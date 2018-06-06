@@ -18,6 +18,7 @@ package org.onehippo.forge.webarchiving.hst.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -25,12 +26,9 @@ import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.configuration.model.HstManager;
-import org.hippoecm.hst.container.HstContainerRequestImpl;
 import org.hippoecm.hst.container.ModifiableRequestContextProvider;
 import org.hippoecm.hst.core.component.HstURLFactory;
-import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.hst.core.container.HstContainerURL;
 import org.hippoecm.hst.core.internal.HstMutableRequestContext;
 import org.hippoecm.hst.core.internal.HstRequestContextComponent;
@@ -39,19 +37,12 @@ import org.hippoecm.hst.core.linking.HstLinkCreator;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
 import org.hippoecm.hst.core.request.ResolvedMount;
-import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
-import org.hippoecm.hst.util.GenericHttpServletRequestWrapper;
-import org.hippoecm.hst.util.HstRequestUtils;
 import org.hippoecm.hst.util.PathUtils;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.forge.webarchiving.common.api.HSTUrlService;
 import org.onehippo.forge.webarchiving.common.error.WebArchiveUpdateException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
-
-import static org.hippoecm.hst.core.container.AbstractHttpsSchemeValve.HTTP_SCHEME;
 
 
 
@@ -103,18 +94,26 @@ public class HSTUrlServiceImpl implements HSTUrlService {
         try {
             HstMutableRequestContext requestContext = hstRequestContextComponent.create();
             ModifiableRequestContextProvider.set(requestContext);
-            HstContainerURL containerUrl = createContainerUrl(null, "localhost", "/home", requestContext, null);
+
+            ResolvedMount resolvedMount = hstManager.getVirtualHosts().matchMount("localhost", contextPath, "/");
+            //ResolvedMount resolvedMount = hstManager.getVirtualHosts().matchVirtualHost("localhost").matchMount(contextPath, "/");
+
+
+
+            requestContext.setBaseURL(createLocalBaseContainerUrl(resolvedMount.getResolvedMountPath()));
+
+            /*HstContainerURL containerUrl = createContainerUrl(null, "localhost", "/home", requestContext, null);1
             requestContext.setBaseURL(containerUrl);
             ResolvedSiteMapItem resolvedSiteMapItem = getResolvedSiteMapItem(containerUrl);
             requestContext.setResolvedSiteMapItem(resolvedSiteMapItem);
-            requestContext.setResolvedMount(resolvedSiteMapItem.getResolvedMount());
+            requestContext.setResolvedMount(resolvedSiteMapItem.getResolvedMount());*/
+
+            requestContext.setResolvedMount(resolvedMount);
+
+
             requestContext.matchingFinished();
-
             requestContext.setURLFactory(hstURLFactory);
-
-
             requestContext.setSiteMapMatcher(hstSiteMapMatcher);
-
 
             List<HstLink> links = linkCreator.createAll(handleNode, requestContext, "localhost", null, true);
             List<HstLink> all = linkCreator.createAll(handleNode, requestContext, true);
@@ -135,57 +134,138 @@ public class HSTUrlServiceImpl implements HSTUrlService {
         return null;
     }
 
-    protected HstContainerURL createContainerUrl(final String scheme,
-                                                 final String hostAndPort,
-                                                 final String pathInfo,
-                                                 final HstMutableRequestContext requestContext,
-                                                 final String queryString) throws Exception {
-        MockHttpServletResponse response = new MockHttpServletResponse();
-
-        GenericHttpServletRequestWrapper containerRequest;
-        {
-            MockHttpServletRequest request = new MockHttpServletRequest();
-            String host = hostAndPort.split(":")[0];
-            if (hostAndPort.split(":").length > 1) {
-                int port = Integer.parseInt(hostAndPort.split(":")[1]);
-                request.setLocalPort(port);
-                request.setServerPort(port);
+    private HstContainerURL createLocalBaseContainerUrl(final String resolvedMountPath) {
+        return new HstContainerURL() {
+            @Override
+            public String getCharacterEncoding() {
+                return "UTF-8";
             }
 
-            if (scheme == null) {
-                request.setScheme(HTTP_SCHEME);
-            } else {
-                request.setScheme(scheme);
+            @Override
+            public String getHostName() {
+                return "localhost";
             }
-            request.setServerName(host);
-            request.addHeader("Host", hostAndPort);
-            setRequestInfo(request, "/site", pathInfo);
-            if (queryString != null) {
-                request.setQueryString(queryString);
+
+            @Override
+            public String getContextPath() {
+                return contextPath;
             }
-            containerRequest = new HstContainerRequestImpl(request, hstManager.getPathSuffixDelimiter());
-        }
 
-        requestContext.setServletRequest(containerRequest);
-        requestContext.setServletResponse(response);
+            @Override
+            public String getRequestPath() {
+                return null;
+            }
 
-        VirtualHosts vhosts = hstManager.getVirtualHosts();
-        ResolvedMount mount = vhosts.matchMount(HstRequestUtils.getFarthestRequestHost(containerRequest),
-            containerRequest.getContextPath(), HstRequestUtils.getRequestPath(containerRequest));
+            @Override
+            public int getPortNumber() {
+                return 8080;
+            }
 
-        setHstServletPath(containerRequest, mount);
-        return hstURLFactory.getContainerURLProvider().parseURL(containerRequest, response, mount);
+            @Override
+            public String getResolvedMountPath() {
+                return resolvedMountPath;
+            }
+
+            @Override
+            public String getPathInfo() {
+                return "/";
+            }
+
+            @Override
+            public String getActionWindowReferenceNamespace() {
+                return null;
+            }
+
+            @Override
+            public void setActionWindowReferenceNamespace(final String actionWindowReferenceNamespace) {
+
+            }
+
+            @Override
+            public String getResourceWindowReferenceNamespace() {
+                return null;
+            }
+
+            @Override
+            public void setResourceWindowReferenceNamespace(final String resourceWindowReferenceNamespace) {
+
+            }
+
+            @Override
+            public String getComponentRenderingWindowReferenceNamespace() {
+                return null;
+            }
+
+            @Override
+            public void setComponentRenderingWindowReferenceNamespace(final String componentRenderingWindowReferenceNamespace) {
+
+            }
+
+            @Override
+            public String getResourceId() {
+                return null;
+            }
+
+            @Override
+            public void setResourceId(final String resourceId) {
+
+            }
+
+            @Override
+            public void setParameter(final String name, final String value) {
+
+            }
+
+            @Override
+            public void setParameter(final String name, final String[] values) {
+
+            }
+
+            @Override
+            public void setParameters(final Map<String, String[]> parameters) {
+
+            }
+
+            @Override
+            public Map<String, String[]> getParameterMap() {
+                return null;
+            }
+
+            @Override
+            public String getParameter(final String name) {
+                return null;
+            }
+
+            @Override
+            public String[] getParameterValues(final String name) {
+                return new String[0];
+            }
+
+            @Override
+            public void setActionParameter(final String name, final String value) {
+
+            }
+
+            @Override
+            public void setActionParameter(final String name, final String[] values) {
+
+            }
+
+            @Override
+            public void setActionParameters(final Map<String, String[]> parameters) {
+
+            }
+
+            @Override
+            public Map<String, String[]> getActionParameterMap() {
+                return null;
+            }
+        };
     }
 
 
-    protected void setRequestInfo(final MockHttpServletRequest request,
-                                  final String contextPath,
-                                  final String pathInfo) {
-        request.setPathInfo(pathInfo);
-        request.setContextPath(contextPath);
-        request.setRequestURI(contextPath + request.getServletPath() + pathInfo);
-    }
 
+/*
     protected void setHstServletPath(final GenericHttpServletRequestWrapper request, final ResolvedMount resolvedMount) {
         if (resolvedMount.getMatchingIgnoredPrefix() != null) {
             request.setServletPath("/" + resolvedMount.getMatchingIgnoredPrefix() + resolvedMount.getResolvedMountPath());
@@ -193,12 +273,15 @@ public class HSTUrlServiceImpl implements HSTUrlService {
             request.setServletPath(resolvedMount.getResolvedMountPath());
         }
     }
+*/
 
+/*
 
     protected ResolvedSiteMapItem getResolvedSiteMapItem(HstContainerURL url) throws ContainerException {
         VirtualHosts vhosts = hstManager.getVirtualHosts();
-        return vhosts.matchSiteMapItem(url);
+        return vhosts.matchMount().matchSiteMapItem(url);
     }
+*/
 
 
      /*   public String getHostGroupNameForCmsHost() {
@@ -208,25 +291,6 @@ public class HSTUrlServiceImpl implements HSTUrlService {
                 "but wasn't found.");
         }
         return hostGroupNameForCmsHost;
-    }*/
-
-
-    /*@Override
-    public Map<String, Channel> getChannels(final String hostname) {
-        try {
-            VirtualHosts virtualHosts = hstManager.getVirtualHosts();
-            final ResolvedVirtualHost resolvedVirtualHost = virtualHosts.matchVirtualHost(hostname);
-            if (resolvedVirtualHost == null) {
-                log.warn("Host '{}' is not a known host in the HST configuration. If it is a CMS host, make sure you " +
-                        "add that host name to the correct '{}' node.", hostname, NODETYPE_HST_VIRTUALHOSTGROUP);
-                return Collections.emptyMap();
-            }
-            return virtualHosts.getChannels(resolvedVirtualHost.getVirtualHost().getHostGroupName());
-        } catch (ContainerException e) {
-            throw new IllegalStateException("Could not load channels.", e);
-        } catch (MatchException e) {
-            throw new IllegalArgumentException(String.format("Could not match hostname '%s'.", hostname), e);
-        }
     }*/
 
 

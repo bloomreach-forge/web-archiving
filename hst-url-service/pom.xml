@@ -38,7 +38,6 @@
       <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
-
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-services</artifactId>
@@ -55,22 +54,6 @@
       <artifactId>hst-commons</artifactId>
       <version>${hippo.hst.version}</version>
       <scope>provided</scope>
-    </dependency>
-
-
-    <!--TODO NOOOOOOOOOOO, NO TEST SCOPE IS NONO-->
-
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-test</artifactId>
-      <version>4.2.6.RELEASE</version>
-
-    </dependency>
-    <dependency>
-      <groupId>org.onehippo.cms7.hst</groupId>
-      <artifactId>hst-mock</artifactId>
-      <version>${hippo.hst.version}</version>
-
     </dependency>
   </dependencies>
 
