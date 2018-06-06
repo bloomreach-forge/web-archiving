@@ -53,6 +53,11 @@ public class WebArchiveUpdateJob implements Serializable {
      */
     private WebArchiveUpdateJobStatus status;
 
+    /**
+     * Number of attempts to submit this job
+     */
+    private int numberOfAttempts = 0;
+
     public WebArchiveUpdateJob() {
         super();
     }
@@ -97,6 +102,14 @@ public class WebArchiveUpdateJob implements Serializable {
         this.status = status;
     }
 
+    public int getNumberOfAttempts() {
+        return numberOfAttempts;
+    }
+
+    public void setNumberOfAttempts(final int numberOfAttempts) {
+        this.numberOfAttempts = numberOfAttempts;
+    }
+
     @Override
     public String toString() {
         return "WebArchiveUpdateJob{" +
@@ -105,6 +118,7 @@ public class WebArchiveUpdateJob implements Serializable {
             ", lastModified=" + lastModified +
             ", webArchiveUpdate=" + webArchiveUpdate +
             ", status=" + status +
+            ", numberOfAttempts=" + numberOfAttempts +
             '}';
     }
 
@@ -119,6 +133,9 @@ public class WebArchiveUpdateJob implements Serializable {
 
         final WebArchiveUpdateJob that = (WebArchiveUpdateJob) o;
 
+        if (numberOfAttempts != that.numberOfAttempts) {
+            return false;
+        }
         if (id != null ? !id.equals(that.id) : that.id != null) {
             return false;
         }
@@ -142,6 +159,7 @@ public class WebArchiveUpdateJob implements Serializable {
         result = 31 * result + (lastModified != null ? lastModified.hashCode() : 0);
         result = 31 * result + (webArchiveUpdate != null ? webArchiveUpdate.hashCode() : 0);
         result = 31 * result + (status != null ? status.hashCode() : 0);
+        result = 31 * result + numberOfAttempts;
         return result;
     }
 }
