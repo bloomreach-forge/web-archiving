@@ -1,0 +1,892 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Copyright 2018 BloomReach Inc. (http://www.bloomreach.com)
+
+    Licensed under the Apache License, Version 2.0 (the  "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS"
+    BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+
+<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="documentworkflow-with-pub-listeners">
+  <sv:property sv:name="jcr:primaryType" sv:type="Name">
+    <sv:value>hipposcxml:scxml</sv:value>
+  </sv:property>
+  <sv:property sv:name="hipposcxml:source" sv:type="String">
+    <sv:value>&lt;?xml version="1.0" encoding="UTF-8" ?&gt;&#13;
+&lt;!--&#13;
+  Copyright 2013-2017 Hippo B.V. (http://www.onehippo.com)&#13;
+&#13;
+  Licensed under the Apache License, Version 2.0 (the "License");&#13;
+  you may not use this file except in compliance with the License.&#13;
+  You may obtain a copy of the License at&#13;
+&#13;
+          http://www.apache.org/licenses/LICENSE-2.0&#13;
+&#13;
+  Unless required by applicable law or agreed to in writing, software&#13;
+  distributed under the License is distributed on an "AS IS" BASIS,&#13;
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.&#13;
+  See the License for the specific language governing permissions and&#13;
+  limitations under the License.&#13;
+  --&gt;&#13;
+&lt;scxml version="1.0"&#13;
+       xmlns="http://www.w3.org/2005/07/scxml"&#13;
+       xmlns:hippo="http://www.onehippo.org/cms7/repository/scxml"&#13;
+       xmlns:cs="http://commons.apache.org/scxml"&#13;
+       xmlns:webarchivingaddon="http://www.onehippo.org/cms7/repository/scxml/webarchivingaddon"&gt;&#13;
+&#13;
+  &lt;script&gt;&#13;
+    def getScxmlId() { workflowContext.scxmlId }&#13;
+    // draft variant property method&#13;
+    def getDraft() { workflowData.documents['draft'] }&#13;
+    // unpublished variant property method&#13;
+    def getUnpublished() { workflowData.documents['unpublished'] }&#13;
+    // published variant property method&#13;
+    def getPublished() { workflowData.documents['published'] }&#13;
+    // current user property method&#13;
+    def getUser() { workflowContext.user }&#13;
+    // current requests map property method&#13;
+    def getRequests() { workflowData.requests }&#13;
+    // returns the variant for copying and checking copy access privileges&#13;
+    def getCopySource() { published ?: unpublished ?: null }&#13;
+    // returns the variant for deleting and checking delete privileges&#13;
+    def getDeleteSource() { unpublished ?: published ?: draft }&#13;
+    // returns the current draft holder (editor) if defined (and draft exists)&#13;
+    def getHolder() { draft?.holder }&#13;
+    // true if draft exists and currently being edited&#13;
+    def boolean isEditing() { !!holder }&#13;
+    // true if draft exists and edited by current user&#13;
+    def boolean isEditor() { holder == user }&#13;
+    // true if draft exists and not currently editor or edited by current user&#13;
+    def boolean isEditable() { !holder or editor }&#13;
+    // true if published variant exists with availability 'live'&#13;
+    def boolean isLive() { published?.isAvailable('live') }&#13;
+    // true if unpublished variant exists with availability 'preview'&#13;
+    def boolean isPreview() { unpublished?.isAvailable('preview') }&#13;
+    // true if either unpublished or published variant exits with availability 'preview'&#13;
+    def boolean isPreviewAvailable() { unpublished?.isAvailable('preview') or published?.isAvailable('preview') }&#13;
+    // true if unpublished variant exists and no published variant exists with availability 'live'&#13;
+    //                                        or they have a different lastModified&#13;
+    def boolean isModified() { unpublished and (!live or unpublished.lastModified!=published.lastModified) }&#13;
+    // true if there is an outstanding workflow request&#13;
+    def boolean isRequestPending() { workflowData.requestPending }&#13;
+    def getContainingFolder() { workflowData.handle.parent }&#13;
+  &lt;/script&gt;&#13;
+&#13;
+  &lt;!-- the initial no-document state is used to prevent entering the handle state if there is no document --&gt;&#13;
+  &lt;state id="no-document"&gt;&#13;
+    &lt;!-- automatic transition to and continue in parallel handle state only when a document variant exists --&gt;&#13;
+    &lt;transition target="handle" cond="!workflowData.documents.isEmpty()"/&gt;&#13;
+  &lt;/state&gt;&#13;
+&#13;
+  &lt;parallel id="handle"&gt;&#13;
+&#13;
+    &lt;!-- the atomic status state is used to report several statuses and info feedback to the invoking workflow --&gt;&#13;
+    &lt;state id="status"&gt;&#13;
+      &lt;onentry&gt;&#13;
+        &lt;hippo:feedback key="status" value="editable"/&gt;&#13;
+        &lt;hippo:feedback key="isLive" value="live"/&gt;&#13;
+        &lt;hippo:feedback key="previewAvailable" value="previewAvailable"/&gt;&#13;
+        &lt;!-- enable the checkModified operation if both draft and unpublished variants exists --&gt;&#13;
+        &lt;hippo:action action="checkModified" enabledExpr="draft and unpublished"/&gt;&#13;
+      &lt;/onentry&gt;&#13;
+&#13;
+      &lt;!-- target-less transition on event checkModified to compare the draft and unpublished variants which result is&#13;
+           reported back as Boolean value through the 'modified' feedback variable and the workflow operation result --&gt;&#13;
+      &lt;transition event="checkModified"&gt;&#13;
+        &lt;hippo:isModified/&gt;&#13;
+        &lt;hippo:result value="workflowContext.feedback['modified']"/&gt;&#13;
+      &lt;/transition&gt;&#13;
+    &lt;/state&gt;&#13;
+&#13;
+    &lt;!-- the composite edit state is used to manage all operations for editing a draft variant --&gt;&#13;
+    &lt;state id="edit"&gt;&#13;
+&#13;
+      &lt;!-- default no-edit state initially disables all editing operations --&gt;&#13;
+      &lt;state id="no-edit"&gt;&#13;
+        &lt;onentry&gt;&#13;
+          &lt;hippo:action action="disposeEditableInstance" enabledExpr="false"/&gt;&#13;
+          &lt;hippo:action action="obtainEditableInstance" enabledExpr="false"/&gt;&#13;
+          &lt;hippo:action action="commitEditableInstance" enabledExpr="false"/&gt;&#13;
+        &lt;/onentry&gt;&#13;
+        &lt;!-- event-less transition to state "editing" if there is no pending request and the draft variant is edited --&gt;&#13;
+        &lt;transition target="editing"  cond="!requestPending and editing"/&gt;&#13;
+        &lt;!-- (else) event-less transition to state "editable" if there is no pending request and the draft variant&#13;
+                    doesn't exist yet or isn't edited --&gt;&#13;
+        &lt;transition target="editable" cond="!requestPending"/&gt;&#13;
+      &lt;/state&gt;&#13;
+&#13;
+      &lt;!-- editing state becomes active when the draft variant is currently edited --&gt;&#13;
+      &lt;state id="editing"&gt;&#13;
+        &lt;onentry&gt;&#13;
+          &lt;if cond="editor"&gt;&#13;
+            &lt;!-- current editor is allowed all editing operations --&gt;&#13;
+            &lt;hippo:action action="disposeEditableInstance" enabledExpr="true"/&gt;&#13;
+            &lt;hippo:action action="obtainEditableInstance" enabledExpr="true"/&gt;&#13;
+            &lt;hippo:action action="commitEditableInstance" enabledExpr="true"/&gt;&#13;
+          &lt;else/&gt;&#13;
+            &lt;!-- for a not-current editor the current editor (holder) is reported through the 'inUseBy' feedback --&gt;&#13;
+            &lt;hippo:feedback key="inUseBy" value="holder"/&gt;&#13;
+          &lt;/if&gt;&#13;
+          &lt;if cond="!editor and workflowContext.isGranted(draft,'hippo:admin')"&gt;&#13;
+            &lt;!-- For an admin (granted hippo:admin) enable the unlock operation if not-current editor --&gt;&#13;
+            &lt;hippo:action action="unlock" enabledExpr="true"/&gt;&#13;
+          &lt;/if&gt;&#13;
+        &lt;/onentry&gt;&#13;
+      &lt;/state&gt;&#13;
+&#13;
+      &lt;!-- editable state becomes active if editing is possible but there is no current editor --&gt;&#13;
+      &lt;state id="editable"&gt;&#13;
+        &lt;onentry&gt;&#13;
+          &lt;if cond="workflowContext.isGranted(draft,'hippo:admin')"&gt;&#13;
+            &lt;!-- for an admin (granted hippo:admin) report the unlock operation as available but disabled --&gt;&#13;
+            &lt;hippo:action action="unlock" enabledExpr="false"/&gt;&#13;
+          &lt;/if&gt;&#13;
+          &lt;!-- enable the operation to start editing --&gt;&#13;
+          &lt;hippo:action action="obtainEditableInstance" enabledExpr="true"/&gt;&#13;
+        &lt;/onentry&gt;&#13;
+      &lt;/state&gt;&#13;
+&#13;
+      &lt;!-- target-less transition to 'dispose' an editable instance by (only) removing the current draft holder, and the&#13;
+           current unpublished document variant is returned if currently in preview state else the published variant --&gt;&#13;
+      &lt;transition event="disposeEditableInstance"&gt;&#13;
+        &lt;!-- remove holder from the draft document --&gt;&#13;
+        &lt;hippo:setHolder holder="null"/&gt;&#13;
+        &lt;hippo:result value="preview ? unpublished : published"/&gt;&#13;
+      &lt;/transition&gt;&#13;
+&#13;
+      &lt;!-- target-less transition to 'obtain' an editable draft document variant by creating or updating a draft variant&#13;
+           by copying (the contents of) the current unpublished variant if available or else the published variant --&gt;&#13;
+      &lt;transition event="obtainEditableInstance"&gt;&#13;
+        &lt;!-- copy/update draft unless user already is holder (editing) --&gt;&#13;
+        &lt;if cond="!editor"&gt;&#13;
+          &lt;if cond="!!unpublished"&gt;&#13;
+            &lt;!-- unpublished document exists: copy it to draft first, unless we're already editor --&gt;&#13;
+            &lt;hippo:copyVariant sourceState="unpublished" targetState="draft"/&gt;&#13;
+          &lt;elseif cond="!!published"/&gt;&#13;
+            &lt;!-- else if published document exists: first copy it to unpublished --&gt;&#13;
+            &lt;hippo:copyVariant sourceState="published" targetState="unpublished"/&gt;&#13;
+            &lt;if cond="live"&gt;&#13;
+              &lt;hippo:configVariant variant="published" availabilities="live"/&gt;&#13;
+              &lt;else/&gt;&#13;
+              &lt;hippo:configVariant variant="published" availabilities=""/&gt;&#13;
+            &lt;/if&gt;&#13;
+            &lt;hippo:configVariant variant="unpublished" versionable="true" availabilities="preview"/&gt;&#13;
+            &lt;!-- create a JCR version of the published document via the unpublished variant --&gt;&#13;
+            &lt;hippo:version variant="unpublished"/&gt;&#13;
+            &lt;!-- now copy the unpublished variant to draft --&gt;&#13;
+            &lt;hippo:copyVariant sourceState="unpublished" targetState="draft"/&gt;&#13;
+          &lt;/if&gt;&#13;
+          &lt;!-- mark the draft document as modified, set the user as editor and remove possibly copied availabilities --&gt;&#13;
+          &lt;hippo:configVariant variant="draft" applyModified="true" setHolder="true" availabilities=""/&gt;&#13;
+        &lt;/if&gt;&#13;
+        &lt;!-- store the (newly created or updated) draft document as result --&gt;&#13;
+        &lt;hippo:result value="draft"/&gt;&#13;
+      &lt;/transition&gt;&#13;
+&#13;
+      &lt;!-- target-less transition to 'commit' an editable instance by removing the holder and, if new or modified,&#13;
+           copying its content to the unpublished variant --&gt;&#13;
+      &lt;transition event="commitEditableInstance"&gt;&#13;
+        &lt;hippo:setHolder holder="null"/&gt;&#13;
+        &lt;if cond="!!unpublished"&gt;&#13;
+          &lt;!-- if unpublished variant exist only 'commit' changes if there are any --&gt;&#13;
+          &lt;hippo:isModified/&gt;&#13;
+        &lt;/if&gt;&#13;
+        &lt;if cond="!unpublished or workflowContext.feedback['modified']"&gt;&#13;
+          &lt;!-- we either have a new draft (no unpublished) or the draft is modified compared to the unpublished --&gt;&#13;
+          &lt;if cond="!unpublished and !!published"&gt;&#13;
+            &lt;!-- we have no unpublished variant yet but do have a published variant:&#13;
+                 remove possible 'preview' availability from the published variant --&gt;&#13;
+            &lt;if cond="live"&gt;&#13;
+              &lt;hippo:configVariant variant="published" availabilities="live"/&gt;&#13;
+            &lt;else/&gt;&#13;
+              &lt;hippo:configVariant variant="published" availabilities=""/&gt;&#13;
+            &lt;/if&gt;&#13;
+          &lt;/if&gt;&#13;
+          &lt;!-- copy the new or modified draft variant to the unpublished variant, creating it if needed --&gt;&#13;
+          &lt;hippo:copyVariant sourceState="draft" targetState="unpublished"/&gt;&#13;
+          &lt;!-- configure the new or updated unpublished to be versionable, modified and available as 'preview' --&gt;&#13;
+          &lt;hippo:configVariant variant="unpublished" versionable="true" applyModified="true" availabilities="preview"/&gt;&#13;
+        &lt;/if&gt;&#13;
+        &lt;!-- return the possibly updated unpublished variant --&gt;&#13;
+        &lt;hippo:result value="unpublished"/&gt;&#13;
+      &lt;/transition&gt;&#13;
+&#13;
+      &lt;!-- target-less transition to 'unlock' the current edited draft variant by overriding its current holder&#13;
+           with that of the current invoking admin (granted hippo:admin) user. --&gt;&#13;
+      &lt;transition event="unlock"&gt;&#13;
+        &lt;hippo:setHolder holder="user"/&gt;&#13;
+      &lt;/transition&gt;&#13;
+&#13;
+    &lt;/state&gt;&#13;
+&#13;
+    &lt;!-- the composite request state is used to manage all workflow operations on existing document workflow requests --&gt;&#13;
+    &lt;state id="request"&gt;&#13;
+&#13;
+      &lt;!-- the initial no-request state is used and active when there are no current document workflow requests --&gt;&#13;
+      &lt;state id="no-request"&gt;&#13;
+        &lt;!-- event-less transition to state "requested" when requests exists --&gt;&#13;
+        &lt;transition target="requested" cond="!empty(requests)"/&gt;&#13;
+      &lt;/state&gt;&#13;
+&#13;
+      &lt;!-- the requested state becomes active when document workflow requests are present --&gt;&#13;
+      &lt;state id="requested"&gt;&#13;
+        &lt;onentry&gt;&#13;
+          &lt;foreach item="request" array="requests.values()"&gt;&#13;
+            &lt;!-- for all requests determine the available request actions and report them through the special 'requests'&#13;
+                 feedback map variable --&gt;&#13;
+            &lt;!-- for document workflow requests: --&gt;&#13;
+            &lt;if cond="request.workflowRequest"&gt;&#13;
+              &lt;if cond="workflowContext.isGranted(request, 'hippo:editor')"&gt;&#13;
+                &lt;!-- editor users (granted hippo:editor) may reject and accept as well as cancel requests --&gt;&#13;
+                &lt;if cond="request.workflowType!='rejected'"&gt;&#13;
+                  &lt;!-- if request not rejected yet, enable reject operation --&gt;&#13;
+                  &lt;hippo:requestAction identifierExpr="request.identity" action="rejectRequest" enabledExpr="true"/&gt;&#13;
+                &lt;/if&gt;&#13;
+                &lt;if cond="request.workflowType=='delete'"&gt;&#13;
+                  &lt;!-- if request for delete: enable accept operation if not live and not editing --&gt;&#13;
+                  &lt;hippo:requestAction identifierExpr="request.identity" action="acceptRequest" enabledExpr="!live and !editing"/&gt;&#13;
+                &lt;elseif cond="request.workflowType=='publish'"&gt;&#13;
+                  &lt;!-- if request for publish: enable accept operation if modified and not editing --&gt;&#13;
+                  &lt;hippo:requestAction identifierExpr="request.identity" action="acceptRequest" enabledExpr="modified and !editing"/&gt;&#13;
+                &lt;/elseif&gt;&#13;
+                &lt;elseif cond="request.workflowType=='depublish'"/&gt;&#13;
+                  &lt;!-- if request for depublish: enable accept operation if live and not editing --&gt;&#13;
+                  &lt;hippo:requestAction identifierExpr="request.identity" action="acceptRequest" enabledExpr="live and !editing"/&gt;&#13;
+                &lt;/if&gt;&#13;
+                &lt;if cond="!request.owner or request.owner==user"&gt;&#13;
+                  &lt;!-- if request owner or no request owner: enable cancel operation --&gt;&#13;
+                  &lt;hippo:requestAction identifierExpr="request.identity" action="cancelRequest" enabledExpr="true"/&gt;&#13;
+                &lt;/if&gt;&#13;
+              &lt;!-- when not an editor user (not granted hippo:editor) then: --&gt;&#13;
+              &lt;elseif cond="request?.owner==user"/&gt;&#13;
+                &lt;!-- if request owner: enable cancel operation --&gt;&#13;
+                &lt;hippo:requestAction identifierExpr="request.identity" action="cancelRequest" enabledExpr="true"/&gt;&#13;
+              &lt;/if&gt;&#13;
+            &lt;else/&gt;&#13;
+              &lt;!-- scheduled workflow operation --&gt;&#13;
+              &lt;if cond="workflowContext.isGranted(request, 'hippo:editor')"&gt;&#13;
+                &lt;!-- if editor user (granted hippo:editor): enable cancel operation --&gt;&#13;
+                &lt;hippo:requestAction identifierExpr="request.identity" action="cancelRequest" enabledExpr="true"/&gt;&#13;
+              &lt;/if&gt;&#13;
+            &lt;/if&gt;&#13;
+          &lt;/foreach&gt;&#13;
+        &lt;/onentry&gt;&#13;
+&#13;
+        &lt;!-- target-less transition to 'accept' a specific request --&gt;&#13;
+        &lt;transition event="acceptRequest"&gt;&#13;
+&#13;
+          &lt;!-- define temporary request variable for the event payload request parameter --&gt;&#13;
+          &lt;cs:var name="request" expr="_event.data?.request"/&gt;&#13;
+          &lt;!-- store the request workflow type as temporary variable --&gt;&#13;
+          &lt;cs:var name="workflowType" expr="request.workflowType"/&gt;&#13;
+          &lt;!-- store the request targetDate as temporary variable --&gt;&#13;
+          &lt;cs:var name="targetDate" expr="request.scheduledDate"/&gt;&#13;
+&#13;
+          &lt;!-- First delete the request itself.&#13;
+               Note: After this, the request object no longer can be accessed!&#13;
+                     Which is why we need to define the temporary variables workflowType and targetDate above.&#13;
+          --&gt;&#13;
+          &lt;hippo:deleteRequest requestExpr="request"/&gt;&#13;
+&#13;
+          &lt;if cond="!targetDate"&gt;&#13;
+            &lt;!-- the request didn't have a targetDate defined, simply trigger the "workflowType" value as event --&gt;&#13;
+            &lt;send event="workflowType"/&gt;&#13;
+            &lt;!-- log the workflowType after it has been processed --&gt;&#13;
+            &lt;send event="'logEvent.'+workflowType"/&gt;&#13;
+          &lt;else/&gt;&#13;
+            &lt;!-- the request did have a targetDate: trigger a 'scheduled' workflow action event --&gt;&#13;
+            &lt;send event="workflowType" namelist="targetDate"/&gt;&#13;
+          &lt;/if&gt;&#13;
+&#13;
+        &lt;/transition&gt;&#13;
+&#13;
+        &lt;!-- target-less transition to 'reject' a request --&gt;&#13;
+        &lt;transition event="rejectRequest"&gt;&#13;
+          &lt;!-- update the specific request to type rejected with an optional reason, using the event payload&#13;
+               'request' and optional 'reason' parameters --&gt;&#13;
+          &lt;hippo:rejectRequest requestExpr="_event.data?.request" reasonExpr="_event.data?.reason"/&gt;&#13;
+        &lt;/transition&gt;&#13;
+&#13;
+        &lt;!-- target-less transition to 'cancel' a request --&gt;&#13;
+        &lt;transition event="cancelRequest"&gt;&#13;
+          &lt;!-- delete the specific request using the event payload 'request' parameter --&gt;&#13;
+          &lt;hippo:deleteRequest requestExpr="_event.data?.request"/&gt;&#13;
+        &lt;/transition&gt;&#13;
+&#13;
+      &lt;/state&gt;&#13;
+&#13;
+    &lt;/state&gt;&#13;
+&#13;
+    &lt;!-- the composite publish state is used to manage workflow operations for publishing a document --&gt;&#13;
+    &lt;state id="publish"&gt;&#13;
+&#13;
+      &lt;!-- the initial no-publish state is used and active to indicate publish operations are currently not&#13;
+           allowed or possible because the document is being edited or not (yet) modified --&gt;&#13;
+      &lt;state id="no-publish"&gt;&#13;
+        &lt;onentry&gt;&#13;
+          &lt;!-- by default report the request publication operation as available but disabled --&gt;&#13;
+          &lt;hippo:action action="requestPublication" enabledExpr="false"/&gt;&#13;
+          &lt;if cond="workflowContext.isGranted(unpublished ?: published ?: draft, 'hippo:editor')"&gt;&#13;
+              &lt;!-- if editor user (granted hippo:editor) by default report the publish operation as available but disabled --&gt;&#13;
+              &lt;hippo:action action="publish" enabledExpr="false"/&gt;&#13;
+          &lt;/if&gt;&#13;
+        &lt;/onentry&gt;&#13;
+        &lt;!-- event-less transition to publishable state if not currently editing and the document is modified --&gt;&#13;
+        &lt;transition target="publishable" cond="!editing and modified"/&gt;&#13;
+      &lt;/state&gt;&#13;
+&#13;
+      &lt;!-- state publishable is active when the  document is modified and not currently edited --&gt;&#13;
+      &lt;state id="publishable"&gt;&#13;
+        &lt;onentry&gt;&#13;
+          &lt;if cond="!requestPending or user=='workflowuser'"&gt;&#13;
+            &lt;!-- if no request pending OR invoked by the 'workflowuser' user (scheduled workflow jobs daemon):&#13;
+                 enable request publication operation --&gt;&#13;
+            &lt;hippo:action action="requestPublication" enabledExpr="true"/&gt;&#13;
+            &lt;if cond="workflowContext.isGranted(unpublished, 'hippo:editor')"&gt;&#13;
+              &lt;!-- if (also) editor user (granted hippo:editor): enable publish operation --&gt;&#13;
+              &lt;hippo:action action="publish" enabledExpr="true"/&gt;&#13;
+            &lt;/if&gt;&#13;
+          &lt;/if&gt;&#13;
+        &lt;/onentry&gt;&#13;
+&#13;
+        &lt;!-- target-less transition to create a publish request when no event payload parameter targetDate is provided --&gt;&#13;
+        &lt;transition event="requestPublication" cond="!_event.data?.targetDate"&gt;&#13;
+          &lt;hippo:workflowRequest type="publish" contextVariantExpr="unpublished"/&gt;&#13;
+        &lt;/transition&gt;&#13;
+&#13;
+        &lt;!-- target-less transition to create a scheduledpublish request at the required event payload parameter targetDate --&gt;&#13;
+        &lt;transition event="requestPublication" cond="!!_event.data?.targetDate"&gt;&#13;
+          &lt;hippo:workflowRequest type="scheduledpublish" contextVariantExpr="unpublished" targetDateExpr="_event.data?.targetDate"/&gt;&#13;
+        &lt;/transition&gt;&#13;
+&#13;
+        &lt;!-- target-less transition to publish the document when no event payload parameter targetDate is provided --&gt;&#13;
+        &lt;transition event="publish" cond="!_event.data?.targetDate"&gt;&#13;
+          &#13;
+          &lt;!-- copy the content of the unpublished variant to the published variant --&gt;&#13;
+          &lt;hippo:copyVariant sourceState="unpublished" targetState="published"/&gt;&#13;
+          &lt;!-- mark the published variant as published and set its availability to (only) 'live' --&gt;&#13;
+          &lt;hippo:configVariant variant="published" applyPublished="true" availabilities="live"/&gt;&#13;
+          &lt;!-- create a JCR version of the published document via the unpublished variant --&gt;&#13;
+          &lt;hippo:version variant="unpublished"/&gt;&#13;
+          &#13;
+          &lt;!-- Queue up for external archiving --&gt;&#13;
+          &lt;webarchivingaddon:externalArchiveOnPublish /&gt;&#13;
+&#13;
+        &lt;/transition&gt;&#13;
+&#13;
+        &lt;!-- target-less transition to schedule the publication of the document at the required event payload parameter targetDate --&gt;&#13;
+        &lt;transition event="publish" cond="!!_event.data?.targetDate"&gt;&#13;
+          &lt;hippo:scheduleWorkflow type="publish" targetDateExpr="_event.data?.targetDate"/&gt;&#13;
+        &lt;/transition&gt;&#13;
+&#13;
+      &lt;/state&gt;&#13;
+&#13;
+    &lt;/state&gt;&#13;
+&#13;
+    &lt;!-- the composite depublish state is used to manage workflow operations for depublishing a document --&gt;&#13;
+    &lt;state id="depublish"&gt;&#13;
+&#13;
+      &lt;!-- the initial no-depublish state is used and active to indicate depublish operations are currently not&#13;
+           allowed or possible because the document is being edited or not 'live' --&gt;&#13;
+      &lt;state id="no-depublish"&gt;&#13;
+        &lt;onentry&gt;&#13;
+          &lt;!-- by default report the request depublication operation as available but disabled --&gt;&#13;
+          &lt;hippo:action action="requestDepublication" enabledExpr="false"/&gt;&#13;
+          &lt;if cond="workflowContext.isGranted(published ?: unpublished ?: draft, 'hippo:editor')"&gt;&#13;
+            &lt;!-- if editor user (granted hippo:editor) by default report the depublish operation as available but disabled --&gt;&#13;
+            &lt;hippo:action action="depublish" enabledExpr="false"/&gt;&#13;
+          &lt;/if&gt;&#13;
+        &lt;/onentry&gt;&#13;
+        &lt;!-- event-less transition to depublishable state if not currently editing and the document is 'live' --&gt;&#13;
+        &lt;transition target="depublishable" cond="!editing and live"/&gt;&#13;
+      &lt;/state&gt;&#13;
+&#13;
+      &lt;!-- state depublishable is active when the  document is live and not currently edited --&gt;&#13;
+      &lt;state id="depublishable"&gt;&#13;
+        &lt;onentry&gt;&#13;
+          &lt;if cond="!requestPending or user=='workflowuser'"&gt;&#13;
+            &lt;!-- if no request pending OR invoked by the 'workflowuser' user (scheduled workflow jobs daemon):&#13;
+                 enable request depublication operation --&gt;&#13;
+            &lt;hippo:action action="requestDepublication" enabledExpr="true"/&gt;&#13;
+            &lt;if cond="workflowContext.isGranted(published, 'hippo:editor')"&gt;&#13;
+              &lt;!-- if (also) editor user (granted hippo:editor): enable publish operation --&gt;&#13;
+              &lt;hippo:action action="depublish" enabledExpr="true"/&gt;&#13;
+            &lt;/if&gt;&#13;
+          &lt;/if&gt;&#13;
+        &lt;/onentry&gt;&#13;
+&#13;
+        &lt;!-- target-less transition to create a depublish request when no event payload parameter targetDate is provided --&gt;&#13;
+        &lt;transition event="requestDepublication" cond="!_event.data?.targetDate"&gt;&#13;
+          &lt;hippo:workflowRequest type="depublish" contextVariantExpr="published"/&gt;&#13;
+        &lt;/transition&gt;&#13;
+&#13;
+        &lt;!-- target-less transition to create a scheduleddepublish request at the required event payload parameter targetDate --&gt;&#13;
+        &lt;transition event="requestDepublication" cond="!!_event.data?.targetDate"&gt;&#13;
+          &lt;hippo:workflowRequest type="scheduleddepublish" contextVariantExpr="published" targetDateExpr="_event.data?.targetDate"/&gt;&#13;
+        &lt;/transition&gt;&#13;
+&#13;
+        &lt;!-- target-less transition to depublish the document when no event payload parameter targetDate is provided --&gt;&#13;
+        &lt;transition event="depublish" cond="!_event.data?.targetDate"&gt;&#13;
+          &lt;!-- Queue up for external archiving --&gt;&#13;
+          &lt;webarchivingaddon:externalArchiveOnPublish /&gt;&#13;
+&#13;
+          &lt;if cond="!unpublished"&gt;&#13;
+            &lt;!-- if no unpublished variant exists yet, copy it from the published variant --&gt;&#13;
+            &lt;hippo:copyVariant sourceState="published" targetState="unpublished"/&gt;&#13;
+          &lt;/if&gt;&#13;
+          &lt;!-- ensure the unpublished variant to be versionable set its availability to (only) 'live' --&gt;&#13;
+          &lt;hippo:configVariant variant="unpublished" versionable="true" availabilities="preview"/&gt;&#13;
+          &lt;!-- remove all availabilities from the published variant --&gt;&#13;
+          &lt;hippo:configVariant variant="published" availabilities=""/&gt;&#13;
+          &lt;!-- create an extra version of the current unpublished (possibly modified?) --&gt;&#13;
+          &lt;hippo:version variant="unpublished"/&gt;&#13;
+          &#13;
+        &lt;/transition&gt;&#13;
+&#13;
+        &lt;!-- target-less transition to schedule the depublication of the document at the required event payload parameter targetDate --&gt;&#13;
+        &lt;transition event="depublish" cond="!!_event.data?.targetDate"&gt;&#13;
+          &lt;hippo:scheduleWorkflow type="depublish" targetDateExpr="_event.data?.targetDate"/&gt;&#13;
+        &lt;/transition&gt;&#13;
+&#13;
+      &lt;/state&gt;&#13;
+&#13;
+    &lt;/state&gt;&#13;
+&#13;
+    &lt;!-- the composite versioning state is used to manage versioning related workflow operations of a document --&gt;&#13;
+    &lt;state id="versioning"&gt;&#13;
+&#13;
+      &lt;onentry&gt;&#13;
+        &lt;!-- always enable the listVersions, even if no version is available (yet) --&gt;&#13;
+        &lt;hippo:action action="listVersions" enabledExpr="true"/&gt;&#13;
+      &lt;/onentry&gt;&#13;
+&#13;
+      &lt;!-- target-less transition to report a list of available versions of the document --&gt;&#13;
+      &lt;transition event="listVersions"&gt;&#13;
+        &lt;hippo:listVersions variant="unpublished" /&gt;&#13;
+      &lt;/transition&gt;&#13;
+&#13;
+      &lt;!-- the initial no-versioning state is used and active to indicate versioning operations are currently not&#13;
+           allowed or possible because there is no unpublished document variant yet --&gt;&#13;
+      &lt;state id="no-versioning"&gt;&#13;
+        &lt;!-- event-less transition to versionable state when an unpublished document variant exists --&gt;&#13;
+        &lt;transition target="versionable" cond="!!unpublished"/&gt;&#13;
+      &lt;/state&gt;&#13;
+&#13;
+      &lt;!-- the versionable state becomes active when an unpublished document variant exists --&gt;&#13;
+      &lt;state id="versionable"&gt;&#13;
+        &lt;onentry&gt;&#13;
+          &lt;!-- enable the retrieveVersion operation --&gt;&#13;
+          &lt;hippo:action action="retrieveVersion" enabledExpr="true"/&gt;&#13;
+          &lt;if cond="workflowContext.isGranted(unpublished, 'hippo:editor')"&gt;&#13;
+            &lt;!-- if the user is editor (granted hippo:editor) also enable the other versioning operations --&gt;&#13;
+            &lt;hippo:action action="version" enabledExpr="true"/&gt;&#13;
+            &lt;hippo:action action="restoreVersion" enabledExpr="true"/&gt;&#13;
+            &lt;hippo:action action="versionRestoreTo" enabledExpr="true"/&gt;&#13;
+          &lt;/if&gt;&#13;
+        &lt;/onentry&gt;&#13;
+&#13;
+        &lt;!-- target-less transition to create a new version for the current unpublished variant --&gt;&#13;
+        &lt;transition event="version"&gt;&#13;
+          &lt;hippo:version variant="unpublished"  /&gt;&#13;
+        &lt;/transition&gt;&#13;
+&#13;
+        &lt;!-- target-less transition to retrieve a specific version created on the event payload provided date parameter --&gt;&#13;
+        &lt;transition event="retrieveVersion"&gt;&#13;
+          &lt;hippo:retrieveVersion historic="_event.data?.date" variant="unpublished" /&gt;&#13;
+        &lt;/transition&gt;&#13;
+&#13;
+        &lt;!-- target-less transition to restore a specific version from the event payload provided parameter date to the&#13;
+             payload provided parameter target (document).&#13;
+             Note: this uses custom/manual copying of the version contents, unlike the restoreVersion operation below --&gt;&#13;
+        &lt;transition event="versionRestoreTo"&gt;&#13;
+          &lt;hippo:versionRestoreTo historic="_event.data?.date" variant="unpublished" target="_event.data?.target"/&gt;&#13;
+        &lt;/transition&gt;&#13;
+&#13;
+        &lt;!-- target-less transition to restore a specific document version from the event payload provided parameter date.&#13;
+             Note: this uses standard JCR version restore unlike the versionRestoreTo operation above --&gt;&#13;
+        &lt;transition event="restoreVersion"&gt;&#13;
+          &lt;hippo:restoreVersion historic="_event.data?.date"  variant="unpublished" /&gt;&#13;
+        &lt;/transition&gt;&#13;
+&#13;
+      &lt;/state&gt;&#13;
+&#13;
+    &lt;/state&gt;&#13;
+&#13;
+    &lt;!-- the composite terminate state is used to manage termination and related/similar workflow operations like&#13;
+         move and rename --&gt;&#13;
+    &lt;state id="terminate"&gt;&#13;
+&#13;
+      &lt;!-- the initial no-terminate state is used and active when delete/move/rename operations are currently now&#13;
+           allowed or possible --&gt;&#13;
+      &lt;state id="no-terminate"&gt;&#13;
+        &lt;onentry&gt;&#13;
+          &lt;!-- report request delete operation as available but default disabled --&gt;&#13;
+          &lt;hippo:action action="requestDelete" enabledExpr="false"/&gt;&#13;
+          &lt;if cond="workflowContext.isGranted(deleteSource, 'hippo:editor') and workflowContext.isGranted(containingFolder, 'jcr:write')"&gt;&#13;
+            &lt;!-- if the user is editor (granted hippo:editor) AND allowed to modify (jcr:write) the document folder,&#13;
+                 report the delete/move/rename operations as available but default disabled --&gt;&#13;
+            &lt;hippo:action action="delete" enabledExpr="false"/&gt;&#13;
+            &lt;hippo:action action="move" enabledExpr="false"/&gt;&#13;
+            &lt;hippo:action action="rename" enabledExpr="false"/&gt;&#13;
+          &lt;/if&gt;&#13;
+        &lt;/onentry&gt;&#13;
+        &lt;!-- event-less transition to terminatable state if the document is not live and not being edited --&gt;&#13;
+        &lt;transition target="terminateable" cond="!live and !editing"/&gt;&#13;
+      &lt;/state&gt;&#13;
+&#13;
+      &lt;!-- the terminateable state becomes active when the document is not live and not being edited --&gt;&#13;
+      &lt;state id="terminateable"&gt;&#13;
+        &lt;onentry&gt;&#13;
+          &lt;if cond="!requestPending"&gt;&#13;
+            &lt;!-- delete operations are only allowed when (also) no request is pending --&gt;&#13;
+            &lt;!-- (then) always enable the request delete operation --&gt;&#13;
+            &lt;hippo:action action="requestDelete" enabledExpr="true"/&gt;&#13;
+            &lt;if cond="workflowContext.isGranted(deleteSource, 'hippo:editor') and workflowContext.isGranted(containingFolder, 'jcr:write')"&gt;&#13;
+              &lt;!-- if the user is editor (granted hippo:editor) AND allowed to modify (jcr:write) the document folder,&#13;
+                   enable the delete/move/rename operations --&gt;&#13;
+              &lt;hippo:action action="delete" enabledExpr="true"/&gt;&#13;
+              &lt;hippo:action action="move" enabledExpr="true"/&gt;&#13;
+              &lt;hippo:action action="rename" enabledExpr="true"/&gt;&#13;
+            &lt;/if&gt;&#13;
+          &lt;/if&gt;&#13;
+        &lt;/onentry&gt;&#13;
+&#13;
+        &lt;!-- target-less transition to create a delete request --&gt;&#13;
+        &lt;transition event="requestDelete"&gt;&#13;
+          &lt;hippo:workflowRequest type="delete" contextVariantExpr="deleteSource"/&gt;&#13;
+        &lt;/transition&gt;&#13;
+&#13;
+        &lt;!-- transition to delete the current document and go to final state terminated --&gt;&#13;
+        &lt;transition event="delete" target="terminated"&gt;&#13;
+          &lt;hippo:archiveDocument/&gt;&#13;
+        &lt;/transition&gt;&#13;
+&#13;
+        &lt;!-- transition to move the current document and go to final state terminated --&gt;&#13;
+        &lt;transition event="move" target="terminated"&gt;&#13;
+          &lt;hippo:moveDocument destinationExpr="_event.data?.destination" newNameExpr="_event.data?.name"/&gt;&#13;
+        &lt;/transition&gt;&#13;
+&#13;
+        &lt;!-- transition to rename the current document and go to final state terminated --&gt;&#13;
+        &lt;transition event="rename" target="terminated"&gt;&#13;
+          &lt;hippo:renameDocument newNameExpr="_event.data?.name"/&gt;&#13;
+        &lt;/transition&gt;&#13;
+&#13;
+      &lt;/state&gt;&#13;
+&#13;
+    &lt;/state&gt;&#13;
+&#13;
+    &lt;!-- the composite copy state is used to manage the copy workflow operation --&gt;&#13;
+    &lt;state id="copy"&gt;&#13;
+&#13;
+      &lt;!-- the initial no-copy state is used and active when the user is not an editor (granted hippo:editor) --&gt;&#13;
+      &lt;state id="no-copy"&gt;&#13;
+        &lt;!-- event-less transition to copyable state when the user is an editor (granted hippo:editor) --&gt;&#13;
+        &lt;transition target="copyable" cond="workflowContext.isGranted(copySource,'hippo:editor')"/&gt;&#13;
+      &lt;/state&gt;&#13;
+&#13;
+      &lt;!-- the state copyable is only active for users which are editor (granted hippo:editor) --&gt;&#13;
+      &lt;state id="copyable"&gt;&#13;
+        &lt;onentry&gt;&#13;
+          &lt;!-- always enable the copy operation --&gt;&#13;
+          &lt;hippo:action action="copy" enabledExpr="true"/&gt;&#13;
+        &lt;/onentry&gt;&#13;
+&#13;
+        &lt;!-- target-less transition to copy the document to the event payload provided parameters destination and name --&gt;&#13;
+        &lt;transition event="copy"&gt;&#13;
+          &lt;hippo:copyDocument destinationExpr="_event.data?.destination" newNameExpr="_event.data?.name"/&gt;&#13;
+        &lt;/transition&gt;&#13;
+&#13;
+      &lt;/state&gt;&#13;
+&#13;
+    &lt;/state&gt;&#13;
+&#13;
+    &lt;!-- the simple and non-transitional logEvent state is used to log actions:&#13;
+         such actions needs to be 'send' using an event name prefixed by 'logEvent.'&#13;
+         the remainder of the event name will be logged as event action&#13;
+    --&gt;&#13;
+    &lt;state id="logEvent"&gt;&#13;
+      &lt;transition event="logEvent.*"&gt;&#13;
+        &lt;hippo:logEvent actionexpr="_event.name.substring('logEvent.'.length())" /&gt;&#13;
+      &lt;/transition&gt;&#13;
+    &lt;/state&gt;&#13;
+&#13;
+  &lt;/parallel&gt;&#13;
+&#13;
+  &lt;!-- the final terminated state is used when the document no longer exists, is renamed or moved --&gt;&#13;
+  &lt;final id="terminated" /&gt;&#13;
+&#13;
+&lt;/scxml&gt;</sv:value>
+  </sv:property>
+  <sv:node sv:name="action">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hipposcxml:action</sv:value>
+    </sv:property>
+    <sv:property sv:name="hipposcxml:classname" sv:type="String">
+      <sv:value>org.onehippo.repository.scxml.ActionAction</sv:value>
+    </sv:property>
+    <sv:property sv:name="hipposcxml:namespace" sv:type="String">
+      <sv:value>http://www.onehippo.org/cms7/repository/scxml</sv:value>
+    </sv:property>
+  </sv:node>
+  <sv:node sv:name="result">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hipposcxml:action</sv:value>
+    </sv:property>
+    <sv:property sv:name="hipposcxml:classname" sv:type="String">
+      <sv:value>org.onehippo.repository.scxml.ResultAction</sv:value>
+    </sv:property>
+    <sv:property sv:name="hipposcxml:namespace" sv:type="String">
+      <sv:value>http://www.onehippo.org/cms7/repository/scxml</sv:value>
+    </sv:property>
+  </sv:node>
+  <sv:node sv:name="feedback">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hipposcxml:action</sv:value>
+    </sv:property>
+    <sv:property sv:name="hipposcxml:classname" sv:type="String">
+      <sv:value>org.onehippo.repository.scxml.FeedbackAction</sv:value>
+    </sv:property>
+    <sv:property sv:name="hipposcxml:namespace" sv:type="String">
+      <sv:value>http://www.onehippo.org/cms7/repository/scxml</sv:value>
+    </sv:property>
+  </sv:node>
+  <sv:node sv:name="configVariant">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hipposcxml:action</sv:value>
+    </sv:property>
+    <sv:property sv:name="hipposcxml:classname" sv:type="String">
+      <sv:value>org.onehippo.repository.documentworkflow.action.ConfigVariantAction</sv:value>
+    </sv:property>
+    <sv:property sv:name="hipposcxml:namespace" sv:type="String">
+      <sv:value>http://www.onehippo.org/cms7/repository/scxml</sv:value>
+    </sv:property>
+  </sv:node>
+  <sv:node sv:name="copyVariant">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hipposcxml:action</sv:value>
+    </sv:property>
+    <sv:property sv:name="hipposcxml:classname" sv:type="String">
+      <sv:value>org.onehippo.repository.documentworkflow.action.CopyVariantAction</sv:value>
+    </sv:property>
+    <sv:property sv:name="hipposcxml:namespace" sv:type="String">
+      <sv:value>http://www.onehippo.org/cms7/repository/scxml</sv:value>
+    </sv:property>
+  </sv:node>
+  <sv:node sv:name="workflowRequest">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hipposcxml:action</sv:value>
+    </sv:property>
+    <sv:property sv:name="hipposcxml:classname" sv:type="String">
+      <sv:value>org.onehippo.repository.documentworkflow.action.WorkflowRequestAction</sv:value>
+    </sv:property>
+    <sv:property sv:name="hipposcxml:namespace" sv:type="String">
+      <sv:value>http://www.onehippo.org/cms7/repository/scxml</sv:value>
+    </sv:property>
+  </sv:node>
+  <sv:node sv:name="archiveDocument">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hipposcxml:action</sv:value>
+    </sv:property>
+    <sv:property sv:name="hipposcxml:classname" sv:type="String">
+      <sv:value>org.onehippo.repository.documentworkflow.action.ArchiveDocumentAction</sv:value>
+    </sv:property>
+    <sv:property sv:name="hipposcxml:namespace" sv:type="String">
+      <sv:value>http://www.onehippo.org/cms7/repository/scxml</sv:value>
+    </sv:property>
+  </sv:node>
+  <sv:node sv:name="isModified">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hipposcxml:action</sv:value>
+    </sv:property>
+    <sv:property sv:name="hipposcxml:classname" sv:type="String">
+      <sv:value>org.onehippo.repository.documentworkflow.action.IsModifiedAction</sv:value>
+    </sv:property>
+    <sv:property sv:name="hipposcxml:namespace" sv:type="String">
+      <sv:value>http://www.onehippo.org/cms7/repository/scxml</sv:value>
+    </sv:property>
+  </sv:node>
+  <sv:node sv:name="scheduleWorkflow">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hipposcxml:action</sv:value>
+    </sv:property>
+    <sv:property sv:name="hipposcxml:classname" sv:type="String">
+      <sv:value>org.onehippo.repository.documentworkflow.action.ScheduleWorkflowAction</sv:value>
+    </sv:property>
+    <sv:property sv:name="hipposcxml:namespace" sv:type="String">
+      <sv:value>http://www.onehippo.org/cms7/repository/scxml</sv:value>
+    </sv:property>
+  </sv:node>
+  <sv:node sv:name="copyDocument">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hipposcxml:action</sv:value>
+    </sv:property>
+    <sv:property sv:name="hipposcxml:classname" sv:type="String">
+      <sv:value>org.onehippo.repository.documentworkflow.action.CopyDocumentAction</sv:value>
+    </sv:property>
+    <sv:property sv:name="hipposcxml:namespace" sv:type="String">
+      <sv:value>http://www.onehippo.org/cms7/repository/scxml</sv:value>
+    </sv:property>
+  </sv:node>
+  <sv:node sv:name="moveDocument">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hipposcxml:action</sv:value>
+    </sv:property>
+    <sv:property sv:name="hipposcxml:classname" sv:type="String">
+      <sv:value>org.onehippo.repository.documentworkflow.action.MoveDocumentAction</sv:value>
+    </sv:property>
+    <sv:property sv:name="hipposcxml:namespace" sv:type="String">
+      <sv:value>http://www.onehippo.org/cms7/repository/scxml</sv:value>
+    </sv:property>
+  </sv:node>
+  <sv:node sv:name="renameDocument">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hipposcxml:action</sv:value>
+    </sv:property>
+    <sv:property sv:name="hipposcxml:classname" sv:type="String">
+      <sv:value>org.onehippo.repository.documentworkflow.action.RenameDocumentAction</sv:value>
+    </sv:property>
+    <sv:property sv:name="hipposcxml:namespace" sv:type="String">
+      <sv:value>http://www.onehippo.org/cms7/repository/scxml</sv:value>
+    </sv:property>
+  </sv:node>
+  <sv:node sv:name="setHolder">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hipposcxml:action</sv:value>
+    </sv:property>
+    <sv:property sv:name="hipposcxml:classname" sv:type="String">
+      <sv:value>org.onehippo.repository.documentworkflow.action.SetHolderAction</sv:value>
+    </sv:property>
+    <sv:property sv:name="hipposcxml:namespace" sv:type="String">
+      <sv:value>http://www.onehippo.org/cms7/repository/scxml</sv:value>
+    </sv:property>
+  </sv:node>
+  <sv:node sv:name="deleteRequest">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hipposcxml:action</sv:value>
+    </sv:property>
+    <sv:property sv:name="hipposcxml:classname" sv:type="String">
+      <sv:value>org.onehippo.repository.documentworkflow.action.DeleteRequestAction</sv:value>
+    </sv:property>
+    <sv:property sv:name="hipposcxml:namespace" sv:type="String">
+      <sv:value>http://www.onehippo.org/cms7/repository/scxml</sv:value>
+    </sv:property>
+  </sv:node>
+  <sv:node sv:name="logEvent">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hipposcxml:action</sv:value>
+    </sv:property>
+    <sv:property sv:name="hipposcxml:classname" sv:type="String">
+      <sv:value>org.onehippo.repository.scxml.LogEventAction</sv:value>
+    </sv:property>
+    <sv:property sv:name="hipposcxml:namespace" sv:type="String">
+      <sv:value>http://www.onehippo.org/cms7/repository/scxml</sv:value>
+    </sv:property>
+  </sv:node>
+  <sv:node sv:name="version">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hipposcxml:action</sv:value>
+    </sv:property>
+    <sv:property sv:name="hipposcxml:classname" sv:type="String">
+      <sv:value>org.onehippo.repository.documentworkflow.action.VersionVariantAction</sv:value>
+    </sv:property>
+    <sv:property sv:name="hipposcxml:namespace" sv:type="String">
+      <sv:value>http://www.onehippo.org/cms7/repository/scxml</sv:value>
+    </sv:property>
+  </sv:node>
+  <sv:node sv:name="listVersions">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hipposcxml:action</sv:value>
+    </sv:property>
+    <sv:property sv:name="hipposcxml:classname" sv:type="String">
+      <sv:value>org.onehippo.repository.documentworkflow.action.ListVersionsVariantAction</sv:value>
+    </sv:property>
+    <sv:property sv:name="hipposcxml:namespace" sv:type="String">
+      <sv:value>http://www.onehippo.org/cms7/repository/scxml</sv:value>
+    </sv:property>
+  </sv:node>
+  <sv:node sv:name="retrieveVersion">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hipposcxml:action</sv:value>
+    </sv:property>
+    <sv:property sv:name="hipposcxml:classname" sv:type="String">
+      <sv:value>org.onehippo.repository.documentworkflow.action.RetrieveVersionAction</sv:value>
+    </sv:property>
+    <sv:property sv:name="hipposcxml:namespace" sv:type="String">
+      <sv:value>http://www.onehippo.org/cms7/repository/scxml</sv:value>
+    </sv:property>
+  </sv:node>
+  <sv:node sv:name="restoreVersion">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hipposcxml:action</sv:value>
+    </sv:property>
+    <sv:property sv:name="hipposcxml:classname" sv:type="String">
+      <sv:value>org.onehippo.repository.documentworkflow.action.RestoreVersionAction</sv:value>
+    </sv:property>
+    <sv:property sv:name="hipposcxml:namespace" sv:type="String">
+      <sv:value>http://www.onehippo.org/cms7/repository/scxml</sv:value>
+    </sv:property>
+  </sv:node>
+  <sv:node sv:name="versionRestoreTo">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hipposcxml:action</sv:value>
+    </sv:property>
+    <sv:property sv:name="hipposcxml:classname" sv:type="String">
+      <sv:value>org.onehippo.repository.documentworkflow.action.VersionRestoreToAction</sv:value>
+    </sv:property>
+    <sv:property sv:name="hipposcxml:namespace" sv:type="String">
+      <sv:value>http://www.onehippo.org/cms7/repository/scxml</sv:value>
+    </sv:property>
+  </sv:node>
+  <sv:node sv:name="workflowException">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hipposcxml:action</sv:value>
+    </sv:property>
+    <sv:property sv:name="hipposcxml:classname" sv:type="String">
+      <sv:value>org.onehippo.repository.scxml.WorkflowExceptionAction</sv:value>
+    </sv:property>
+    <sv:property sv:name="hipposcxml:namespace" sv:type="String">
+      <sv:value>http://www.onehippo.org/cms7/repository/scxml</sv:value>
+    </sv:property>
+  </sv:node>
+  <sv:node sv:name="requestAction">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hipposcxml:action</sv:value>
+    </sv:property>
+    <sv:property sv:name="hipposcxml:classname" sv:type="String">
+      <sv:value>org.onehippo.repository.documentworkflow.action.RequestActionAction</sv:value>
+    </sv:property>
+    <sv:property sv:name="hipposcxml:namespace" sv:type="String">
+      <sv:value>http://www.onehippo.org/cms7/repository/scxml</sv:value>
+    </sv:property>
+  </sv:node>
+  <sv:node sv:name="rejectRequest">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hipposcxml:action</sv:value>
+    </sv:property>
+    <sv:property sv:name="hipposcxml:classname" sv:type="String">
+      <sv:value>org.onehippo.repository.documentworkflow.action.RejectRequestAction</sv:value>
+    </sv:property>
+    <sv:property sv:name="hipposcxml:namespace" sv:type="String">
+      <sv:value>http://www.onehippo.org/cms7/repository/scxml</sv:value>
+    </sv:property>
+  </sv:node>
+  <sv:node sv:name="externalArchiveOnPublish">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hipposcxml:action</sv:value>
+    </sv:property>
+    <sv:property sv:name="hipposcxml:classname" sv:type="String">
+      <sv:value>org.onehippo.forge.webarchiving.cms.scxml.WebArchivingAction</sv:value>
+    </sv:property>
+    <sv:property sv:name="hipposcxml:namespace" sv:type="String">
+      <sv:value>http://www.onehippo.org/cms7/repository/scxml/webarchivingaddon</sv:value>
+    </sv:property>
+  </sv:node>
+</sv:node>
