@@ -30,6 +30,7 @@ import org.hippoecm.hst.core.internal.HstRequestContextComponent;
 import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.linking.HstLinkCreator;
 import org.hippoecm.hst.core.request.ResolvedMount;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.forge.webarchiving.common.api.HstUrlService;
 import org.onehippo.forge.webarchiving.common.error.WebArchiveUpdateException;
@@ -53,6 +54,8 @@ public class HstUrlServiceImpl implements HstUrlService {
             String host = "localhost";
             int port = 8080;
             String requestPath = "/";
+
+            handleNode.isNodeType(HippoNodeType.NT_HANDLE) ;
 
 
             HstMutableRequestContext requestContext = hstRequestContextComponent.create();
