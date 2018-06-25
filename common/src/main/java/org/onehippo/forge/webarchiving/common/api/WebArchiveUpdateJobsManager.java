@@ -40,7 +40,7 @@ public interface WebArchiveUpdateJobsManager extends Serializable {
      * @return created web archive update job identifier
      * @throws WebArchiveUpdateException if a web archive update exception occurs
      */
-    String createWebArchiveUpdateJob(WebArchiveUpdateJob webArchiveUpdateJob) throws WebArchiveUpdateException;
+    String storeWebArchiveUpdateJob(WebArchiveUpdateJob webArchiveUpdateJob) throws WebArchiveUpdateException;
 
     /**
      * Get the web archive update job by the given job identifier ({@code webArchiveUpdateJobId}).

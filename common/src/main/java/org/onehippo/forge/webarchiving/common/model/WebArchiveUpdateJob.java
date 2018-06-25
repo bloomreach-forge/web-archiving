@@ -21,7 +21,7 @@ import java.util.Calendar;
 
 /**
  * A web archive update job containing exactly one {@link WebArchiveUpdate} object.
- * This class takes care of maintaining status for this update, and other, mostly scheduling related information.
+ * This class takes care of maintaining status for this update and scheduling related information.
  * The contained {@link WebArchiveUpdate} object acts as the payload of this job
  */
 public class WebArchiveUpdateJob implements Serializable {
@@ -54,9 +54,9 @@ public class WebArchiveUpdateJob implements Serializable {
     private WebArchiveUpdateJobStatus status;
 
     /**
-     * Number of attempts to submit this job
+     * Number of attempt to submit this job
      */
-    private int numberOfAttempts = 0;
+    private int attempt = 0;
 
     public WebArchiveUpdateJob() {
         super();
@@ -102,12 +102,12 @@ public class WebArchiveUpdateJob implements Serializable {
         this.status = status;
     }
 
-    public int getNumberOfAttempts() {
-        return numberOfAttempts;
+    public int getAttempt() {
+        return attempt;
     }
 
-    public void setNumberOfAttempts(final int numberOfAttempts) {
-        this.numberOfAttempts = numberOfAttempts;
+    public void setAttempt(final int attempt) {
+        this.attempt = attempt;
     }
 
     @Override
@@ -118,7 +118,7 @@ public class WebArchiveUpdateJob implements Serializable {
             ", lastModified=" + lastModified +
             ", webArchiveUpdate=" + webArchiveUpdate +
             ", status=" + status +
-            ", numberOfAttempts=" + numberOfAttempts +
+            ", attempt=" + attempt +
             '}';
     }
 
@@ -133,7 +133,7 @@ public class WebArchiveUpdateJob implements Serializable {
 
         final WebArchiveUpdateJob that = (WebArchiveUpdateJob) o;
 
-        if (numberOfAttempts != that.numberOfAttempts) {
+        if (attempt != that.attempt) {
             return false;
         }
         if (id != null ? !id.equals(that.id) : that.id != null) {
@@ -159,7 +159,7 @@ public class WebArchiveUpdateJob implements Serializable {
         result = 31 * result + (lastModified != null ? lastModified.hashCode() : 0);
         result = 31 * result + (webArchiveUpdate != null ? webArchiveUpdate.hashCode() : 0);
         result = 31 * result + (status != null ? status.hashCode() : 0);
-        result = 31 * result + numberOfAttempts;
+        result = 31 * result + attempt;
         return result;
     }
 }
