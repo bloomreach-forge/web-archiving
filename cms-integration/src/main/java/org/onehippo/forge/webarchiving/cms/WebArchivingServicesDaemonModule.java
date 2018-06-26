@@ -34,6 +34,9 @@ import org.onehippo.repository.modules.ProvidesService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Registers services for the web archiving addon
+ */
 @ProvidesService(types = {
     WebArchiveUpdateJobsManager.class,
     WebArchiveManager.class

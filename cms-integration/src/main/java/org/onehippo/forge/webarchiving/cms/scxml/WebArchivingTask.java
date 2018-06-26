@@ -57,7 +57,7 @@ public class WebArchivingTask extends AbstractDocumentTask {
             final WebArchiveUpdateJobsManager webArchiveUpdateJobsManager = HippoServiceRegistry.getService(WebArchiveUpdateJobsManager.class);
             if (webArchiveUpdateJobsManager == null) {
                 //TODO Email admin, log erros
-                throw new WebArchiveUpdateException("No service registered for class " + WebArchiveUpdateJobsManager.class);
+                throw new WebArchiveUpdateException("No service registered for class {}", WebArchiveUpdateJobsManager.class);
             } else {
 
                 WebArchiveUpdate webArchiveUpdate = new WebArchiveUpdate();
@@ -69,7 +69,7 @@ public class WebArchivingTask extends AbstractDocumentTask {
                 webArchiveUpdate.setCreated(now);
 
                 try {
-                    webArchiveUpdateJobsManager.storeWebArchiveUpdateJob(
+                    String jobId = webArchiveUpdateJobsManager.createWebArchiveUpdateJob(
                         WebArchiveUpdateJobBuilder
                             .newJob()
                             .setCreated(now)
