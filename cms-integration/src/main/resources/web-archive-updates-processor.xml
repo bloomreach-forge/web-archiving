@@ -56,10 +56,7 @@
           <!--<sv:value>*/20 * * * *</sv:value>-->
 
           <!-- EVERY MINUTE (testing)-->
-          <sv:value>* * * * *</sv:value>
-
-          <!-- EVERY MINUTE (testing)-->
-          <!--<sv:value>0 0/1 * 1/1 * ? *</sv:value>-->
+          <sv:value>0 0/1 * 1/1 * ? *</sv:value>
         </sv:property>
         <sv:property sv:name="hipposched:enabled" sv:type="Boolean">
           <sv:value>true</sv:value>
