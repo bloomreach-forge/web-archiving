@@ -50,6 +50,7 @@ public class HstUrlServiceImpl implements HstUrlService {
 
 
     public String[] getAllUrls(Node handleNode) throws WebArchiveUpdateException {
+        List<String> urls = new ArrayList<>();
         try {
             String host = "localhost";
             int port = 8080;
@@ -70,19 +71,18 @@ public class HstUrlServiceImpl implements HstUrlService {
             List<HstLink> all = linkCreator.createAll(handleNode, requestContext, true);
             List<HstLink> allAvailableCanonicals = linkCreator.createAllAvailableCanonicals(handleNode, requestContext);
 
-
-            List<String> urls = new ArrayList<>();
             urls.addAll(links.stream().map(link -> link.toUrlForm(requestContext, true)).collect(Collectors.toList()));
             urls.addAll(all.stream().map(link -> link.toUrlForm(requestContext, true)).collect(Collectors.toList()));
             urls.addAll(allAvailableCanonicals.stream().map(link -> link.toUrlForm(requestContext, true)).collect(Collectors.toList()));
 
             ModifiableRequestContextProvider.clear();
 
-            return urls.toArray(new String[0]);
+
         } catch (Exception e) {
             e.printStackTrace();
+            throw new WebArchiveUpdateException(e);
         }
-        return null;
+        return urls.toArray(new String[0]);
     }
 
     public void registerService() {

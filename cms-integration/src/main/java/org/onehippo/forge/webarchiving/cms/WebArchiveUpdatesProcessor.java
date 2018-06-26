@@ -81,8 +81,7 @@ public class WebArchiveUpdatesProcessor implements RepositoryJob {
             processPendingJobs();
 
         } catch (WebArchiveUpdateException e) {
-            //TODO
-            e.printStackTrace();
+            log.error("Error while processing web archive jobs", e);
         } finally {
             session.logout();
         }
@@ -129,7 +128,7 @@ public class WebArchiveUpdatesProcessor implements RepositoryJob {
                         try {
                             updateJobsManager.updateWebArchiveUpdateJob(updateJob);
                         } catch (WebArchiveUpdateException e2) {
-                            //TODO SEVERE
+                            log.error("Error while updating WebArchiveUpdate job:" + updateJob, e2);
                         }
                     }
                 }));

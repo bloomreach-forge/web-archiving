@@ -31,10 +31,8 @@ public interface HstUrlService {
      * Return all public Urls a document is visible under
      *
      * @param handleNode the {@link Node} object of the document handle
-     * @return all public urls as an array of Strings
+     * @return all public urls as an array of Strings or empty if no urls exist
      * @throws WebArchiveUpdateException if an exception occurs
      */
     String[] getAllUrls(Node handleNode) throws WebArchiveUpdateException;
-
-
 }

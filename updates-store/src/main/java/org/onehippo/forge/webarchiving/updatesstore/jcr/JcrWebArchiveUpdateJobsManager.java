@@ -386,7 +386,7 @@ public class JcrWebArchiveUpdateJobsManager implements WebArchiveUpdateJobsManag
             for (String attrName : searchFilters.keySet()) {
 
                 String propName = WebArchivingConstants.NS_WEB_ARCHIVING_ADDON + attrName.toLowerCase();
-                if (!WebArchivingConstants.BUILTIN_PROP_NAMES.contains(propName)) {
+                if (!WebArchivingConstants.BUILTIN_JOB_PROP_NAMES.contains(propName)) {
                     propName = WebArchivingConstants.NS_WEB_ARCHIVING_ADDON + attrName;
                 }
 
