@@ -79,7 +79,7 @@ public interface WebArchiveUpdateJobsManager extends Serializable {
      * @param limit               size of the page of the result set
      * @param orderByPropertyHint order by property name. e.g., 'created', 'lastmodfied', 'creator', etc.
      * @param ascending           whether or not the sorting is based on ascending
-     * @return search result of web archive update jobs
+     * @return list of web archive update jobs or empty list if none
      * @throws WebArchiveUpdateException if a web archive update exception occurs
      */
     List<WebArchiveUpdateJob> searchForWebArchiveUpdateJobs(List<WebArchiveUpdateJobStatus> statuses, Map<String, String> searchFilters,
@@ -99,7 +99,7 @@ public interface WebArchiveUpdateJobsManager extends Serializable {
     /**
      * Convenience method to get pending web archive update jobs.
      *
-     * @return list of pending web archive update jobs
+     * @return list of pending web archive update jobs or empty list if none
      * @throws WebArchiveUpdateException if a web archive update exception occurs
      */
     default List<WebArchiveUpdateJob> getPendingWebArchiveUpdateJobs(int searchLimit) throws WebArchiveUpdateException {
@@ -109,7 +109,7 @@ public interface WebArchiveUpdateJobsManager extends Serializable {
     /**
      * Convenience method to get completed web archive update jobs.
      *
-     * @return list of completed web archive update jobs
+     * @return list of completed web archive update jobs or empty list if none
      * @throws WebArchiveUpdateException if a web archive update exception occurs
      */
     default List<WebArchiveUpdateJob> getCompletedWebArchiveUpdateJobs(int searchLimit) throws WebArchiveUpdateException {
