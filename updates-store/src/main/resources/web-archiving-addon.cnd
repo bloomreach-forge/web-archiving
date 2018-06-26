@@ -15,7 +15,7 @@
 	- webarchivingaddon:created (date)
 	- webarchivingaddon:lastmodified (date)
 	- webarchivingaddon:attempt (long)
-	+ webarchivingaddon:update
+	+ webarchivingaddon:update (webarchivingaddon:update)
 
 [webarchivingaddon:updatejobsstore] > nt:base
     + * (webarchivingaddon:updatejob)

@@ -30,7 +30,7 @@ public final class WebArchivingConstants {
      */
     static final String NS_WEB_ARCHIVING_ADDON = "webarchivingaddon:";
 
-    static final String NT_WEB_ARCHIVE_UPDATE_CONTAINER = NS_WEB_ARCHIVING_ADDON + "updatejobsstore";
+    static final String NT_WEB_ARCHIVE_UPDATE_JOBS_CONTAINER = NS_WEB_ARCHIVING_ADDON + "updatejobsstore";
     static final String NT_WEB_ARCHIVE_UPDATE_JOB = NS_WEB_ARCHIVING_ADDON + "updatejob";
     static final String NT_WEB_ARCHIVE_UPDATE = NS_WEB_ARCHIVING_ADDON + "update";
 
