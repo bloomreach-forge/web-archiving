@@ -22,6 +22,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 
+import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.api.WorkflowException;
@@ -49,8 +50,9 @@ public class WebArchivingTask extends AbstractDocumentTask {
             //TODO, wip, For link rewriting in cms, use HippoServiceRegistry#getServices(LinkCreatorService.class) and ask every service for the links (every hst webapp will do the linkrewriting)
             final HstUrlService hstUrlService = HippoServiceRegistry.getService(HstUrlService.class);
 
+            Node handle = getDocumentHandle().getHandle();
             List<String> urls = Arrays.asList(
-                hstUrlService.getAllUrls(getDocumentHandle().getHandle()));
+                hstUrlService.getAllUrls(handle));
 
             final WebArchiveUpdateJobsManager webArchiveUpdateJobsManager = HippoServiceRegistry.getService(WebArchiveUpdateJobsManager.class);
             if (webArchiveUpdateJobsManager == null) {
@@ -62,6 +64,7 @@ public class WebArchivingTask extends AbstractDocumentTask {
                 webArchiveUpdate.setCreator(getWorkflowContext().getUserIdentity());
                 webArchiveUpdate.setType(WebArchiveUpdateType.DOCUMENT);
                 webArchiveUpdate.setUrls(urls);
+                webArchiveUpdate.setId(handle.getPath());
                 Calendar now = Calendar.getInstance();
                 webArchiveUpdate.setCreated(now);
 
