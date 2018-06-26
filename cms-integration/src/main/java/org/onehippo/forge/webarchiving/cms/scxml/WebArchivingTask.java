@@ -31,6 +31,7 @@ import org.onehippo.forge.webarchiving.common.api.HstUrlService;
 import org.onehippo.forge.webarchiving.common.api.WebArchiveUpdateJobsManager;
 import org.onehippo.forge.webarchiving.common.error.WebArchiveUpdateException;
 import org.onehippo.forge.webarchiving.common.model.WebArchiveUpdate;
+import org.onehippo.forge.webarchiving.common.model.WebArchiveUpdateJob;
 import org.onehippo.forge.webarchiving.common.model.WebArchiveUpdateJobStatus;
 import org.onehippo.forge.webarchiving.common.model.WebArchiveUpdateType;
 import org.onehippo.forge.webarchiving.common.util.WebArchiveUpdateJobBuilder;
@@ -44,47 +45,52 @@ public class WebArchivingTask extends AbstractDocumentTask {
 
     @Override
     public Object doExecute() throws WorkflowException, RepositoryException, RemoteException {
+        Node handle = getDocumentHandle().getHandle();
 
-        try {
+        //TODO, wip, For link rewriting in cms, use HippoServiceRegistry#getServices(LinkCreatorService.class) and ask every service for the links (every hst webapp will do the linkrewriting)
+        final HstUrlService hstUrlService = HippoServiceRegistry.getService(HstUrlService.class);
+        final WebArchiveUpdateJobsManager webArchiveUpdateJobsManager = HippoServiceRegistry.getService(WebArchiveUpdateJobsManager.class);
 
-            //TODO, wip, For link rewriting in cms, use HippoServiceRegistry#getServices(LinkCreatorService.class) and ask every service for the links (every hst webapp will do the linkrewriting)
-            final HstUrlService hstUrlService = HippoServiceRegistry.getService(HstUrlService.class);
-
-            Node handle = getDocumentHandle().getHandle();
-            List<String> urls = Arrays.asList(
-                hstUrlService.getAllUrls(handle));
-
-            final WebArchiveUpdateJobsManager webArchiveUpdateJobsManager = HippoServiceRegistry.getService(WebArchiveUpdateJobsManager.class);
-            if (webArchiveUpdateJobsManager == null) {
-                //TODO Email admin, log erros
-                throw new WebArchiveUpdateException("No service registered for class {}", WebArchiveUpdateJobsManager.class);
-            } else {
-
-                WebArchiveUpdate webArchiveUpdate = new WebArchiveUpdate();
-                webArchiveUpdate.setCreator(getWorkflowContext().getUserIdentity());
-                webArchiveUpdate.setType(WebArchiveUpdateType.DOCUMENT);
-                webArchiveUpdate.setUrls(urls);
-                webArchiveUpdate.setId(handle.getPath());
-                Calendar now = Calendar.getInstance();
-                webArchiveUpdate.setCreated(now);
-
-                try {
-                    String jobId = webArchiveUpdateJobsManager.createWebArchiveUpdateJob(
-                        WebArchiveUpdateJobBuilder
-                            .newJob()
-                            .setCreated(now)
-                            .setLastModified(now)
-                            .setStatus(WebArchiveUpdateJobStatus.QUEUED)
-                            .setWebArchiveUpdate(webArchiveUpdate)
-                            .build());
-                } catch (WebArchiveUpdateException e) {
-                    //TODO
-                    e.printStackTrace();
-                }
-            }
-        } catch (Exception e) {
-            //TODO EMAIL
+        if (hstUrlService == null || webArchiveUpdateJobsManager == null) {
+            log.error("Not all required services are registered, url-service ({}): {}, store-service ({}): {}. Skipping creation of job for {}",
+                HstUrlService.class, hstUrlService, WebArchiveUpdateJobsManager.class, webArchiveUpdateJobsManager, handle.getPath());
+            return null;
         }
+
+        List<String> urls = null;
+        try {
+            urls = Arrays.asList(hstUrlService.getAllUrls(handle));
+        } catch (WebArchiveUpdateException e) {
+            log.error("Failed to create Web Archive update job for {}", handle.getPath(), e);
+            return null;
+        }
+
+        if (urls.isEmpty()) {
+            log.info("No public urls for document {}, skipping creation of job", handle.getPath());
+            return null;
+        }
+
+        WebArchiveUpdate webArchiveUpdate = new WebArchiveUpdate();
+        webArchiveUpdate.setCreator(getWorkflowContext().getUserIdentity());
+        webArchiveUpdate.setType(WebArchiveUpdateType.DOCUMENT);
+        webArchiveUpdate.setUrls(urls);
+        webArchiveUpdate.setId(handle.getPath());
+        Calendar now = Calendar.getInstance();
+        webArchiveUpdate.setCreated(now);
+
+        WebArchiveUpdateJob job = WebArchiveUpdateJobBuilder.newJob()
+            .setCreated(now)
+            .setLastModified(now)
+            .setStatus(WebArchiveUpdateJobStatus.QUEUED)
+            .setWebArchiveUpdate(webArchiveUpdate)
+            .build();
+        try {
+            webArchiveUpdateJobsManager.createWebArchiveUpdateJob(job);
+        } catch (WebArchiveUpdateException e) {
+            log.error("Failed to create Web Archive update job {}", job);
+        }
+
         return null;
     }
 }
+
