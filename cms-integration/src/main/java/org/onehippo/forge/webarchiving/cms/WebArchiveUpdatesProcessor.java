@@ -122,13 +122,13 @@ public class WebArchiveUpdatesProcessor implements RepositoryJob {
                         webArchiveManager.requestUpdate(update);
                         updateJob.setStatus(ACKNOWLEDGED);
                     } catch (WebArchiveUpdateException e) {
-                        log.error("Error processing job", e);
+                        log.info("Error processing job:" + updateJob.toString(), e);
                         updateJob.setStatus(ERROR);
                     } finally {
                         try {
                             updateJobsManager.updateWebArchiveUpdateJob(updateJob);
                         } catch (WebArchiveUpdateException e2) {
-                            log.error("Error while updating WebArchiveUpdate job:" + updateJob, e2);
+                            log.error("Error while updating WebArchiveUpdate job:" + updateJob.toString(), e2);
                         }
                     }
                 }));
