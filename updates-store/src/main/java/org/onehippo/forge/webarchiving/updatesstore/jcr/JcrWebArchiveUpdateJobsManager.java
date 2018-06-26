@@ -133,11 +133,12 @@ public class JcrWebArchiveUpdateJobsManager implements WebArchiveUpdateJobsManag
 
     @Override
     public WebArchiveUpdateJob getWebArchiveUpdateJobById(String webArchiveUpdateJobId) throws WebArchiveUpdateException {
-        WebArchiveUpdateJob job;
+        WebArchiveUpdateJob job = new WebArchiveUpdateJob();
         Session session = null;
         try {
             session = getSession();
-            job = getWebArchiveUpdateJobById(webArchiveUpdateJobId, session);
+            Node jobNode = getJobsStoreNode(session).getNode(webArchiveUpdateJobId);
+            mapWebArchiveJob(jobNode, job);
         } catch (RepositoryException e) {
             throw new WebArchiveUpdateException(e);
         } finally {
@@ -264,8 +265,8 @@ public class JcrWebArchiveUpdateJobsManager implements WebArchiveUpdateJobsManag
                 QueryResult result = searchService.search(query);
                 for (final HitIterator hits = result.getHits(); hits.hasNext(); ) {
                     final Hit hit = hits.next();
-                    final String id = hit.getSearchDocument().getContentId().toIdentifier();
-                    final WebArchiveUpdateJob job = getWebArchiveUpdateJobById(id, session);
+                    final String uuid = hit.getSearchDocument().getContentId().toIdentifier();
+                    final WebArchiveUpdateJob job = getWebArchiveUpdateJobByUuid(uuid, session);
                     jobs.add(job);
                 }
             } catch (SearchServiceException | RepositoryException e) {
@@ -324,9 +325,14 @@ public class JcrWebArchiveUpdateJobsManager implements WebArchiveUpdateJobsManag
         updateNode.setProperty(WebArchivingConstants.PROP_URLS, update.getUrls().toArray(new String[0]));
     }
 
-    protected WebArchiveUpdateJob getWebArchiveUpdateJobById(final String jobId, final Session session) throws RepositoryException {
-        Node jobNode = getJobsStoreNode(session).getNode(jobId);
+    protected WebArchiveUpdateJob getWebArchiveUpdateJobByUuid(final String jobUuid, final Session session) throws RepositoryException {
+        Node jobNode = session.getNodeByIdentifier(jobUuid);
         WebArchiveUpdateJob job = new WebArchiveUpdateJob();
+        mapWebArchiveJob(jobNode, job);
+        return job;
+    }
+
+    protected void mapWebArchiveJob(final Node jobNode, WebArchiveUpdateJob job) throws RepositoryException {
         job.setId(jobNode.getName());
         job.setCreated(JcrUtils.getDateProperty(jobNode, WebArchivingConstants.PROP_CREATED, null));
         job.setLastModified(JcrUtils.getDateProperty(jobNode, WebArchivingConstants.PROP_LAST_MODIFIED, null));
@@ -343,7 +349,6 @@ public class JcrWebArchiveUpdateJobsManager implements WebArchiveUpdateJobsManag
             update.setUrls(Arrays.asList(JcrUtils.getMultipleStringProperty(updateNode, WebArchivingConstants.PROP_URLS, null)));
             job.setWebArchiveUpdate(update);
         }
-        return job;
     }
 
     protected Query createSearchQuery(final SearchService searchService, final String webArchiveUpdateJobNodeType, final List<WebArchiveUpdateJobStatus> statuses,

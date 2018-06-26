@@ -17,6 +17,7 @@
 package org.onehippo.forge.webarchiving.common.api;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -24,8 +25,6 @@ import org.onehippo.cms7.services.SingletonService;
 import org.onehippo.forge.webarchiving.common.error.WebArchiveUpdateException;
 import org.onehippo.forge.webarchiving.common.model.WebArchiveUpdateJob;
 import org.onehippo.forge.webarchiving.common.model.WebArchiveUpdateJobStatus;
-
-import static java.util.Collections.singletonList;
 
 /**
  * Web archive update manager, responsible for storing/reading web archive update jobs.
@@ -40,7 +39,7 @@ public interface WebArchiveUpdateJobsManager extends Serializable {
      * @return created web archive update job identifier
      * @throws WebArchiveUpdateException if a web archive update exception occurs
      */
-    String storeWebArchiveUpdateJob(WebArchiveUpdateJob webArchiveUpdateJob) throws WebArchiveUpdateException;
+    String createWebArchiveUpdateJob(WebArchiveUpdateJob webArchiveUpdateJob) throws WebArchiveUpdateException;
 
     /**
      * Get the web archive update job by the given job identifier ({@code webArchiveUpdateJobId}).
@@ -62,21 +61,10 @@ public interface WebArchiveUpdateJobsManager extends Serializable {
     /**
      * Delete a web archive update job by {@code webArchiveUpdateJobId}.
      *
-     * @param webArchiveUpdateJobId web archive update job identifier
+     * @param webArchiveUpdateJobs web archive update job identifier
      * @throws WebArchiveUpdateException if a web archive update exception occurs
      */
-    void deleteWebArchiveUpdateJob(String webArchiveUpdateJobId) throws WebArchiveUpdateException;
-
-
-    /**
-     * Return the total size of web archive update jobs in the queue by {@code statuses}.
-     *
-     * @param statuses OR-ed statuses to be filtered on, a null value means no filtering
-     * @return the total size of web archive update jobs by {@code statuses}
-     * @throws WebArchiveUpdateException if a web archive update exception occurs
-     */
-    long getTotalSizeForWebArchiveUpdateJobs(List<WebArchiveUpdateJobStatus> statuses) throws WebArchiveUpdateException;
-
+    void deleteWebArchiveUpdateJobs(WebArchiveUpdateJob... webArchiveUpdateJobs) throws WebArchiveUpdateException;
 
     /**
      * Search and return web archive update jobs by the given inputs.
@@ -97,7 +85,6 @@ public interface WebArchiveUpdateJobsManager extends Serializable {
     List<WebArchiveUpdateJob> searchForWebArchiveUpdateJobs(List<WebArchiveUpdateJobStatus> statuses, Map<String, String> searchFilters,
                                                             int offset, int limit, String orderByPropertyHint, boolean ascending) throws WebArchiveUpdateException;
 
-
     /**
      * Convenience method to get all web archive update jobs.
      *
@@ -109,26 +96,23 @@ public interface WebArchiveUpdateJobsManager extends Serializable {
         return searchForWebArchiveUpdateJobs(null, null, 0, searchLimit, null, true);
     }
 
-
     /**
-     * Convenience method to get queued web archive update jobs.
+     * Convenience method to get pending web archive update jobs.
      *
-     * @return list of queued web archive update jobs
+     * @return list of pending web archive update jobs
      * @throws WebArchiveUpdateException if a web archive update exception occurs
      */
-    default List<WebArchiveUpdateJob> getQueuedWebArchiveUpdateJobs(int searchLimit) throws WebArchiveUpdateException {
-        return searchForWebArchiveUpdateJobs(singletonList(WebArchiveUpdateJobStatus.QUEUED), null, 0, searchLimit, null, true);
+    default List<WebArchiveUpdateJob> getPendingWebArchiveUpdateJobs(int searchLimit) throws WebArchiveUpdateException {
+        return searchForWebArchiveUpdateJobs(Arrays.asList(WebArchiveUpdateJobStatus.CATEGORY_PENDING), null, 0, searchLimit, null, true);
     }
 
     /**
-     * Convenience method to get aborted web archive update jobs.
+     * Convenience method to get completed web archive update jobs.
      *
-     * @return list of aborted web archive update jobs
+     * @return list of completed web archive update jobs
      * @throws WebArchiveUpdateException if a web archive update exception occurs
      */
-    default List<WebArchiveUpdateJob> getAbortedWebArchiveUpdateJobs(int searchLimit) throws WebArchiveUpdateException {
-        return searchForWebArchiveUpdateJobs(singletonList(WebArchiveUpdateJobStatus.ABORTED), null, 0, searchLimit, null, true);
+    default List<WebArchiveUpdateJob> getCompletedWebArchiveUpdateJobs(int searchLimit) throws WebArchiveUpdateException {
+        return searchForWebArchiveUpdateJobs(Arrays.asList(WebArchiveUpdateJobStatus.CATEGORY_COMPLETED), null, 0, searchLimit, null, true);
     }
-
-
 }
