@@ -56,7 +56,7 @@ public class WebArchiveUpdateJob implements Serializable {
     /**
      * Number of attempt to submit this job
      */
-    private int attempt = 0;
+    private long attempt = 0;
 
     public WebArchiveUpdateJob() {
         super();
@@ -102,11 +102,11 @@ public class WebArchiveUpdateJob implements Serializable {
         this.status = status;
     }
 
-    public int getAttempt() {
+    public long getAttempt() {
         return attempt;
     }
 
-    public void setAttempt(final int attempt) {
+    public void setAttempt(final long attempt) {
         this.attempt = attempt;
     }
 
@@ -159,7 +159,7 @@ public class WebArchiveUpdateJob implements Serializable {
         result = 31 * result + (lastModified != null ? lastModified.hashCode() : 0);
         result = 31 * result + (webArchiveUpdate != null ? webArchiveUpdate.hashCode() : 0);
         result = 31 * result + (status != null ? status.hashCode() : 0);
-        result = 31 * result + attempt;
+        result = 31 * result + (int) (attempt ^ (attempt >>> 32));
         return result;
     }
 }
