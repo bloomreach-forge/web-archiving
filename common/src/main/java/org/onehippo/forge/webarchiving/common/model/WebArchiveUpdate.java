@@ -98,7 +98,7 @@ public class WebArchiveUpdate implements Serializable {
     public String toString() {
         return "WebArchiveUpdate{" +
             "id='" + id + '\'' +
-            ", created=" + created +
+            ", created=" + created.getTime() +
             ", creator='" + creator + '\'' +
             ", urls=" + urls +
             ", type=" + type +

@@ -114,8 +114,8 @@ public class WebArchiveUpdateJob implements Serializable {
     public String toString() {
         return "WebArchiveUpdateJob{" +
             "id='" + id + '\'' +
-            ", created=" + created +
-            ", lastModified=" + lastModified +
+            ", created=" + created.getTime() +
+            ", lastModified=" + lastModified.getTime() +
             ", webArchiveUpdate=" + webArchiveUpdate +
             ", status=" + status +
             ", attempt=" + attempt +
