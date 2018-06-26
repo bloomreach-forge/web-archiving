@@ -3,6 +3,7 @@
 <'webarchivingaddon'='http://www.onehippo.org/webarchivingaddon/nt/1.0'>
 
 [webarchivingaddon:update] > nt:base
+	- webarchivingaddon:id (string)
 	- webarchivingaddon:creator (string)
 	- webarchivingaddon:created (date)
 	- webarchivingaddon:lastmodified (date)
@@ -14,14 +15,7 @@
 	- webarchivingaddon:created (date)
 	- webarchivingaddon:lastmodified (date)
 	- webarchivingaddon:attempt (long)
-	+ * (webarchivingaddon:update)
+	+ webarchivingaddon:update
 
 [webarchivingaddon:updatejobsstore] > nt:base
     + * (webarchivingaddon:updatejob)
-
-/*
-[webarchivingaddon:configuration] > nt:base
-	- * (string)
-	- * (string) multiple
-    + * (webarchivingaddon:configuration)
-*/

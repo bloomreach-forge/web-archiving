@@ -34,6 +34,7 @@ public final class WebArchivingConstants {
     static final String NT_WEB_ARCHIVE_UPDATE_JOB = NS_WEB_ARCHIVING_ADDON + "updatejob";
     static final String NT_WEB_ARCHIVE_UPDATE = NS_WEB_ARCHIVING_ADDON + "update";
 
+    static final String PROP_ID = NS_WEB_ARCHIVING_ADDON + "id";
     static final String PROP_CREATED = NS_WEB_ARCHIVING_ADDON + "created";
     static final String PROP_LAST_MODIFIED = NS_WEB_ARCHIVING_ADDON + "lastmodified";
     static final String PROP_CREATOR = NS_WEB_ARCHIVING_ADDON + "creator";
@@ -44,7 +45,7 @@ public final class WebArchivingConstants {
 
     //TODO Update this list
     static final Set<String> BUILTIN_PROP_NAMES =
-        new HashSet<>(Arrays.asList(PROP_STATUS, PROP_CREATED, PROP_LAST_MODIFIED, PROP_CREATOR));
+        new HashSet<>(Arrays.asList(PROP_ID, PROP_STATUS, PROP_CREATED, PROP_LAST_MODIFIED, PROP_CREATOR));
 
 
     private WebArchivingConstants() {
