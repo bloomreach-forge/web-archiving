@@ -32,9 +32,7 @@ public enum WebArchiveUpdateJobStatus {
 
     QUEUED("Queued"), //queued for submission
 
-    SUBMITTED("Submitted"),
-
-    COMPLETED("Completed"), //can be deleted
+    ACKNOWLEDGED("Acknowledged"), //can be deleted
 
     ABORTED("Aborted"), //must be resubmitted
 
@@ -42,24 +40,14 @@ public enum WebArchiveUpdateJobStatus {
 
     UNDEFINED("Undefined"); //can be deleted
 
-    public static final WebArchiveUpdateJobStatus[] ALL = new WebArchiveUpdateJobStatus[]{QUEUED, SUBMITTED, COMPLETED, ABORTED, ERROR, UNDEFINED};
-    public static List<WebArchiveUpdateJobStatus> all() {
-        return Arrays.asList(ALL);
-    }
+    public static final WebArchiveUpdateJobStatus[] ALL = new WebArchiveUpdateJobStatus[]{QUEUED, ACKNOWLEDGED, ABORTED, ERROR, UNDEFINED};
 
     /** Statuses that are in the category of 'pending' */
-    public static final WebArchiveUpdateJobStatus[] CATEGORY_PENDING = new WebArchiveUpdateJobStatus[]{QUEUED, SUBMITTED, ABORTED};
+    public static final WebArchiveUpdateJobStatus[] CATEGORY_PENDING = new WebArchiveUpdateJobStatus[]{QUEUED, ABORTED};
 
-    /** Statuses that are in the category of 'done' */
-    public static final WebArchiveUpdateJobStatus[] CATEGORY_DONE = new WebArchiveUpdateJobStatus[]{COMPLETED, ERROR, UNDEFINED};
+    /** Statuses that are in the category of 'completed' */
+    public static final WebArchiveUpdateJobStatus[] CATEGORY_COMPLETED = new WebArchiveUpdateJobStatus[]{ACKNOWLEDGED, ERROR, UNDEFINED};
 
-    public static List<WebArchiveUpdateJobStatus> categoryPending() {
-        return Arrays.asList(CATEGORY_PENDING);
-    }
-
-    public static List<WebArchiveUpdateJobStatus> categoryDone() {
-        return Arrays.asList(CATEGORY_DONE);
-    }
 
     private String label;
 

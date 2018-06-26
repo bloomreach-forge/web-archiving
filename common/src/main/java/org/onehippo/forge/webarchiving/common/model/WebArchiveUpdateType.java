@@ -16,22 +16,12 @@
 
 package org.onehippo.forge.webarchiving.common.model;
 
-import java.util.Arrays;
-import java.util.List;
-
 /**
- * Web archive update type.
- *
- * Don't change the order in which the enum are declared. The {@link #compareTo(Enum)} method
- * uses this order. See enum specs.
+ * Web archive update type
  */
 public enum WebArchiveUpdateType {
 
     CHANNEL, //update operates on whole channel
-    DOCUMENT; //update only operates on document urls
-
-    public static final WebArchiveUpdateType[] ALL = new WebArchiveUpdateType[]{CHANNEL, DOCUMENT};
-    public static List<WebArchiveUpdateType> all() {
-        return Arrays.asList(ALL);
-    }
+    DOCUMENT, //update only operates on document urls
+    UNDEFINED;
 }

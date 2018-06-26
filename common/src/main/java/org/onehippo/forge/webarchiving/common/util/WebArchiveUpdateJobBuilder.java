@@ -58,9 +58,4 @@ public class WebArchiveUpdateJobBuilder {
         this.webArchiveUpdateJob.setStatus(status);
         return this;
     }
-
-    public WebArchiveUpdateJobBuilder setId(String id) {
-        this.webArchiveUpdateJob.setId(id);
-        return this;
-    }
 }
