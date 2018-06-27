@@ -19,6 +19,7 @@ package org.onehippo.forge.webarchiving.cms.util;
 import java.util.Map;
 
 import org.onehippo.forge.webarchiving.common.error.WebArchiveUpdateException;
+import org.onehippo.forge.webarchiving.common.error.WebArchivingException;
 import org.onehippo.repository.modules.DaemonModule;
 /**
  * Component module lifecycle abstraction.
@@ -33,7 +34,7 @@ public interface LifeCycle {
      * @param props properties
      * @throws WebArchiveUpdateException if any exception occurs
      */
-    void initialize(Map<String, String> props) throws WebArchiveUpdateException;
+    void initialize(Map<String, String> props) throws WebArchivingException;
 
     /**
      * Do destruction.
