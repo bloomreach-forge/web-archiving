@@ -17,6 +17,7 @@
 package org.onehippo.forge.webarchiving.cms;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -126,6 +127,7 @@ public class WebArchiveUpdatesProcessor implements RepositoryJob {
                         updateJob.setStatus(ERROR);
                     } finally {
                         try {
+                            updateJob.setLastModified(Calendar.getInstance());
                             updateJobsManager.updateWebArchiveUpdateJob(updateJob);
                         } catch (WebArchiveUpdateException e2) {
                             log.error("Error while updating WebArchiveUpdate job:" + updateJob.toString(), e2);
