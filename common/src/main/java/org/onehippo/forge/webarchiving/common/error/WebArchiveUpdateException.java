@@ -16,17 +16,12 @@
 
 package org.onehippo.forge.webarchiving.common.error;
 
-import org.slf4j.helpers.MessageFormatter;
-
 /**
  * The <CODE>WebArchiveUpdateException</CODE> class defines a general exception
- * that the web archiving module can throw when it is unable to perform its operation
- * successfully.
+ * that the web archiving module can throw when it is unable to perform an update
+ * related operation successfully.
  */
-public class WebArchiveUpdateException extends Exception {
-
-    private static final long serialVersionUID = 1L;
-
+public class WebArchiveUpdateException extends WebArchivingException {
     public WebArchiveUpdateException(final String message) {
         super(message);
     }
@@ -36,18 +31,14 @@ public class WebArchiveUpdateException extends Exception {
     }
 
     public WebArchiveUpdateException(final Throwable cause, final String message) {
-        super(message, cause);
+        super(cause, message);
     }
 
     public WebArchiveUpdateException(final String messagePattern, final Object... args) {
-        super(parseArrayMessage(messagePattern, args));
+        super(messagePattern, args);
     }
 
     public WebArchiveUpdateException(final Throwable cause, final String messagePattern, final Object... args) {
-        super(parseArrayMessage(messagePattern, args), cause);
-    }
-
-    protected static String parseArrayMessage(final String messagePattern, final Object[] args) {
-        return MessageFormatter.arrayFormat(messagePattern, args).getMessage();
+        super(cause, messagePattern, args);
     }
 }
