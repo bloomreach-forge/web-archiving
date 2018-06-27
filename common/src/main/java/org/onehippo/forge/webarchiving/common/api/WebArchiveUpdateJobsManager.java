@@ -16,7 +16,6 @@
 
 package org.onehippo.forge.webarchiving.common.api;
 
-import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -30,7 +29,7 @@ import org.onehippo.forge.webarchiving.common.model.WebArchiveUpdateJobStatus;
  * Web archive update manager, responsible for storing/reading web archive update jobs.
  */
 @SingletonService
-public interface WebArchiveUpdateJobsManager extends Serializable {
+public interface WebArchiveUpdateJobsManager {
 
     /**
      * Create and save a web archive update job and return the created job identifier.
