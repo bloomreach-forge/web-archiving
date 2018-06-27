@@ -47,6 +47,7 @@ import org.onehippo.cms7.services.search.result.QueryResult;
 import org.onehippo.cms7.services.search.service.SearchService;
 import org.onehippo.cms7.services.search.service.SearchServiceException;
 import org.onehippo.cms7.services.search.service.SearchServiceFactory;
+import org.onehippo.forge.webarchiving.cms.util.Discoverable;
 import org.onehippo.forge.webarchiving.cms.util.LifeCycle;
 import org.onehippo.forge.webarchiving.cms.util.ModuleSessionAware;
 import org.onehippo.forge.webarchiving.common.api.WebArchiveUpdateJobsManager;
@@ -61,7 +62,7 @@ import org.slf4j.LoggerFactory;
 /**
  * A {@link WebArchiveUpdateJobsManager} implementation which stores data into JCR repository.
  */
-public class JcrWebArchiveUpdateJobsManager implements WebArchiveUpdateJobsManager, ModuleSessionAware, LifeCycle {
+public class JcrWebArchiveUpdateJobsManager implements WebArchiveUpdateJobsManager, ModuleSessionAware, LifeCycle, Discoverable {
 
     private static Logger log = LoggerFactory.getLogger(JcrWebArchiveUpdateJobsManager.class);
 

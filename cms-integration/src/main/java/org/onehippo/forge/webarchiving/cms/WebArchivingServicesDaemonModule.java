@@ -24,17 +24,21 @@ import javax.jcr.Session;
 
 import org.apache.commons.lang.StringUtils;
 import org.onehippo.cms7.services.HippoServiceRegistry;
+import org.onehippo.forge.webarchiving.cms.util.CmsUtils;
+import org.onehippo.forge.webarchiving.cms.util.Discoverable;
+import org.onehippo.forge.webarchiving.cms.util.LifeCycle;
+import org.onehippo.forge.webarchiving.cms.util.ModuleSessionAware;
+import org.onehippo.forge.webarchiving.common.api.ChannelPublicationListener;
 import org.onehippo.forge.webarchiving.common.api.WebArchiveManager;
 import org.onehippo.forge.webarchiving.common.api.WebArchiveUpdateJobsManager;
-import org.onehippo.forge.webarchiving.cms.util.ModuleSessionAware;
-import org.onehippo.forge.webarchiving.cms.util.LifeCycle;
-import org.onehippo.forge.webarchiving.cms.util.CmsUtils;
+import org.onehippo.forge.webarchiving.common.error.WebArchivingException;
 import org.onehippo.repository.modules.AbstractReconfigurableDaemonModule;
 import org.onehippo.repository.modules.ProvidesService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * TODO It doesn't know until runtime which services are Discoverable
  * Registers services for the web archiving addon
  */
 @ProvidesService(types = {
@@ -46,6 +50,7 @@ public class WebArchivingServicesDaemonModule extends AbstractReconfigurableDaem
 
     private static final String WEB_ARCHIVE_MANAGER_CONFIG_LOCATION = "archivemanager";
     private static final String WEB_ARCHIVE_UPDATE_JOBS_MANAGER_CONFIG_LOCATION = "updatesmanager";
+    private static final String WEB_ARCHIVE_CHANNEL_PUB_LISTENER_CONFIG_LOCATION = "channelpub";
 
     private static final String CLASS_NAME = "className";
 
@@ -55,6 +60,7 @@ public class WebArchivingServicesDaemonModule extends AbstractReconfigurableDaem
 
     private WebArchiveUpdateJobsManager webArchiveUpdateJobsManager;
     private WebArchiveManager webArchiveManager;
+    private ChannelPublicationListener channelPublicationListener;
 
     @Override
     protected void doInitialize(final Session session) throws RepositoryException {
@@ -63,7 +69,7 @@ public class WebArchivingServicesDaemonModule extends AbstractReconfigurableDaem
 
     @Override
     protected void doShutdown() {
-        unregisterServices();
+        shutdownServices();
         log.debug("Shut down {}...", WebArchivingServicesDaemonModule.class.getName());
     }
 
@@ -74,73 +80,76 @@ public class WebArchivingServicesDaemonModule extends AbstractReconfigurableDaem
         log.info("Configuring {} for environment '{}'", WebArchivingServicesDaemonModule.class.getName(), environment);
 
         synchronized (configurationLock) {
-            unregisterServices();
-            registerServices(moduleConfig);
+            shutdownServices();
+            try {
+                initializeServices(moduleConfig);
+            } catch (Exception e) {
+                log.error("Error while initializing web-archiving-addon services:", e);
+            }
         }
     }
 
-    private void unregisterServices() {
-        unregisterService(webArchiveUpdateJobsManager, WebArchiveUpdateJobsManager.class);
-        unregisterService(webArchiveManager, WebArchiveManager.class);
+    private void shutdownServices() {
+        shutdownService(webArchiveUpdateJobsManager, WebArchiveUpdateJobsManager.class);
+        shutdownService(webArchiveManager, WebArchiveManager.class);
+        shutdownService(channelPublicationListener, ChannelPublicationListener.class);
     }
 
-    private void registerServices(final Node moduleConfig) {
-        webArchiveUpdateJobsManager = registerService(moduleConfig, WEB_ARCHIVE_UPDATE_JOBS_MANAGER_CONFIG_LOCATION, WebArchiveUpdateJobsManager.class);
-        webArchiveManager = registerService(moduleConfig, WEB_ARCHIVE_MANAGER_CONFIG_LOCATION, WebArchiveManager.class);
+    private void initializeServices(final Node moduleConfig) throws RepositoryException, WebArchivingException {
+        webArchiveUpdateJobsManager = initializeService(getServiceConfigNode(moduleConfig, WEB_ARCHIVE_UPDATE_JOBS_MANAGER_CONFIG_LOCATION), WebArchiveUpdateJobsManager.class);
+        webArchiveManager = initializeService(getServiceConfigNode(moduleConfig, WEB_ARCHIVE_MANAGER_CONFIG_LOCATION), WebArchiveManager.class);
+        channelPublicationListener = initializeService(getServiceConfigNode(moduleConfig, WEB_ARCHIVE_CHANNEL_PUB_LISTENER_CONFIG_LOCATION), ChannelPublicationListener.class);
     }
 
-    private <T> T registerService(final Node moduleConfig, final String configPath, final Class<T> serviceInterface) {
+    private <T> T initializeService(final Node serviceConfigNode, final Class<T> serviceInterface) throws RepositoryException, WebArchivingException {
+        Map<String, String> config = CmsUtils.getServiceConfiguration(serviceConfigNode, this.environment);
+        log.debug("Got service configuration {} for environment {}", config, this.environment);
 
-        String className = null;
+        String className = config.get(CLASS_NAME);
+        if (StringUtils.isBlank(className)) {
+            throw new WebArchivingException("Property '{}' not present or empty in configuration {}", CLASS_NAME, serviceConfigNode.getPath());
+        }
+
+        T service;
         try {
-            T service = HippoServiceRegistry.getService(serviceInterface);
-            if (service != null) {
-                log.info("Service {} already registered, skip registering from {}/{})", serviceInterface.getName(), moduleConfig.getPath(), configPath);
-                return service;
-            }
-
-            if (moduleConfig.hasNode(configPath)) {
-                final Node serviceConfig = moduleConfig.getNode(configPath);
-
-                final Map<String, String> config = CmsUtils.getServiceConfiguration(serviceConfig, this.environment);
-                log.debug("Got service configuration {} for environment {}", config, this.environment);
-
-                className = config.get(CLASS_NAME);
-                if (StringUtils.isNotBlank(className)) {
-                    @SuppressWarnings("unchecked")
-                    final Class<? extends T> moduleClass = (Class<? extends T>) Class.forName(className);
-                    service = moduleClass.getConstructor().newInstance();
-
-                    if (service instanceof ModuleSessionAware) {
-                        ((ModuleSessionAware) service).setModuleSession(moduleConfig.getSession());
-                    }
-
-                    if (service instanceof LifeCycle) {
-                        ((LifeCycle) service).initialize(config);
-                    }
-
-                    HippoServiceRegistry.registerService(service, serviceInterface);
-                    return service;
-                } else {
-                    log.warn("Property '{}' not present or empty at node {}/{}", CLASS_NAME, moduleConfig.getPath(), configPath);
-                }
-            } else {
-                log.warn("Config node '{}' not found below {}", configPath, moduleConfig.getPath());
-            }
+            final Class<? extends T> moduleClass = (Class<? extends T>) Class.forName(className);
+            service = moduleClass.getConstructor().newInstance();
         } catch (Exception e) {
-            log.error(e.getClass().getSimpleName() + " while registering, initializing service "
-                + serviceInterface.getSimpleName() + " from path " + configPath + ", className=" + className, e);
+            throw new WebArchivingException(e);
         }
-        return null;
+
+        if (service instanceof ModuleSessionAware) {
+            ((ModuleSessionAware) service).setModuleSession(serviceConfigNode.getSession());
+        }
+
+        if (service instanceof LifeCycle) {
+            ((LifeCycle) service).initialize(config);
+        }
+
+        if (service instanceof Discoverable) {
+            HippoServiceRegistry.registerService(service, serviceInterface);
+        }
+        return service;
     }
 
-    private <T> void unregisterService(T module, Class<T> serviceInterface) {
-        if (module != null) {
-            if (module instanceof LifeCycle) {
-                ((LifeCycle) module).destroy();
+
+    private Node getServiceConfigNode(final Node moduleConfig, final String configPath) throws RepositoryException, WebArchivingException {
+        if (moduleConfig.hasNode(configPath)) {
+            return moduleConfig.getNode(configPath);
+        } else {
+            throw new WebArchivingException("Config node '{}' not found below {}", configPath, moduleConfig.getPath());
+        }
+    }
+
+    private <T, S extends T> void shutdownService(S service, Class<T> serviceInterface) {
+        if (service != null) {
+            if (service instanceof LifeCycle) {
+                ((LifeCycle) service).destroy();
             }
 
-            HippoServiceRegistry.unregisterService(module, serviceInterface);
+            if (service instanceof Discoverable) {
+                HippoServiceRegistry.unregisterService(service, serviceInterface);
+            }
         }
     }
 }
