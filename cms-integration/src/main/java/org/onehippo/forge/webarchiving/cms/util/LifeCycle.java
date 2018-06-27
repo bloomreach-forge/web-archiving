@@ -19,12 +19,12 @@ package org.onehippo.forge.webarchiving.cms.util;
 import java.util.Map;
 
 import org.onehippo.forge.webarchiving.common.error.WebArchiveUpdateException;
-import org.onehippo.forge.webarchiving.cms.WebArchivingServicesDaemonModule;
+import org.onehippo.repository.modules.DaemonModule;
 /**
  * Component module lifecycle abstraction.
  *
- * Services registered via {@link WebArchivingServicesDaemonModule} can implement this interface
- * in order to initialize and destroy themselves on each lifecycle method call.
+ * Services can implement this interface in order to initialize and destroy themselves on each lifecycle method call.
+ * The service initiator module (typically a {@link DaemonModule} implementation) manages this lifecycle.
  */
 public interface LifeCycle {
 

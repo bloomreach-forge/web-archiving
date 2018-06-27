@@ -17,11 +17,11 @@
 package org.onehippo.forge.webarchiving.cms.util;
 
 import javax.jcr.Session;
-import org.onehippo.forge.webarchiving.cms.WebArchivingServicesDaemonModule;
+import org.onehippo.repository.modules.DaemonModule;
 
 /**
- * Services registered via {@link WebArchivingServicesDaemonModule} can implement this interface
- * if access is needed to the JCR session provided by the underlying (daemon) module.
+ * Services can implement this interface if access is needed to the JCR session provided by the initiator module.
+ * The service initiator module (typically a {@link DaemonModule} implementation) manages this.
  */
 public interface ModuleSessionAware {
 
