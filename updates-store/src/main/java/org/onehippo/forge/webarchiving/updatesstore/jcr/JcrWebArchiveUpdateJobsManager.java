@@ -74,10 +74,6 @@ public class JcrWebArchiveUpdateJobsManager implements WebArchiveUpdateJobsManag
     protected Session moduleSession;
     protected long batchSize = DEFAULT_BATCH_SIZE;
 
-    //TODO WHY?
-    private Credentials systemCredentials = new SimpleCredentials("system", new char[]{});
-
-
     @Override
     public synchronized void initialize(final Map<String, String> props) throws WebArchiveUpdateException {
         String value = props.get(CONFIG_PROP_BATCH_SIZE);
@@ -427,32 +423,32 @@ public class JcrWebArchiveUpdateJobsManager implements WebArchiveUpdateJobsManag
             if (session != null) {
                 session.refresh(false);
             }
-        } catch (RepositoryException e2) {
-            log.error("Failed to refresh.", e2);
+        } catch (RepositoryException e) {
+            log.error("Failed to refresh.", e);
         }
     }
 
     protected Session getSession() throws RepositoryException {
         if (moduleSession != null) {
-            return moduleSession.impersonate(systemCredentials);
+            return moduleSession.impersonate(getSystemCredentials());
         }
-
         throw new RepositoryException("ModuleSession is null");
+    }
+
+    protected Credentials getSystemCredentials() {
+        return new SimpleCredentials("system", new char[]{});
     }
 
     protected Node getJobsStoreNode(final Session session) throws RepositoryException {
         Node rootNode = session.getRootNode();
         Node updatesStoreNode;
-
-        if (!rootNode.hasNode(DEFAULT_WEB_ARCHIVE_UPDATE_JOBSTORE_LOCATION)) {
-            //TODO WHY?
-            synchronized (mutex) {
+        synchronized (mutex) {
+            if (!rootNode.hasNode(DEFAULT_WEB_ARCHIVE_UPDATE_JOBSTORE_LOCATION)) {
                 updatesStoreNode = rootNode.addNode(DEFAULT_WEB_ARCHIVE_UPDATE_JOBSTORE_LOCATION, WebArchivingConstants.NT_WEB_ARCHIVE_UPDATE_JOBS_CONTAINER);
+            } else {
+                updatesStoreNode = rootNode.getNode(DEFAULT_WEB_ARCHIVE_UPDATE_JOBSTORE_LOCATION);
             }
-        } else {
-            updatesStoreNode = rootNode.getNode(DEFAULT_WEB_ARCHIVE_UPDATE_JOBSTORE_LOCATION);
         }
-
         return updatesStoreNode;
     }
 
@@ -484,8 +480,4 @@ public class JcrWebArchiveUpdateJobsManager implements WebArchiveUpdateJobsManag
         return type;
     }
 
-    //TODO Throw away
-    void setSystemCredentials(final Credentials systemCredentials) {
-        this.systemCredentials = systemCredentials;
-    }
 }
