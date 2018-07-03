@@ -40,7 +40,7 @@ public class ArchiefWebArchiveManager implements WebArchiveManager, LifeCycle, D
     }
 
     @Override
-    public void requestUpdate(final WebArchiveUpdate update) throws WebArchiveUpdateException {
+    public synchronized void requestUpdate(final WebArchiveUpdate update) throws WebArchiveUpdateException {
 
     }
 
