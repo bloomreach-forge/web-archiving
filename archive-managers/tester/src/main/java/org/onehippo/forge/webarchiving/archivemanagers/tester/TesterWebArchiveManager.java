@@ -52,10 +52,11 @@ public class TesterWebArchiveManager implements WebArchiveManager, LifeCycle, Di
     }
 
     @Override
-    public void requestUpdate(final WebArchiveUpdate update) throws WebArchiveUpdateException {
+    public synchronized void requestUpdate(final WebArchiveUpdate update) throws WebArchiveUpdateException {
         try {
             Thread.sleep(testerSleepTimeInSeconds * 1000);
         } catch (InterruptedException e) {
+            log.warn("Can't even sleep for {} seconds", testerSleepTimeInSeconds);
         }
 
         log.info("\n====================   Received update: ====================\n{}\n\n" +
