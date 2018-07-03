@@ -16,10 +16,10 @@
 -->
 
 <module xmlns="http://www.onehippo.org/schema/hst/hst-addon-module_1_0.xsd">
-  <name>org.onehippo.forge.webarchiving</name>
+  <name>org.onehippo.forge.webarchiving.hst</name>
   <config-locations>
     <config-location>
-      classpath*:META-INF/hst-assembly/addon/org/onehippo/forge/webarchiving/api/*.xml
+      classpath*:META-INF/hst-assembly/addon/org/onehippo/forge/webarchiving/hst/*.xml
     </config-location>
   </config-locations>
 </module>
