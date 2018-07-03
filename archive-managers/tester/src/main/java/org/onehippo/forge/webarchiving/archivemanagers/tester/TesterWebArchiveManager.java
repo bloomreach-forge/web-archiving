@@ -18,6 +18,8 @@ package org.onehippo.forge.webarchiving.archivemanagers.tester;
 
 import java.util.Calendar;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import org.onehippo.forge.webarchiving.cms.util.Discoverable;
 import org.onehippo.forge.webarchiving.cms.util.LifeCycle;
@@ -32,6 +34,7 @@ public class TesterWebArchiveManager implements WebArchiveManager, LifeCycle, Di
     private static final Logger log = LoggerFactory.getLogger(TesterWebArchiveManager.class);
 
     private int testerSleepTimeInSeconds = 10;
+    private ExecutorService pool;
 
     @Override
     public synchronized void initialize(final Map<String, String> props) {
@@ -44,6 +47,9 @@ public class TesterWebArchiveManager implements WebArchiveManager, LifeCycle, Di
             }
         }
         log.info("Initialized {}. Simulating a Web Archive service with conf: sleep seconds: {}", this.getClass().getName(), testerSleepTimeInSeconds);
+
+        pool = Executors.newCachedThreadPool();
+
     }
 
     @Override
@@ -53,18 +59,22 @@ public class TesterWebArchiveManager implements WebArchiveManager, LifeCycle, Di
 
     @Override
     public synchronized void requestUpdate(final WebArchiveUpdate update) throws WebArchiveUpdateException {
-        try {
-            Thread.sleep(testerSleepTimeInSeconds * 1000);
-        } catch (InterruptedException e) {
-            log.warn("Can't even sleep for {} seconds", testerSleepTimeInSeconds);
-        }
 
-        log.info("\n====================   Received update: ====================\n{}\n\n" +
-            "========================================\n\n", update);
+        pool.submit(() -> {
+            log.info("\n====================   Received update: ====================\n{}\n\n" +
+                "========================================\n\n", update);
 
-        if (Calendar.getInstance().get(Calendar.SECOND) % 2 != 0) {
-            throw new WebArchiveUpdateException("It's an odd second, web archive is closed now");
-        }
+            try {
+                Thread.sleep(testerSleepTimeInSeconds * 1000);
+            } catch (InterruptedException e) {
+                log.warn("Can't even sleep for {} seconds", testerSleepTimeInSeconds);
+            }
+
+            if (update.hashCode() % 2 != 0) {
+                log.error("\n====================  Failed to request Web Archive update ====================\n{}" +
+                "========================================\n", update);
+            }
+        });
     }
 
     @Override
