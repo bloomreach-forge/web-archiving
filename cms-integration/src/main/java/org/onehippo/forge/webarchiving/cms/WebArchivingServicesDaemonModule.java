@@ -28,9 +28,7 @@ import org.onehippo.forge.webarchiving.cms.util.CmsUtils;
 import org.onehippo.forge.webarchiving.cms.util.Discoverable;
 import org.onehippo.forge.webarchiving.cms.util.LifeCycle;
 import org.onehippo.forge.webarchiving.cms.util.ModuleSessionAware;
-import org.onehippo.forge.webarchiving.common.api.ChannelPublicationListener;
 import org.onehippo.forge.webarchiving.common.api.WebArchiveManager;
-import org.onehippo.forge.webarchiving.common.api.WebArchiveUpdateJobsManager;
 import org.onehippo.forge.webarchiving.common.error.WebArchivingException;
 import org.onehippo.repository.modules.AbstractReconfigurableDaemonModule;
 import org.onehippo.repository.modules.ProvidesService;
@@ -42,25 +40,16 @@ import org.slf4j.LoggerFactory;
  * Registers services for the web archiving addon
  */
 @ProvidesService(types = {
-    WebArchiveUpdateJobsManager.class,
     WebArchiveManager.class
 })
 public class WebArchivingServicesDaemonModule extends AbstractReconfigurableDaemonModule {
     private static Logger log = LoggerFactory.getLogger(WebArchivingServicesDaemonModule.class);
 
     private static final String WEB_ARCHIVE_MANAGER_CONFIG_LOCATION = "archivemanager";
-    private static final String WEB_ARCHIVE_UPDATE_JOBS_MANAGER_CONFIG_LOCATION = "updatesmanager";
-    private static final String WEB_ARCHIVE_CHANNEL_PUB_LISTENER_CONFIG_LOCATION = "channelpub";
-
     private static final String CLASS_NAME = "className";
-
     private final Object configurationLock = new Object();
-
     private String environment;
-
-    private WebArchiveUpdateJobsManager webArchiveUpdateJobsManager;
     private WebArchiveManager webArchiveManager;
-    private ChannelPublicationListener channelPublicationListener;
 
     @Override
     protected void doInitialize(final Session session) throws RepositoryException {
@@ -90,15 +79,11 @@ public class WebArchivingServicesDaemonModule extends AbstractReconfigurableDaem
     }
 
     private void shutdownServices() {
-        shutdownService(webArchiveUpdateJobsManager, WebArchiveUpdateJobsManager.class);
         shutdownService(webArchiveManager, WebArchiveManager.class);
-        shutdownService(channelPublicationListener, ChannelPublicationListener.class);
     }
 
     private void initializeServices(final Node moduleConfig) throws RepositoryException, WebArchivingException {
-        webArchiveUpdateJobsManager = initializeService(getServiceConfigNode(moduleConfig, WEB_ARCHIVE_UPDATE_JOBS_MANAGER_CONFIG_LOCATION), WebArchiveUpdateJobsManager.class);
         webArchiveManager = initializeService(getServiceConfigNode(moduleConfig, WEB_ARCHIVE_MANAGER_CONFIG_LOCATION), WebArchiveManager.class);
-        channelPublicationListener = initializeService(getServiceConfigNode(moduleConfig, WEB_ARCHIVE_CHANNEL_PUB_LISTENER_CONFIG_LOCATION), ChannelPublicationListener.class);
     }
 
     private <T> T initializeService(final Node serviceConfigNode, final Class<T> serviceInterface) throws RepositoryException, WebArchivingException {

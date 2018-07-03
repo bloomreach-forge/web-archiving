@@ -32,28 +32,12 @@
     <sv:property sv:name="environment.system.property" sv:type="String">
       <sv:value>hippo.environment</sv:value>
     </sv:property>
-    <sv:node sv:name="updatesmanager">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hipposys:moduleconfig</sv:value>
-      </sv:property>
-      <sv:property sv:name="className" sv:type="String">
-        <sv:value />
-      </sv:property>
-    </sv:node>
     <sv:node sv:name="archivemanager">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hipposys:moduleconfig</sv:value>
       </sv:property>
       <sv:property sv:name="className" sv:type="String">
         <sv:value />
-      </sv:property>
-    </sv:node>
-    <sv:node sv:name="channelpub">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hipposys:moduleconfig</sv:value>
-      </sv:property>
-      <sv:property sv:name="className" sv:type="String">
-        <sv:value>org.onehippo.forge.webarchiving.cms.events.ChannelPublicationListenerImpl</sv:value>
       </sv:property>
     </sv:node>
   </sv:node>
