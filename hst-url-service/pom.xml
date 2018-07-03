@@ -54,6 +54,16 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
+      <groupId>org.onehippo.cms7.hst.client-modules</groupId>
+      <artifactId>hst-page-composer</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-api</artifactId>
       <scope>provided</scope>

@@ -29,4 +29,6 @@
     <property name="hstManager" ref="org.hippoecm.hst.configuration.model.HstManager"/>
   </bean>
 
+  <bean class="org.onehippo.forge.webarchiving.hst.events.ChannelPublicationEventListener"
+        init-method="init" destroy-method="destroy" />
 </beans>
