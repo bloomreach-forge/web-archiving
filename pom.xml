@@ -131,6 +131,16 @@
         <scope>provided</scope>
       </dependency>
       <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-search-service-api</artifactId>
+        <version>${hippo.addon-search-service.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-search-service-jcr</artifactId>
+        <version>${hippo.addon-search-service.version}</version>
+      </dependency>
+      <dependency>
         <groupId>com.squareup.okhttp3</groupId>
         <artifactId>okhttp</artifactId>
         <version>${okhttp.version}</version>
@@ -164,7 +174,9 @@
   </build>
 
   <modules>
+    <module>bom</module>
     <module>common</module>
+    <module>updates-store</module>
     <module>archive-managers</module>
     <module>cms-integration</module>
     <module>hst-url-service</module>

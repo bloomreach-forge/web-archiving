@@ -28,10 +28,13 @@ import javax.jcr.RepositoryException;
 import org.hippoecm.repository.api.WorkflowException;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.forge.webarchiving.common.api.HstUrlService;
-import org.onehippo.forge.webarchiving.common.api.WebArchiveManager;
+import org.onehippo.forge.webarchiving.common.api.WebArchiveUpdateJobsManager;
 import org.onehippo.forge.webarchiving.common.error.WebArchiveUpdateException;
 import org.onehippo.forge.webarchiving.common.model.WebArchiveUpdate;
+import org.onehippo.forge.webarchiving.common.model.WebArchiveUpdateJob;
+import org.onehippo.forge.webarchiving.common.model.WebArchiveUpdateJobStatus;
 import org.onehippo.forge.webarchiving.common.model.WebArchiveUpdateType;
+import org.onehippo.forge.webarchiving.common.util.WebArchiveUpdateJobBuilder;
 import org.onehippo.repository.documentworkflow.task.AbstractDocumentTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,11 +49,11 @@ public class WebArchivingTask extends AbstractDocumentTask {
 
         //TODO, wip, For link rewriting in cms, use HippoServiceRegistry#getServices(LinkCreatorService.class) and ask every service for the links (every hst webapp will do the linkrewriting)
         final HstUrlService hstUrlService = HippoServiceRegistry.getService(HstUrlService.class);
-        final WebArchiveManager webArchiveManager = HippoServiceRegistry.getService(WebArchiveManager.class);
+        final WebArchiveUpdateJobsManager webArchiveUpdateJobsManager = HippoServiceRegistry.getService(WebArchiveUpdateJobsManager.class);
 
-        if (hstUrlService == null || webArchiveManager == null) {
-            log.error("Not all required services are registered, url-service ({}): {}, web-archive-service ({}): {}. Skipping creation of job for {}",
-                HstUrlService.class, hstUrlService, WebArchiveManager.class, webArchiveManager, handle.getPath());
+        if (hstUrlService == null || webArchiveUpdateJobsManager == null) {
+            log.error("Not all required services are registered, url-service ({}): {}, store-service ({}): {}. Skipping creation of job for {}",
+                HstUrlService.class, hstUrlService, WebArchiveUpdateJobsManager.class, webArchiveUpdateJobsManager, handle.getPath());
             return null;
         }
 
@@ -75,10 +78,16 @@ public class WebArchivingTask extends AbstractDocumentTask {
         Calendar now = Calendar.getInstance();
         webArchiveUpdate.setCreated(now);
 
+        WebArchiveUpdateJob job = WebArchiveUpdateJobBuilder.newJob()
+            .setCreated(now)
+            .setLastModified(now)
+            .setStatus(WebArchiveUpdateJobStatus.QUEUED)
+            .setWebArchiveUpdate(webArchiveUpdate)
+            .build();
         try {
-            webArchiveManager.requestUpdate(webArchiveUpdate);
+            webArchiveUpdateJobsManager.createWebArchiveUpdateJob(job);
         } catch (WebArchiveUpdateException e) {
-            log.error("Failed to request Web Archive update {}", webArchiveUpdate, e);
+            log.error("Failed to create Web Archive update job {}", job);
         }
 
         return null;

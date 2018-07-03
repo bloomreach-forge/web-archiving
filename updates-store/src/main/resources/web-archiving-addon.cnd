@@ -1,0 +1,21 @@
+<'mix'='http://www.jcp.org/jcr/mix/1.0'>
+<'nt'='http://www.jcp.org/jcr/nt/1.0'>
+<'webarchivingaddon'='http://www.onehippo.org/webarchivingaddon/nt/1.0'>
+
+[webarchivingaddon:update] > nt:base
+	- webarchivingaddon:id (string)
+	- webarchivingaddon:creator (string)
+	- webarchivingaddon:created (date)
+	- webarchivingaddon:lastmodified (date)
+	- webarchivingaddon:type (string)
+	- webarchivingaddon:urls (string) multiple
+
+[webarchivingaddon:updatejob] > nt:base
+	- webarchivingaddon:status (string)
+	- webarchivingaddon:created (date)
+	- webarchivingaddon:lastmodified (date)
+	- webarchivingaddon:attempt (long)
+	+ webarchivingaddon:update (webarchivingaddon:update)
+
+[webarchivingaddon:updatejobsstore] > nt:base
+    + * (webarchivingaddon:updatejob)
