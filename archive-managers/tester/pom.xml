@@ -36,6 +36,12 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
+      <groupId>org.onehippo.forge</groupId>
+      <artifactId>web-archiving-addon-cms-integration</artifactId>
+      <version>${project.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-services</artifactId>
       <scope>provided</scope>
