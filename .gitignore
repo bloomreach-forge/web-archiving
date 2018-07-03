@@ -1,0 +1,13 @@
+.DS_Store
+.idea
+.project
+*.iml
+*.sublime*
+*.swp
+**/.settings
+**/.classpath
+/.vscode
+
+target
+/essentials/overlays/
+/storage
