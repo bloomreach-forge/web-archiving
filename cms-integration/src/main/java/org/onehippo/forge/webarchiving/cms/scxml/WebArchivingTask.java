@@ -78,7 +78,8 @@ public class WebArchivingTask extends AbstractDocumentTask {
         try {
             webArchiveManager.requestUpdate(webArchiveUpdate);
         } catch (WebArchiveUpdateException e) {
-            log.error("Failed to request Web Archive update {}", webArchiveUpdate, e);
+            log.error("\n====================  Failed to request Web Archive update ====================\n{}" +
+                "========================================\n", webArchiveUpdate, e);
         }
 
         return null;
