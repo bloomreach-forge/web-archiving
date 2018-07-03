@@ -27,6 +27,7 @@ import java.util.stream.Collectors;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.forge.webarchiving.common.api.WebArchiveManager;
@@ -39,9 +40,11 @@ import org.onehippo.repository.scheduling.RepositoryJobExecutionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.onehippo.forge.webarchiving.common.model.WebArchiveUpdateJobStatus.ABORTED;
 import static org.onehippo.forge.webarchiving.common.model.WebArchiveUpdateJobStatus.ACKNOWLEDGED;
+import static org.onehippo.forge.webarchiving.common.model.WebArchiveUpdateJobStatus.CATEGORY_PENDING;
 import static org.onehippo.forge.webarchiving.common.model.WebArchiveUpdateJobStatus.ERROR;
-import static org.onehippo.forge.webarchiving.common.model.WebArchiveUpdateJobStatus.QUEUED;
+import static org.onehippo.forge.webarchiving.common.model.WebArchiveUpdateJobStatus.SUBMITTED;
 import static org.onehippo.forge.webarchiving.common.model.WebArchiveUpdateJobStatus.UNDEFINED;
 
 /**
@@ -61,16 +64,14 @@ public class WebArchiveUpdatesProcessor implements RepositoryJob {
     private long daysToLive = DEFAULT_DAYS_TO_LIVE;
     private long searchLimit = DEFAULT_SEARCH_LIMIT;
 
-    private /*TODO final*/ ExecutorService pool;
+    private ExecutorService pool;
     private WebArchiveUpdateJobsManager updateJobsManager;
     private WebArchiveManager webArchiveManager;
 
     public WebArchiveUpdatesProcessor() {
-        System.out.println("Constructor and pool was null? " + (pool == null));
         if (pool == null) {
-            pool = Executors.newCachedThreadPool(); //TODO CHECK LIFECYCLE OF SCHEDULER
+            pool = Executors.newCachedThreadPool();
         }
-
     }
 
     @Override
@@ -115,8 +116,20 @@ public class WebArchiveUpdatesProcessor implements RepositoryJob {
     private void processPendingJobs() throws WebArchiveUpdateException {
         final List<WebArchiveUpdateJob> pendingJobs = updateJobsManager.getPendingWebArchiveUpdateJobs((int) searchLimit);
         pendingJobs.stream()
-            .filter(job -> job.getStatus() == QUEUED)
-            .forEach(updateJob ->
+            .filter(job -> ArrayUtils.contains(CATEGORY_PENDING, job.getStatus()))
+            .forEach(updateJob -> {
+
+                //Immediately set status to submitted, prevents this job from being requested again
+                updateJob.setLastModified(Calendar.getInstance());
+                updateJob.setStatus(SUBMITTED);
+                try {
+                    updateJobsManager.updateWebArchiveUpdateJob(updateJob);
+                } catch (WebArchiveUpdateException e) {
+                    log.error("Error while updating WebArchiveUpdate job:" + updateJob.toString(), e);
+                    return;
+                }
+
+                //Request job
                 pool.submit(() -> {
                     WebArchiveUpdate update = updateJob.getWebArchiveUpdate();
                     try {
@@ -124,7 +137,7 @@ public class WebArchiveUpdatesProcessor implements RepositoryJob {
                         updateJob.setStatus(ACKNOWLEDGED);
                     } catch (WebArchiveUpdateException e) {
                         log.info("Error processing job:" + updateJob.toString(), e);
-                        updateJob.setStatus(ERROR);
+                        updateJob.setStatus(ABORTED);
                     } finally {
                         try {
                             updateJob.setLastModified(Calendar.getInstance());
@@ -133,8 +146,11 @@ public class WebArchiveUpdatesProcessor implements RepositoryJob {
                             log.error("Error while updating WebArchiveUpdate job:" + updateJob.toString(), e2);
                         }
                     }
-                }));
+
+                });
+            });
     }
+
 
     protected void doConfigure(final RepositoryJobExecutionContext context) throws WebArchiveUpdateException {
         daysToLive = getNumber(context, CONFIG_DAYS_TO_LIVE, DEFAULT_DAYS_TO_LIVE);

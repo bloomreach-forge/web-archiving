@@ -17,9 +17,6 @@
 package org.onehippo.forge.webarchiving.archivemanagers.tester;
 
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 
 import org.onehippo.forge.webarchiving.cms.util.Discoverable;
 import org.onehippo.forge.webarchiving.cms.util.LifeCycle;
@@ -34,7 +31,6 @@ public class TesterWebArchiveManager implements WebArchiveManager, LifeCycle, Di
     private static final Logger log = LoggerFactory.getLogger(TesterWebArchiveManager.class);
 
     private int testerSleepTimeInSeconds = 10;
-    private ExecutorService pool;
 
     @Override
     public synchronized void initialize(final Map<String, String> props) {
@@ -47,55 +43,27 @@ public class TesterWebArchiveManager implements WebArchiveManager, LifeCycle, Di
             }
         }
         log.info("Initialized {}. Simulating a Web Archive service with conf: sleep seconds: {}", this.getClass().getName(), testerSleepTimeInSeconds);
-
-        pool = Executors.newCachedThreadPool();
-
     }
 
     @Override
     public void destroy() {
         log.debug("Destroying {}", this.getClass().getName());
-
-        if (pool != null) {
-            pool.shutdown(); // Disable new tasks from being submitted
-            try {
-                // Wait a while for existing tasks to terminate
-                if (!pool.awaitTermination(60, TimeUnit.SECONDS)) {
-                    pool.shutdownNow(); // Cancel currently executing tasks
-                    // Wait a while for tasks to respond to being cancelled
-                    if (!pool.awaitTermination(60, TimeUnit.SECONDS)) {
-                        log.error("Thread pool did not terminate");
-                    }
-                }
-            } catch (InterruptedException e) {
-                // (Re-)Cancel if current thread also interrupted
-                pool.shutdownNow();
-                // Preserve interrupt status
-                Thread.currentThread().interrupt();
-            }
-        }
-        log.debug("Destroyed {}, shut down thread pool", this.getClass().getName());
-
     }
 
     @Override
     public synchronized void requestUpdate(final WebArchiveUpdate update) throws WebArchiveUpdateException {
+        log.info("\n====================   Received update: ====================\n{}\n\n" +
+            "========================================\n\n", update);
 
-        pool.submit(() -> {
-            log.info("\n====================   Received update: ====================\n{}\n\n" +
-                "========================================\n\n", update);
+        try {
+            Thread.sleep(testerSleepTimeInSeconds * 1000);
+        } catch (InterruptedException e) {
+            log.warn("Can't even sleep for {} seconds", testerSleepTimeInSeconds);
+        }
 
-            try {
-                Thread.sleep(testerSleepTimeInSeconds * 1000);
-            } catch (InterruptedException e) {
-                log.warn("Can't even sleep for {} seconds", testerSleepTimeInSeconds);
-            }
-
-            if (update.hashCode() % 2 != 0) {
-                log.error("\n====================  Failed to request Web Archive update ====================\n{}" +
-                    "========================================\n", update);
-            }
-        });
+        if (update.hashCode() % 2 != 0) {
+            throw new WebArchiveUpdateException("It's an odd second, web archive is closed now");
+        }
     }
 
     @Override

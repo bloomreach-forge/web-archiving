@@ -32,6 +32,8 @@ public enum WebArchiveUpdateJobStatus {
 
     QUEUED("Queued"), //queued for submission
 
+    SUBMITTED("Submitted"), //submitted
+
     ACKNOWLEDGED("Acknowledged"), //can be deleted
 
     ABORTED("Aborted"), //must be resubmitted
@@ -40,10 +42,10 @@ public enum WebArchiveUpdateJobStatus {
 
     UNDEFINED("Undefined"); //can be deleted
 
-    public static final WebArchiveUpdateJobStatus[] ALL = new WebArchiveUpdateJobStatus[]{QUEUED, ACKNOWLEDGED, ABORTED, ERROR, UNDEFINED};
+    public static final WebArchiveUpdateJobStatus[] ALL = new WebArchiveUpdateJobStatus[]{QUEUED, SUBMITTED, ACKNOWLEDGED, ABORTED, ERROR, UNDEFINED};
 
     /** Statuses that are in the category of 'pending' */
-    public static final WebArchiveUpdateJobStatus[] CATEGORY_PENDING = new WebArchiveUpdateJobStatus[]{QUEUED, ABORTED};
+    public static final WebArchiveUpdateJobStatus[] CATEGORY_PENDING = new WebArchiveUpdateJobStatus[]{QUEUED, SUBMITTED, ABORTED};
 
     /** Statuses that are in the category of 'completed' */
     public static final WebArchiveUpdateJobStatus[] CATEGORY_COMPLETED = new WebArchiveUpdateJobStatus[]{ACKNOWLEDGED, ERROR, UNDEFINED};
