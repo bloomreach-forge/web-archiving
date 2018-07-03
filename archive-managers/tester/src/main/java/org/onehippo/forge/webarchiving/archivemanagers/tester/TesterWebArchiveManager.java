@@ -20,6 +20,7 @@ import java.util.Calendar;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import org.onehippo.forge.webarchiving.cms.util.Discoverable;
 import org.onehippo.forge.webarchiving.cms.util.LifeCycle;
@@ -55,6 +56,27 @@ public class TesterWebArchiveManager implements WebArchiveManager, LifeCycle, Di
     @Override
     public void destroy() {
         log.debug("Destroying {}", this.getClass().getName());
+
+        if (pool != null) {
+            pool.shutdown(); // Disable new tasks from being submitted
+            try {
+                // Wait a while for existing tasks to terminate
+                if (!pool.awaitTermination(60, TimeUnit.SECONDS)) {
+                    pool.shutdownNow(); // Cancel currently executing tasks
+                    // Wait a while for tasks to respond to being cancelled
+                    if (!pool.awaitTermination(60, TimeUnit.SECONDS)) {
+                        log.error("Thread pool did not terminate");
+                    }
+                }
+            } catch (InterruptedException e) {
+                // (Re-)Cancel if current thread also interrupted
+                pool.shutdownNow();
+                // Preserve interrupt status
+                Thread.currentThread().interrupt();
+            }
+        }
+        log.debug("Destroyed {}, shut down thread pool", this.getClass().getName());
+
     }
 
     @Override
@@ -72,7 +94,7 @@ public class TesterWebArchiveManager implements WebArchiveManager, LifeCycle, Di
 
             if (update.hashCode() % 2 != 0) {
                 log.error("\n====================  Failed to request Web Archive update ====================\n{}" +
-                "========================================\n", update);
+                    "========================================\n", update);
             }
         });
     }
