@@ -43,7 +43,7 @@ public class TesterWebArchiveManager implements WebArchiveManager, LifeCycle, Di
                 log.error("Initializing {}: cannot parse property tester.sleep.seconds='{}' into integer", this.getClass().getName(), sleepSeconds);
             }
         }
-        log.info("Initialized {}. Simulating a Web Archive service with conf: sleep seconds {}", this.getClass().getName(), testerSleepTimeInSeconds);
+        log.info("Initialized {}. Simulating a Web Archive service with conf: sleep seconds: {}", this.getClass().getName(), testerSleepTimeInSeconds);
     }
 
     @Override
@@ -57,8 +57,12 @@ public class TesterWebArchiveManager implements WebArchiveManager, LifeCycle, Di
             Thread.sleep(testerSleepTimeInSeconds * 1000);
         } catch (InterruptedException e) {
         }
+
+        log.info("\n====================   Received update: ====================\n{}\n\n" +
+            "========================================\n\n", update);
+
         if (Calendar.getInstance().get(Calendar.SECOND) % 2 != 0) {
-            throw new WebArchiveUpdateException("It's an odd minute, web archive is closed now");
+            throw new WebArchiveUpdateException("It's an odd second, web archive is closed now");
         }
     }
 

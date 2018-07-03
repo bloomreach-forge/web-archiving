@@ -16,17 +16,19 @@
 
 package org.onehippo.forge.webarchiving.hst.events;
 
-import com.google.common.eventbus.AllowConcurrentEvents;
+import java.util.Calendar;
+
 import com.google.common.eventbus.Subscribe;
 
-import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.core.container.ComponentManagerAware;
-import org.hippoecm.hst.core.linking.HstLink;
-import org.hippoecm.hst.core.linking.HstLinkCreator;
-import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.api.ChannelEvent;
 import org.hippoecm.hst.pagecomposer.jaxrs.api.ChannelEvent.ChannelEventType;
+import org.onehippo.cms7.services.HippoServiceRegistry;
+import org.onehippo.forge.webarchiving.common.api.WebArchiveManager;
+import org.onehippo.forge.webarchiving.common.error.WebArchiveUpdateException;
+import org.onehippo.forge.webarchiving.common.model.WebArchiveUpdate;
+import org.onehippo.forge.webarchiving.common.model.WebArchiveUpdateType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,41 +52,40 @@ public class ChannelPublicationEventListener implements ComponentManagerAware {
     }
 
     @Subscribe
-    @AllowConcurrentEvents
     public void onEvent(ChannelEvent event) {
         if (event.getException() != null) {
             return;
         }
 
         final ChannelEventType type = event.getChannelEventType();
-        if (type != ChannelEventType.DISCARD && type != ChannelEventType.PUBLISH) {
-            log.debug("Skipping ChannelEvent '{}' because type is not equal to {} or {}.", type,
-                ChannelEventType.PUBLISH, ChannelEventType.DISCARD);
+        if (ChannelEventType.PUBLISH != type) {
+            log.debug("Skipping ChannelEvent '{}' because type is not equal to {}.", type, ChannelEventType.PUBLISH);
             return;
         }
 
+        //TODO BloomReach 12: check if pub is happening in context of a project: event.getEditingPreviewSite().getChannel().getBranchOf();
 
-        String homeLink = "(ERROR)";
-        try {
-            HstRequestContext context = event.getRequestContext();
-            HstLinkCreator creator = context.getHstLinkCreator();
-            Mount mount = context.getResolvedMount().getMount();
-            HstLink link = creator.create("/", mount);
-            homeLink = link.toUrlForm(context, true);
-        } catch (Exception e) {
-            String s = "";
+        final String channelIdentifier = event.getEditingMount().getChannel().getName();
+        final WebArchiveManager webArchiveManager = HippoServiceRegistry.getService(WebArchiveManager.class);
+
+        if (webArchiveManager == null) {
+            log.error("A required service isn't registered: web-archive-service ({}). Skipping request of update for channel {}",
+                WebArchiveManager.class, webArchiveManager, channelIdentifier);
+            return;
         }
 
-        log.error("\n(NOT AN ERROR) Channel: {}\nevent: {}\nispreview: {}\ncontextpath: {}\nhomepage: {}\nmountpath: {}\nrootFQLink (as string): {}\nuser: {}",
-            event.getEditingPreviewSite().getName(),
-            event.getChannelEventType(),
-            event.getEditingMount().isPreview(),
-            event.getEditingMount().getContextPath(),
-            event.getEditingMount().getHomePage(),
-            event.getEditingMount().getMountPath(),
-            homeLink,
-            event.getUserIds());
+        WebArchiveUpdate webArchiveUpdate = new WebArchiveUpdate();
+        webArchiveUpdate.setCreator("TODO");
+        webArchiveUpdate.setType(WebArchiveUpdateType.CHANNEL);
+        webArchiveUpdate.setId(channelIdentifier);
+        Calendar now = Calendar.getInstance();
+        webArchiveUpdate.setCreated(now);
 
+        try {
+            webArchiveManager.requestUpdate(webArchiveUpdate);
+        } catch (WebArchiveUpdateException e) {
+            log.error("\n====================  Failed to request Web Archive update ====================\n{}" +
+                "========================================\n", webArchiveUpdate, e);
+        }
     }
-
 }

@@ -67,13 +67,13 @@ public class HstUrlServiceImpl implements HstUrlService {
             requestContext.matchingFinished();
             requestContext.setURLFactory(hstURLFactory);
 
-            List<HstLink> links = linkCreator.createAll(handleNode, requestContext, host, null, true);
+            //List<HstLink> links = linkCreator.createAll(handleNode, requestContext, host, null, true);
             List<HstLink> all = linkCreator.createAll(handleNode, requestContext, true);
-            List<HstLink> allAvailableCanonicals = linkCreator.createAllAvailableCanonicals(handleNode, requestContext);
+            //List<HstLink> allAvailableCanonicals = linkCreator.createAllAvailableCanonicals(handleNode, requestContext);
 
-            urls.addAll(links.stream().map(link -> link.toUrlForm(requestContext, true)).collect(Collectors.toList()));
+            //urls.addAll(links.stream().map(link -> link.toUrlForm(requestContext, true)).collect(Collectors.toList()));
             urls.addAll(all.stream().map(link -> link.toUrlForm(requestContext, true)).collect(Collectors.toList()));
-            urls.addAll(allAvailableCanonicals.stream().map(link -> link.toUrlForm(requestContext, true)).collect(Collectors.toList()));
+            //urls.addAll(allAvailableCanonicals.stream().map(link -> link.toUrlForm(requestContext, true)).collect(Collectors.toList()));
 
             ModifiableRequestContextProvider.clear();
 
