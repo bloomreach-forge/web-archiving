@@ -36,4 +36,19 @@
     </sv:property>
   </sv:node>
 
+  <sv:node sv:name="web-archiving-addon-tester-archive-manager-module-config-sleep-time">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentroot" sv:type="String">
+      <sv:value>/hippo:configuration/hippo:modules/web-archiving-addon-services-daemon/hippo:moduleconfig/archivemanager/tester.sleep.seconds</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentpropset" sv:type="String">
+      <sv:value>3</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>29009.1</sv:value>
+    </sv:property>
+  </sv:node>
+
 </sv:node>
