@@ -47,17 +47,15 @@ public class HstUrlServiceImpl implements HstUrlService {
     private HstRequestContextComponent hstRequestContextComponent;
     private HstURLFactory hstURLFactory;
     private HstManager hstManager;
+    private String host;
+    private int port;
+    private String requestPath;
 
 
     public String[] getAllUrls(Node handleNode) throws WebArchiveUpdateException {
         List<String> urls = new ArrayList<>();
         try {
-            String host = "localhost";
-            int port = 8080;
-            String requestPath = "/";
-
-            handleNode.isNodeType(HippoNodeType.NT_HANDLE) ;
-
+            handleNode.isNodeType(HippoNodeType.NT_HANDLE);
 
             HstMutableRequestContext requestContext = hstRequestContextComponent.create();
             ModifiableRequestContextProvider.set(requestContext);
@@ -116,5 +114,15 @@ public class HstUrlServiceImpl implements HstUrlService {
         this.hstManager = hstManager;
     }
 
+    public void setHost(final String host) {
+        this.host = host;
+    }
 
+    public void setPort(final int port) {
+        this.port = port;
+    }
+
+    public void setRequestPath(final String requestPath) {
+        this.requestPath = requestPath;
+    }
 }
