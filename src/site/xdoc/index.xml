@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC
+  "-//Apache Software Foundation//DTD XDOC 1.0//EN"
+  "http://maven.apache.org/dtd/xdoc_1_0.dtd">
+<!--
+    Copyright 2018 BloomReach Inc. (http://www.bloomreach.com)
+
+    Licensed under the Apache License, Version 2.0 (the  "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS"
+    BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+
+<document>
+  <properties>
+    <title>Welcome</title>
+  </properties>
+  <body>
+    <section name="Web Archiving Addon">
+      <p>The Web Archiving Addon provides a notification mechanism for web archiving agencies, communicating all URLs under which a document is visible upon
+        document publication or depublication. Additionally, the addon will send a notification on channel publication.
+      </p>
+
+      <subsection name="Installation instructions">
+        <p>Instructions on how to obtain and install the addon can be found on the <a href="install.html">install page</a>.
+        </p>
+      </subsection>
+      <subsection name="Project status">
+        <p>The latest version of the addon is compatible with Hippo 11.2.8. See the <a href="release-notes.html">release notes</a> for details.
+        </p>
+        <table border="1" cellpadding="0" cellspacing="5">
+          <tbody>
+            <tr>
+              <th>Version</th>
+              <th>Hippo CMS Version</th>
+            </tr>
+            <tr>
+              <td>1.0.1</td>
+              <td>11.2.x</td>
+            </tr>
+          </tbody>
+        </table>
+      </subsection>
+    </section>
+  </body>
+</document>
