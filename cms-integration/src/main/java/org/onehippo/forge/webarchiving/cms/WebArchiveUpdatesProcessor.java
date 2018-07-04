@@ -27,7 +27,6 @@ import java.util.stream.Collectors;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.forge.webarchiving.common.api.WebArchiveManager;
@@ -42,7 +41,6 @@ import org.slf4j.LoggerFactory;
 
 import static org.onehippo.forge.webarchiving.common.model.WebArchiveUpdateJobStatus.ABORTED;
 import static org.onehippo.forge.webarchiving.common.model.WebArchiveUpdateJobStatus.ACKNOWLEDGED;
-import static org.onehippo.forge.webarchiving.common.model.WebArchiveUpdateJobStatus.CATEGORY_PENDING;
 import static org.onehippo.forge.webarchiving.common.model.WebArchiveUpdateJobStatus.ERROR;
 import static org.onehippo.forge.webarchiving.common.model.WebArchiveUpdateJobStatus.SUBMITTED;
 import static org.onehippo.forge.webarchiving.common.model.WebArchiveUpdateJobStatus.UNDEFINED;
@@ -115,40 +113,38 @@ public class WebArchiveUpdatesProcessor implements RepositoryJob {
 
     private void processPendingJobs() throws WebArchiveUpdateException {
         final List<WebArchiveUpdateJob> pendingJobs = updateJobsManager.getPendingWebArchiveUpdateJobs((int) searchLimit);
-        pendingJobs.stream()
-            .filter(job -> ArrayUtils.contains(CATEGORY_PENDING, job.getStatus()))
-            .forEach(updateJob -> {
+        pendingJobs.forEach(updateJob -> {
 
-                //Immediately set status to submitted, prevents this job from being requested again
-                updateJob.setLastModified(Calendar.getInstance());
-                updateJob.setStatus(SUBMITTED);
+            //Immediately set status to submitted, prevents this job from being requested again
+            updateJob.setLastModified(Calendar.getInstance());
+            updateJob.setStatus(SUBMITTED);
+            try {
+                updateJobsManager.updateWebArchiveUpdateJob(updateJob);
+            } catch (WebArchiveUpdateException e) {
+                log.error("Error while updating WebArchiveUpdate job:" + updateJob.toString(), e);
+                return;
+            }
+
+            //Request job
+            pool.submit(() -> {
+                WebArchiveUpdate update = updateJob.getWebArchiveUpdate();
                 try {
-                    updateJobsManager.updateWebArchiveUpdateJob(updateJob);
+                    webArchiveManager.requestUpdate(update);
+                    updateJob.setStatus(ACKNOWLEDGED);
                 } catch (WebArchiveUpdateException e) {
-                    log.error("Error while updating WebArchiveUpdate job:" + updateJob.toString(), e);
-                    return;
+                    log.info("Error processing job:" + updateJob.toString(), e);
+                    updateJob.setStatus(ABORTED);
+                } finally {
+                    try {
+                        updateJob.setLastModified(Calendar.getInstance());
+                        updateJobsManager.updateWebArchiveUpdateJob(updateJob);
+                    } catch (WebArchiveUpdateException e2) {
+                        log.error("Error while updating WebArchiveUpdate job:" + updateJob.toString(), e2);
+                    }
                 }
 
-                //Request job
-                pool.submit(() -> {
-                    WebArchiveUpdate update = updateJob.getWebArchiveUpdate();
-                    try {
-                        webArchiveManager.requestUpdate(update);
-                        updateJob.setStatus(ACKNOWLEDGED);
-                    } catch (WebArchiveUpdateException e) {
-                        log.info("Error processing job:" + updateJob.toString(), e);
-                        updateJob.setStatus(ABORTED);
-                    } finally {
-                        try {
-                            updateJob.setLastModified(Calendar.getInstance());
-                            updateJobsManager.updateWebArchiveUpdateJob(updateJob);
-                        } catch (WebArchiveUpdateException e2) {
-                            log.error("Error while updating WebArchiveUpdate job:" + updateJob.toString(), e2);
-                        }
-                    }
-
-                });
             });
+        });
     }
 
 
