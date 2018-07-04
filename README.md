@@ -2,7 +2,7 @@
 
 # BloomReach Web Archiving Addon
 
-The Web Archiving Addon provides a notification mechanism for web archiving agencies, communicating all URLs under which a document is visible upon document publication or depublication. 
+The Web Archiving Addon provides a notification mechanism for web archiving agencies, communicating all URLs under which a document is visible upon document publication or depublication.
 Additionally, the addon will send a notification on channel publication.
 
 # Documentation 
