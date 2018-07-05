@@ -35,6 +35,12 @@
         <p>Depending on the manager used, different parameters will be exposed. The configuration can be found under
           /hippo:configuration/hippo:modules/web-archiving-addon-services-daemon/archivemanager</p>
       </subsection>
+
+      <subsection name="HST URL service">
+        <p>This addon exposes a service in HST that fetches all URLs of a document. Configuration for this service can be found in
+          hst-url-service/src/main/resources/META-INF/hst-assembly/addon/org/onehippo/forge/webarchiving/hst/web-archiving-hst.xml.
+          You can change the initialization parameters of the "org.onehippo.forge.webarchiving.hst.service.HstUrlServiceImpl" bean as needed</p>
+      </subsection>
     </section>
   </body>
 </document>
