@@ -92,12 +92,8 @@
     </dependency>
     <dependency>
       <groupId>org.onehippo.forge</groupId>
-      <artifactId>web-archiving-addon-common</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.onehippo.forge</groupId>
-      <artifactId>web-archiving-addon-hst-url-service</artifactId>
+      <artifactId>web-archiving-addon-hst-dependencies</artifactId>
+      <type>pom</type>
     </dependency>
   </dependencies>
   <build>

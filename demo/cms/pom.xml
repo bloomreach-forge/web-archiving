@@ -14,23 +14,19 @@
   <dependencies>
     <dependency>
       <groupId>org.onehippo.forge</groupId>
-      <artifactId>web-archiving-addon-cms-integration</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.onehippo.forge</groupId>
-      <artifactId>web-archiving-addon-common</artifactId>
-      <scope>provided</scope>
+      <artifactId>web-archiving-addon-cms-dependencies</artifactId>
+      <type>pom</type>
     </dependency>
     <dependency>
       <groupId>org.onehippo.forge</groupId>
       <artifactId>web-archiving-addon-archive-manager-tester</artifactId>
     </dependency>
-    <!--
-        <dependency>
-          <groupId>org.onehippo.forge</groupId>
-          <artifactId>web-archiving-addon-archive-manager-archiefweb</artifactId>
-        </dependency>
-    -->
+<!--
+    <dependency>
+      <groupId>org.onehippo.forge</groupId>
+      <artifactId>web-archiving-addon-archive-manager-archiefweb</artifactId>
+    </dependency>
+-->
     <dependency>
       <groupId>org.onehippo.cms7.hst.dependencies</groupId>
       <artifactId>hst-repository-dependencies</artifactId>

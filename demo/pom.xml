@@ -171,21 +171,23 @@
 
       <dependency>
         <groupId>org.onehippo.forge</groupId>
-        <artifactId>web-archiving-addon-cms-integration</artifactId>
+        <artifactId>web-archiving-addon-cms-dependencies</artifactId>
         <version>${webarchiving-addon.version}</version>
+        <type>pom</type>
       </dependency>
 
       <dependency>
         <groupId>org.onehippo.forge</groupId>
-        <artifactId>web-archiving-addon-hst-url-service</artifactId>
+        <artifactId>web-archiving-addon-hst-dependencies</artifactId>
         <version>${webarchiving-addon.version}</version>
+        <type>pom</type>
       </dependency>
 
-<!--      <dependency>
-        <groupId>org.onehippo.forge</groupId>
-        <artifactId>web-archiving-addon-archive-manager-archiefweb</artifactId>
-        <version>${webarchiving-addon.version}</version>
-      </dependency>-->
+      <!--      <dependency>
+              <groupId>org.onehippo.forge</groupId>
+              <artifactId>web-archiving-addon-archive-manager-archiefweb</artifactId>
+              <version>${webarchiving-addon.version}</version>
+            </dependency>-->
       <dependency>
         <groupId>org.onehippo.forge</groupId>
         <artifactId>web-archiving-addon-archive-manager-tester</artifactId>
