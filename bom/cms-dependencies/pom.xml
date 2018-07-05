@@ -27,19 +27,19 @@
   <name>BloomReach Web Archiving Addon CMS Dependencies</name>
   <artifactId>web-archiving-addon-cms-dependencies</artifactId>
   <packaging>pom</packaging>
-  
+
   <dependencyManagement>
     <dependencies>
       <dependency>
-      <groupId>org.onehippo.forge</groupId>
-      <artifactId>web-archiving-addon-cms-integration</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.onehippo.forge</groupId>
-      <artifactId>web-archiving-addon-updates-store</artifactId>
-      <version>${project.version}</version>
-    </dependency>
+        <groupId>org.onehippo.forge</groupId>
+        <artifactId>web-archiving-addon-cms-integration</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.forge</groupId>
+        <artifactId>web-archiving-addon-updates-store</artifactId>
+        <version>${project.version}</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 
@@ -54,5 +54,18 @@
       <artifactId>web-archiving-addon-updates-store</artifactId>
       <version>${project.version}</version>
     </dependency>
-   </dependencies>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-site-plugin</artifactId>
+        <configuration>
+          <skip>true</skip>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
 </project>
