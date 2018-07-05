@@ -131,7 +131,10 @@
             
 <p>Add the addon version to the main pom.xml of the project</p>
             
+<div class="brush: xml">
+              
 <div class="source"><pre>&lt;webarchiving-addon.version&gt;version.number&lt;/webarchiving-addon.version&gt;</pre></div>
+            </div>
             
 <p>
               <b>Note:</b>
@@ -146,6 +149,8 @@
               to dependencies that need to have a &quot;provided&quot; scope. Depending which manager you want to use, comment and uncomment the corresponding dependencies below:
             </p>
             
+<div class="brush: xml">
+              
 <div class="source"><pre>
     &lt;dependency&gt;
       &lt;groupId&gt;org.onehippo.forge&lt;/groupId&gt;
@@ -179,7 +184,8 @@
       &lt;artifactId&gt;web-archiving-addon-archive-manager-tester&lt;/artifactId&gt;
       &lt;version&gt;${webarchiving-addon.version}&lt;/version&gt;
     &lt;/dependency&gt;
-            </pre></div>
+              </pre></div>
+            </div>
           </li>
 
           
@@ -187,21 +193,27 @@
             
 <p>Add the &quot;common&quot; artifact as a direct, provided dependency to the &lt;dependencies&gt; section</p>
             
+<div class="brush: xml">
+              
 <div class="source"><pre>
     &lt;dependency&gt;
       &lt;groupId&gt;org.onehippo.forge&lt;/groupId&gt;
       &lt;artifactId&gt;web-archiving-addon-common&lt;/artifactId&gt;
       &lt;scope&gt;provided&lt;/scope&gt;
     &lt;/dependency&gt;
-            </pre></div>
+              </pre></div>
+            </div>
           </li>
 
           
 <li>
             
 <p>Add the &quot;common&quot; artifact as a shared lib dependency via the cargo.run profile. If you are creating a distribution, make sure the artifact is also
-            listed in src/main/assembly/shared-lib-component.xml</p>
+              listed in src/main/assembly/shared-lib-component.xml
+            </p>
             
+<div class="brush: xml">
+              
 <div class="source"><pre>
     &lt;profile&gt;
       &lt;id&gt;cargo.run&lt;/id&gt;
@@ -220,7 +232,8 @@
                   &lt;/dependency&gt;
                 &lt;/dependencies&gt;
                 ...
-            </pre></div>
+              </pre></div>
+            </div>
           </li>
         </ol>
       </div>
@@ -236,6 +249,8 @@
             
 <p>Add the following dependencies to the cms pom.xml, notice the provided dependency and comment/uncomment the desired Web Archive manager</p>
             
+<div class="brush: xml">
+              
 <div class="source"><pre>
     &lt;dependency&gt;
       &lt;groupId&gt;org.onehippo.forge&lt;/groupId&gt;
@@ -256,7 +271,8 @@
           &lt;artifactId&gt;web-archiving-addon-archive-manager-archiefweb&lt;/artifactId&gt;
         &lt;/dependency&gt;
     --&gt;
-            </pre></div>
+              </pre></div>
+            </div>
           </li>
         </ol>
       </div>
@@ -271,6 +287,8 @@
             
 <p>Add the following dependencies to the site pom.xml, please notice the provided dependency</p>
             
+<div class="brush: xml">
+              
 <div class="source"><pre>
     &lt;dependency&gt;
       &lt;groupId&gt;org.onehippo.forge&lt;/groupId&gt;
@@ -281,7 +299,8 @@
       &lt;groupId&gt;org.onehippo.forge&lt;/groupId&gt;
       &lt;artifactId&gt;web-archiving-addon-hst-url-service&lt;/artifactId&gt;
     &lt;/dependency&gt;
-            </pre></div>
+              </pre></div>
+            </div>
           </li>
         </ol>
       </div>
@@ -296,11 +315,14 @@
             
 <p>To change logging level for the addon, add the following &lt;logger&gt; configuration in conf/log4j-dev.xml and conf/log4j-dist.xml</p>
             
+<div class="brush: xml">
+              
 <div class="source"><pre>
     &lt;logger name=&quot;org.onehippo.forge.webarchiving&quot;&gt;
       &lt;level value=&quot;info&quot;/&gt;
     &lt;/logger&gt;
-            </pre></div>
+              </pre></div>
+            </div>
           </li>
         </ol>
       </div>

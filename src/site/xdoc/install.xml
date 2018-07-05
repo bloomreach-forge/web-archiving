@@ -54,7 +54,9 @@
 
           <li>
             <p>Add the addon version to the main pom.xml of the project</p>
-            <source><![CDATA[<webarchiving-addon.version>version.number</webarchiving-addon.version>]]></source>
+            <div class="brush: xml">
+              <source><![CDATA[<webarchiving-addon.version>version.number</webarchiving-addon.version>]]></source>
+            </div>
             <p>
               <b>Note:</b>
               always check for the latest version number and compatibility with the project on the <a href="release-notes.html">Release Notes page</a>.
@@ -65,7 +67,8 @@
             <p>It is recommended to use the <![CDATA[<dependencyManagement><dependencies>]]> section to set the version of all the addon artifacts. Please pay extra attention
               to dependencies that need to have a "provided" scope. Depending which manager you want to use, comment and uncomment the corresponding dependencies below:
             </p>
-            <source><![CDATA[
+            <div class="brush: xml">
+              <source><![CDATA[
     <dependency>
       <groupId>org.onehippo.forge</groupId>
       <artifactId>web-archiving-addon-common</artifactId>
@@ -98,24 +101,29 @@
       <artifactId>web-archiving-addon-archive-manager-tester</artifactId>
       <version>${webarchiving-addon.version}</version>
     </dependency>]]>
-            </source>
+              </source>
+            </div>
           </li>
 
           <li>
             <p>Add the "common" artifact as a direct, provided dependency to the <![CDATA[<dependencies>]]> section</p>
-            <source><![CDATA[
+            <div class="brush: xml">
+              <source><![CDATA[
     <dependency>
       <groupId>org.onehippo.forge</groupId>
       <artifactId>web-archiving-addon-common</artifactId>
       <scope>provided</scope>
     </dependency>]]>
-            </source>
+              </source>
+            </div>
           </li>
 
           <li>
             <p>Add the "common" artifact as a shared lib dependency via the cargo.run profile. If you are creating a distribution, make sure the artifact is also
-            listed in src/main/assembly/shared-lib-component.xml</p>
-            <source><![CDATA[
+              listed in src/main/assembly/shared-lib-component.xml
+            </p>
+            <div class="brush: xml">
+              <source><![CDATA[
     <profile>
       <id>cargo.run</id>
       <build>
@@ -133,7 +141,8 @@
                   </dependency>
                 </dependencies>
                 ...]]>
-            </source>
+              </source>
+            </div>
           </li>
         </ol>
       </subsection>
@@ -143,7 +152,8 @@
         <ol>
           <li>
             <p>Add the following dependencies to the cms pom.xml, notice the provided dependency and comment/uncomment the desired Web Archive manager</p>
-            <source><![CDATA[
+            <div class="brush: xml">
+              <source><![CDATA[
     <dependency>
       <groupId>org.onehippo.forge</groupId>
       <artifactId>web-archiving-addon-cms-integration</artifactId>
@@ -163,7 +173,8 @@
           <artifactId>web-archiving-addon-archive-manager-archiefweb</artifactId>
         </dependency>
     -->]]>
-            </source>
+              </source>
+            </div>
           </li>
         </ol>
       </subsection>
@@ -172,7 +183,8 @@
         <ol>
           <li>
             <p>Add the following dependencies to the site pom.xml, please notice the provided dependency</p>
-            <source><![CDATA[
+            <div class="brush: xml">
+              <source><![CDATA[
     <dependency>
       <groupId>org.onehippo.forge</groupId>
       <artifactId>web-archiving-addon-common</artifactId>
@@ -182,7 +194,8 @@
       <groupId>org.onehippo.forge</groupId>
       <artifactId>web-archiving-addon-hst-url-service</artifactId>
     </dependency>]]>
-            </source>
+              </source>
+            </div>
           </li>
         </ol>
       </subsection>
@@ -191,11 +204,13 @@
         <ol>
           <li>
             <p>To change logging level for the addon, add the following <![CDATA[<logger>]]> configuration in conf/log4j-dev.xml and conf/log4j-dist.xml</p>
-            <source><![CDATA[
+            <div class="brush: xml">
+              <source><![CDATA[
     <logger name="org.onehippo.forge.webarchiving">
       <level value="info"/>
     </logger>]]>
-            </source>
+              </source>
+            </div>
           </li>
         </ol>
       </subsection>
