@@ -92,8 +92,8 @@ public class TesterWebArchiveManager implements WebArchiveManager, LifeCycle, Di
             }
 
             if (update.hashCode() % 2 != 0) {
-                log.error("\n====================  Failed to request Web Archive update ====================\n{}" +
-                    "========================================\n", update);
+                log.error("\n====================  Failed to request Web Archive update ====================\n{}\n\n" +
+                    "========================================\n\n", update);
             }
         });
     }
