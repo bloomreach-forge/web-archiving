@@ -44,9 +44,9 @@
   </licenses>
 
   <scm>
-    <connection>scm:git:git@github.com:onehippo-forge/web-archiving.git</connection>
-    <developerConnection>scm:git:git@github.com:onehippo-forge/web-archiving.git</developerConnection>
-    <url>https://github.com/onehippo-forge/web-archiving.git</url>
+    <connection>scm:git:git@github.com:bloomreach-forge/web-archiving.git</connection>
+    <developerConnection>scm:git:git@github.com:bloomreach-forge/web-archiving.git</developerConnection>
+    <url>https://github.com/bloomreach-forge/web-archiving.git</url>
     <tag>HEAD</tag>
   </scm>
 
