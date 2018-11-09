@@ -27,7 +27,7 @@
     <bloomreach>
      <!-- Add a 'Fork me on GitHub' ribbon  -->
       <gitHub>
-        <projectId>bloomreach-forge/web-archiving</projectId>
+        <projectId>bloomreach-forge/web-archiving-addon</projectId>
       </gitHub>
     </bloomreach>
   </custom>
