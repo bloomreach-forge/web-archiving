@@ -23,7 +23,7 @@ import org.hippoecm.hst.core.container.ComponentManagerAware;
 import org.hippoecm.hst.pagecomposer.jaxrs.api.ChannelEvent;
 import org.hippoecm.hst.pagecomposer.jaxrs.api.ChannelEvent.ChannelEventType;
 import org.onehippo.forge.webarchiving.common.model.WebArchiveUpdateType;
-import org.onehippo.forge.webarchiving.hst.util.WebArchiveUpdateHelper;
+import org.onehippo.forge.webarchiving.common.util.WebArchiveUpdateHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

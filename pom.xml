@@ -169,6 +169,7 @@
     <module>archive-managers</module>
     <module>cms-integration</module>
     <module>hst-url-service</module>
+    <module>enterprise-hst-url-service</module>
   </modules>
 
   <profiles>

@@ -19,7 +19,6 @@ package org.onehippo.forge.webarchiving.cms.scxml;
 
 import java.rmi.RemoteException;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.List;
 
 import javax.jcr.Node;
@@ -30,8 +29,8 @@ import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.forge.webarchiving.common.api.HstUrlService;
 import org.onehippo.forge.webarchiving.common.api.WebArchiveManager;
 import org.onehippo.forge.webarchiving.common.error.WebArchiveUpdateException;
-import org.onehippo.forge.webarchiving.common.model.WebArchiveUpdate;
 import org.onehippo.forge.webarchiving.common.model.WebArchiveUpdateType;
+import org.onehippo.forge.webarchiving.common.util.WebArchiveUpdateHelper;
 import org.onehippo.repository.documentworkflow.task.AbstractDocumentTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,21 +66,7 @@ public class WebArchivingTask extends AbstractDocumentTask {
             return null;
         }
 
-        WebArchiveUpdate webArchiveUpdate = new WebArchiveUpdate();
-        webArchiveUpdate.setCreator(getWorkflowContext().getUserIdentity());
-        webArchiveUpdate.setType(WebArchiveUpdateType.DOCUMENT);
-        webArchiveUpdate.setUrls(urls);
-        webArchiveUpdate.setId(handle.getPath());
-        Calendar now = Calendar.getInstance();
-        webArchiveUpdate.setCreated(now);
-
-        try {
-            webArchiveManager.requestUpdate(webArchiveUpdate);
-        } catch (WebArchiveUpdateException e) {
-            log.error("\n====================  Failed to request Web Archive update ====================\n{}" +
-                "========================================\n", webArchiveUpdate, e);
-        }
-
+        WebArchiveUpdateHelper.sendArchiveUpdate(handle.getPath(), getWorkflowContext().getUserIdentity(), WebArchiveUpdateType.DOCUMENT, urls, handle.getPath());
         return null;
     }
 }

@@ -149,6 +149,12 @@
         <version>${webarchiving-addon.version}</version>
       </dependency>
 
+      <dependency>
+        <groupId>org.onehippo.forge</groupId>
+        <artifactId>web-archiving-addon-enterprise-hst-url-service</artifactId>
+        <version>${webarchiving-addon.version}</version>
+      </dependency>
+
       <!--Uncomment to use the ArchiefWeb manager-->
       <!--<dependency>-->
         <!--<groupId>org.onehippo.forge</groupId>-->

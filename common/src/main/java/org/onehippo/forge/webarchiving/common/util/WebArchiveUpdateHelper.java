@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.onehippo.forge.webarchiving.hst.util;
+package org.onehippo.forge.webarchiving.common.util;
 
 import java.util.Calendar;
 import java.util.List;
