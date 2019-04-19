@@ -21,26 +21,26 @@ import org.hippoecm.hst.content.beans.standard.HippoHtml;
 import org.hippoecm.hst.content.beans.standard.HippoGalleryImageSet;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 
-@HippoEssentialsGenerated(internalName = "webarchivingaddondemov11:bannerdocument")
-@Node(jcrType = "webarchivingaddondemov11:bannerdocument")
+@HippoEssentialsGenerated(internalName = "webarchivingaddondemov12:bannerdocument")
+@Node(jcrType = "webarchivingaddondemov12:bannerdocument")
 public class Banner extends BaseDocument {
-	@HippoEssentialsGenerated(internalName = "webarchivingaddondemov11:title")
+	@HippoEssentialsGenerated(internalName = "webarchivingaddondemov12:title")
 	public String getTitle() {
-		return getProperty("webarchivingaddondemov11:title");
+		return getProperty("webarchivingaddondemov12:title");
 	}
 
-	@HippoEssentialsGenerated(internalName = "webarchivingaddondemov11:content")
+	@HippoEssentialsGenerated(internalName = "webarchivingaddondemov12:content")
 	public HippoHtml getContent() {
-		return getHippoHtml("webarchivingaddondemov11:content");
+		return getHippoHtml("webarchivingaddondemov12:content");
 	}
 
-	@HippoEssentialsGenerated(internalName = "webarchivingaddondemov11:image")
+	@HippoEssentialsGenerated(internalName = "webarchivingaddondemov12:image")
 	public HippoGalleryImageSet getImage() {
-		return getLinkedBean("webarchivingaddondemov11:image", HippoGalleryImageSet.class);
+		return getLinkedBean("webarchivingaddondemov12:image", HippoGalleryImageSet.class);
 	}
 
-	@HippoEssentialsGenerated(internalName = "webarchivingaddondemov11:link")
+	@HippoEssentialsGenerated(internalName = "webarchivingaddondemov12:link")
 	public HippoBean getLink() {
-		return getLinkedBean("webarchivingaddondemov11:link", HippoBean.class);
+		return getLinkedBean("webarchivingaddondemov12:link", HippoBean.class);
 	}
 }

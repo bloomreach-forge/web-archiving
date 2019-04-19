@@ -1,0 +1,4 @@
+definitions:
+  config:
+    /hippowpm:hippowpm/hippowpm:approvalpolicies/dx-projects:
+      hippowpm:requiredAccepts: 0

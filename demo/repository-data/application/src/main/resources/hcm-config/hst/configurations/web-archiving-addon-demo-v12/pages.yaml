@@ -1,0 +1,4 @@
+definitions:
+  config:
+    /hst:hst/hst:configurations/webarchivingaddondemov12/hst:pages:
+      jcr:primaryType: hst:pages

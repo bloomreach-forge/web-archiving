@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <installerDocument>
-    <name>bannerPlugin</name>
-    <dateAdded>2018-06-05T22:51:48.035+02:00</dateAdded>
-    <dateInstalled>2018-06-05T22:51:45.650+02:00</dateInstalled>
-    <installationState>installed</installationState>
+    <dateAdded>2019-04-12T12:16:24.566+02:00</dateAdded>
+    <dateInstalled>2019-04-12T12:16:21.884+02:00</dateInstalled>
+    <installationState>installing</installationState>
 </installerDocument>

@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <project>
-    <name>project-settings</name>
-    <beansFolder>site/src/main/java</beansFolder>
-    <bootstrapModule>bootstrap</bootstrapModule>
+    <applicationSubModule>application</applicationSubModule>
     <cmsModule>cms</cmsModule>
     <confirmParams>false</confirmParams>
+    <developmentSubModule>development</developmentSubModule>
+    <enterprise>true</enterprise>
     <extraTemplates>true</extraTemplates>
-    <projectNamespace>webarchivingaddondemov11</projectNamespace>
+    <projectNamespace>webarchivingaddondemov12</projectNamespace>
+    <repositoryDataModule>repository-data</repositoryDataModule>
     <selectedBeansPackage>org.onehippo.forge.webarchiving.beans</selectedBeansPackage>
     <selectedComponentsPackage>org.onehippo.forge.webarchiving.components</selectedComponentsPackage>
     <selectedProjectPackage>org.onehippo.forge.webarchiving</selectedProjectPackage>

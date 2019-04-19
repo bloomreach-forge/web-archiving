@@ -1,17 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.onehippo.forge</groupId>
-    <artifactId>web-archiving-addon-demo-v11</artifactId>
-    <version>0.1.0-SNAPSHOT</version>
+    <artifactId>web-archiving-addon-demo-v12</artifactId>
+    <version>1.0.1-SNAPSHOT</version>
   </parent>
-  <artifactId>web-archiving-addon-demo-v11-site</artifactId>
+  <artifactId>web-archiving-addon-demo-v12-site</artifactId>
   <packaging>war</packaging>
-  <name>Web Archiving Addon Demo v11 Site</name>
-  <description>Web Archiving Addon Demo v11 Site</description>
+  <name>Web Archiving Addon Demo v12 Site</name>
+  <description>Web Archiving Addon Demo v12 Site</description>
   <dependencies>
+
+    <!--Start - Install web-archiving addon-->
+    <dependency>
+      <groupId>org.onehippo.forge</groupId>
+      <artifactId>web-archiving-addon-common</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo.forge</groupId>
+      <artifactId>web-archiving-addon-hst-url-service</artifactId>
+    </dependency>
+    <!--End - Install web-archiving addon-->
+
     <dependency>
       <groupId>javax.servlet.jsp</groupId>
       <artifactId>jsp-api</artifactId>
@@ -26,7 +38,7 @@
       <groupId>org.apache.taglibs</groupId>
       <artifactId>taglibs-standard-impl</artifactId>
     </dependency>
-
+    
     <!-- the following xalan dependencies are required by apache standard taglibs implementation -->
     <dependency>
       <groupId>xalan</groupId>
@@ -91,19 +103,19 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.onehippo.forge</groupId>
-      <artifactId>web-archiving-addon-common</artifactId>
-      <scope>provided</scope>
+      <groupId>com.onehippo.cms7</groupId>
+      <artifactId>hippo-addon-enterprise-site-toolkit-dependencies-server</artifactId>
+      <type>pom</type>
     </dependency>
     <dependency>
-      <groupId>org.onehippo.forge</groupId>
-      <artifactId>web-archiving-addon-hst-url-service</artifactId>
+      <groupId>com.onehippo.cms7</groupId>
+      <artifactId>hippo-addon-wpm-dependencies-site</artifactId>
+      <type>pom</type>
     </dependency>
   </dependencies>
   <build>
     <resources>
       <resource>
-        <filtering>false</filtering>
         <directory>src/main/java</directory>
         <includes>
           <include>**/*.properties</include>

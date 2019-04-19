@@ -1,0 +1,4 @@
+/hst:hst/hst:configurations/webarchivingaddondemov12/hst:workspace/hst:sitemenus/main/home:
+  jcr:primaryType: hst:sitemenuitem
+  jcr:mixinTypes: ['dxphst:mergeable']
+  hst:referencesitemapitem: root

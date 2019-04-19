@@ -1,0 +1,6 @@
+definitions:
+  config:
+    /hst:hst/hst:configurations/webarchivingaddondemov12/hst:catalog:
+      jcr:primaryType: hst:catalog
+      /webarchivingaddondemov12-catalog:
+        jcr:primaryType: hst:containeritempackage

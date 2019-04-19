@@ -6,8 +6,8 @@
          id="cms">
 
   <!-- General configuration -->
-  <display-name>Web Archiving Addon Demo v11 CMS</display-name>
-  <description>Web Archiving Addon Demo v11 CMS</description>
+  <display-name>Web Archiving Addon Demo v12 CMS</display-name>
+  <description>Web Archiving Addon Demo v12 CMS</description>
 
   <context-param>
     <description>The address of the repository</description>
@@ -107,7 +107,7 @@
 
   <servlet>
     <servlet-name>AngularResourceServlet</servlet-name>
-    <servlet-class>org.onehippo.cms7.utilities.servlet.ResourceServlet</servlet-class>
+    <servlet-class>org.onehippo.cms7.utilities.servlet.SecureCmsResourceServlet</servlet-class>
     <init-param>
       <param-name>jarPathPrefix</param-name>
       <param-value>/angular</param-value>
@@ -122,7 +122,7 @@
 
   <servlet>
     <servlet-name>CKEditorResourceServlet</servlet-name>
-    <servlet-class>org.onehippo.cms7.utilities.servlet.ResourceServlet</servlet-class>
+    <servlet-class>org.onehippo.cms7.utilities.servlet.SecureCmsResourceServlet</servlet-class>
     <init-param>
       <param-name>jarPathPrefix</param-name>
       <param-value>/ckeditor</param-value>

@@ -1,0 +1,6 @@
+definitions:
+  config:
+    /hst:hst/hst:configurations/webarchivingaddondemov12/hst:workspace:
+      jcr:primaryType: hst:workspace
+      jcr:mixinTypes: ['dxphst:mergeable']
+      dxphst:treehash: B58444F40DC970DE3DAB28D9F06E9591

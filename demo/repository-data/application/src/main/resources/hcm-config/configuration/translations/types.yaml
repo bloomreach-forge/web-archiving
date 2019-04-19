@@ -1,0 +1,32 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:types/webarchivingaddondemov12:bannerdocument:
+      jcr:primaryType: hipposys:resourcebundles
+      /en:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Banner
+        webarchivingaddondemov12:content: Content
+        webarchivingaddondemov12:image: Image
+        webarchivingaddondemov12:link: Link
+        webarchivingaddondemov12:title: Title
+      /nl:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Banner
+        webarchivingaddondemov12:content: Inhoud
+        webarchivingaddondemov12:image: Afbeelding
+        webarchivingaddondemov12:link: Link
+        webarchivingaddondemov12:title: Titel
+      /fr:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Bannière
+        webarchivingaddondemov12:content: Contenu
+        webarchivingaddondemov12:image: Image
+        webarchivingaddondemov12:link: Lien
+        webarchivingaddondemov12:title: Titre
+      /de:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Banner
+        webarchivingaddondemov12:content: Inhalt
+        webarchivingaddondemov12:image: Abbildung
+        webarchivingaddondemov12:link: Link
+        webarchivingaddondemov12:title: Titel

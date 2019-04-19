@@ -1,0 +1,42 @@
+definitions:
+  config:
+    /hst:hst/hst:configurations/webarchivingaddondemov12/hst:workspace/hst:containers:
+      jcr:primaryType: hst:containercomponentfolder
+      jcr:mixinTypes: ['dxphst:mergeable']
+      /base:
+        jcr:primaryType: hst:containercomponentfolder
+        jcr:mixinTypes: ['dxphst:mergeable']
+        /top:
+          .meta:residual-child-node-category: content
+          jcr:primaryType: hst:containercomponent
+          hst:label: Top
+          hst:xtype: hst.vbox
+          jcr:mixinTypes: ['dxphst:mergeable']
+          hst:lastmodified: 2019-04-12T12:21:15.405+02:00
+        /footer:
+          .meta:residual-child-node-category: content
+          jcr:primaryType: hst:containercomponent
+          hst:label: Footer
+          hst:xtype: hst.vbox
+          jcr:mixinTypes: ['dxphst:mergeable']
+          hst:lastmodified: 2019-04-12T12:21:15.405+02:00
+      /homepage:
+        jcr:primaryType: hst:containercomponentfolder
+        jcr:mixinTypes: ['dxphst:mergeable']
+        /main:
+          .meta:residual-child-node-category: content
+          jcr:primaryType: hst:containercomponent
+          hst:label: Home Page Main
+          hst:xtype: hst.vbox
+          jcr:mixinTypes: ['dxphst:mergeable']
+          hst:lastmodified: 2019-04-12T16:49:26.418+02:00
+      /pagenotfound:
+        jcr:primaryType: hst:containercomponentfolder
+        jcr:mixinTypes: ['dxphst:mergeable']
+        /main:
+          .meta:residual-child-node-category: content
+          jcr:primaryType: hst:containercomponent
+          hst:label: Page-Not-Found Main
+          hst:xtype: hst.vbox
+          jcr:mixinTypes: ['dxphst:mergeable']
+          hst:lastmodified: 2019-04-12T12:21:15.405+02:00

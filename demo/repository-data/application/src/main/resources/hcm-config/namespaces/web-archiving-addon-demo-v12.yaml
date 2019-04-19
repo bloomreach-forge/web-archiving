@@ -1,0 +1,6 @@
+definitions:
+  config:
+    /hippo:namespaces/webarchivingaddondemov12:
+      jcr:primaryType: hipposysedit:namespace
+      jcr:mixinTypes: ['mix:referenceable']
+      jcr:uuid: 1619afe9-3fb1-4027-9354-4d60a08d949b
