@@ -16,21 +16,18 @@
 
 package org.onehippo.forge.webarchiving.hst.events;
 
-import java.util.Calendar;
-
-import com.google.common.eventbus.Subscribe;
+import java.util.Collections;
 
 import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.core.container.ComponentManagerAware;
 import org.hippoecm.hst.pagecomposer.jaxrs.api.ChannelEvent;
 import org.hippoecm.hst.pagecomposer.jaxrs.api.ChannelEvent.ChannelEventType;
-import org.onehippo.cms7.services.HippoServiceRegistry;
-import org.onehippo.forge.webarchiving.common.api.WebArchiveManager;
-import org.onehippo.forge.webarchiving.common.error.WebArchiveUpdateException;
-import org.onehippo.forge.webarchiving.common.model.WebArchiveUpdate;
 import org.onehippo.forge.webarchiving.common.model.WebArchiveUpdateType;
+import org.onehippo.forge.webarchiving.hst.util.WebArchiveUpdateHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.eventbus.Subscribe;
 
 public class ChannelPublicationEventListener implements ComponentManagerAware {
 
@@ -58,34 +55,19 @@ public class ChannelPublicationEventListener implements ComponentManagerAware {
         }
 
         final ChannelEventType type = event.getChannelEventType();
+        final String projectId = event.getEditingMount().getChannel().getBranchId();
         if (ChannelEventType.PUBLISH != type) {
             log.debug("Skipping ChannelEvent '{}' because type is not equal to {}.", type, ChannelEventType.PUBLISH);
             return;
         }
-
-        //TODO BloomReach 12: check if pub is happening in context of a project: event.getEditingPreviewSite().getChannel().getBranchOf();
-
-        final String channelIdentifier = event.getEditingMount().getChannel().getName();
-        final WebArchiveManager webArchiveManager = HippoServiceRegistry.getService(WebArchiveManager.class);
-
-        if (webArchiveManager == null) {
-            log.error("A required service isn't registered: web-archive-service ({}). Skipping request of update for channel {}",
-                WebArchiveManager.class, webArchiveManager, channelIdentifier);
+        else if (projectId != null){
+            log.debug("Skipping ChannelEvent because publication is in context of project with ID: '{}'",projectId);
             return;
         }
 
-        WebArchiveUpdate webArchiveUpdate = new WebArchiveUpdate();
-        webArchiveUpdate.setCreator("TODO");
-        webArchiveUpdate.setType(WebArchiveUpdateType.CHANNEL);
-        webArchiveUpdate.setId(channelIdentifier);
-        Calendar now = Calendar.getInstance();
-        webArchiveUpdate.setCreated(now);
+        final String channelIdentifier = event.getEditingMount().getChannel().getName();
+        final String creator = String.join(", ",event.getUserIds());
 
-        try {
-            webArchiveManager.requestUpdate(webArchiveUpdate);
-        } catch (WebArchiveUpdateException e) {
-            log.error("\n====================  Failed to request Web Archive update ====================\n{}" +
-                "========================================\n", webArchiveUpdate, e);
-        }
+        WebArchiveUpdateHelper.sendArchiveUpdate(channelIdentifier, creator, WebArchiveUpdateType.CHANNEL, Collections.emptyList(), channelIdentifier);
     }
 }

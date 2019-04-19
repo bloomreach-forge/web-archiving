@@ -68,6 +68,16 @@
       <artifactId>hippo-repository-api</artifactId>
       <scope>provided</scope>
     </dependency>
+    <dependency>
+      <groupId>com.onehippo.cms7</groupId>
+      <artifactId>hippo-addon-wpm-repository</artifactId>
+      <version>${hippo.addon-wpm.version}</version>
+    </dependency>
+    <dependency>
+        <groupId>com.onehippo.cms7</groupId>
+        <artifactId>hippo-enterprise-services</artifactId>
+        <version>${hippo.addon-wpm.version}</version>
+    </dependency>
   </dependencies>
 
   <build>
@@ -86,6 +96,7 @@
         <directory>src/main/resources</directory>
         <includes>
           <include>**/*.xml</include>
+          <include>**/*.yaml</include>
         </includes>
       </resource>
     </resources>

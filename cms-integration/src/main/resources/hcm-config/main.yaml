@@ -1,0 +1,5 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:workflows/default/handle/hipposys:config:
+      default-scxml-definition: documentworkflow
+      scxml-definition: documentworkflow-with-pub-listeners

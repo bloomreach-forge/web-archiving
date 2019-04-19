@@ -33,4 +33,7 @@
 
   <bean class="org.onehippo.forge.webarchiving.hst.events.ChannelPublicationEventListener"
         init-method="init" destroy-method="destroy"/>
+
+  <bean class="org.onehippo.forge.webarchiving.hst.events.ProjectMergeEventListener"
+        init-method="init" destroy-method="destroy"/>
 </beans>

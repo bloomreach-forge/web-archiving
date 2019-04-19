@@ -42,6 +42,11 @@ public class LocalHstContainerURL implements HstContainerURL {
     }
 
     @Override
+    public String getURIEncoding() {
+        return "UTF-8";
+    }
+
+    @Override
     public String getHostName() {
         return host;
     }

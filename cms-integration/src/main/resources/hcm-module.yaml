@@ -1,0 +1,6 @@
+group:
+  name: web-archiving
+  after: hippo-cms
+project: web-archiving-addon
+module:
+  name: web-archiving-addon-cms-integration
