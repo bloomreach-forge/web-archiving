@@ -1,0 +1,11 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:modules/web-archiving-addon-services-daemon/hippo:moduleconfig/archivemanager:
+      archiefweb.api.key: ''
+      archiefweb.api.url: ''
+      archiefweb.api.user: ''
+      archiefweb.certification.check: 'true'
+      className:
+        operation: override
+        type: string
+        value: org.onehippo.forge.webarchiving.archivemanagers.archiefweb.ArchiefWebArchiveManager

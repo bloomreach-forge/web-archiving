@@ -62,8 +62,10 @@ public class ChannelPublicationEventListener implements ComponentManagerAware {
             log.debug("Skipping ChannelEvent '{}' because type is not equal to {}.", type, ChannelEventType.PUBLISH);
             return;
         }
-
-        //TODO BloomReach 12: check if pub is happening in context of a project: event.getEditingPreviewSite().getChannel().getBranchOf();
+        else if (projectId != null){
+            log.debug("Skipping ChannelEvent because publication is in context of project with ID: '{}'",projectId);
+            return;
+        }
 
         final String channelIdentifier = event.getEditingMount().getChannel().getName();
         final WebArchiveManager webArchiveManager = HippoServiceRegistry.getService(WebArchiveManager.class);
@@ -73,6 +75,7 @@ public class ChannelPublicationEventListener implements ComponentManagerAware {
                 WebArchiveManager.class, webArchiveManager, channelIdentifier);
             return;
         }
+        final String creator = String.join(", ",event.getUserIds());
 
         WebArchiveUpdate webArchiveUpdate = new WebArchiveUpdate();
         webArchiveUpdate.setCreator("TODO");

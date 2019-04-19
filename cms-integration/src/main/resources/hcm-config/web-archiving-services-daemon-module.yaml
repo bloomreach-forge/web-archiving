@@ -1,0 +1,18 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:modules/web-archiving-addon-services-daemon:
+      jcr:primaryType: hipposys:module
+      hipposys:className: org.onehippo.forge.webarchiving.cms.WebArchivingServicesDaemonModule
+      hipposys:cmsonly: true
+      /hippo:moduleconfig:
+        jcr:primaryType: hipposys:moduleconfig
+        environment.system.property: hippo.environment
+        /archivemanager:
+          jcr:primaryType: hipposys:moduleconfig
+          className: ''
+        /updatesmanager:
+          jcr:primaryType: hipposys:moduleconfig
+          className: ''
+        /channelpub:
+          jcr:primaryType: hipposys:moduleconfig
+          className: 'org.onehippo.forge.webarchiving.cms.events.ChannelPublicationListenerImpl'

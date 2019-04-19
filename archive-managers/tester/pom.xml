@@ -63,7 +63,7 @@
         <filtering>false</filtering>
         <directory>src/main/resources</directory>
         <includes>
-          <include>**/*.xml</include>
+          <include>**/*.yaml</include>
         </includes>
       </resource>
     </resources>
