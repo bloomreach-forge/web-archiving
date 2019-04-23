@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <!--
-    Copyright 2018 BloomReach Inc. (http://www.bloomreach.com)
+    Copyright 2018-2019 BloomReach Inc. (http://www.bloomreach.com)
 
     Licensed under the Apache License, Version 2.0 (the  "License");
     you may not use this file except in compliance with the License.
@@ -21,10 +21,10 @@
   </properties>
   <body>
     <section name="Release Notes">
-      <subsection name="1.0.1">
-        <p class="smallinfo">Release Date: [TODO]</p>
+      <subsection name="1.0.0-SNAPSHOT (unreleased)">
+        <p class="smallinfo">Release Date: n/a</p>
         <ul>
-          <li>Initial release, compatible with BloomReach Experience version 11</li>
+          <li>Initial version, compatible with BloomReach Experience version 11</li>
         </ul>
       </subsection>
     </section>
