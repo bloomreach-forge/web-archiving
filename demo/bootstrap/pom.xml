@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.onehippo.forge</groupId>
     <artifactId>web-archiving-addon-demo-v11</artifactId>
-    <version>0.1.0-SNAPSHOT</version>
+    <version>1.0.0-SNAPSHOT</version>
   </parent>
 
   <name>Web Archiving Addon Demo v11 Bootstrap</name>
