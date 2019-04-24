@@ -12,7 +12,7 @@
   <description>Web Archiving Addon Demo v12</description>
   <groupId>org.onehippo.forge</groupId>
   <artifactId>web-archiving-addon-demo-v12</artifactId>
-  <version>1.0.1-SNAPSHOT</version>
+  <version>2.0.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <!-- 
@@ -59,6 +59,7 @@
   <properties>
 
     <webarchiving-addon.version>${project.version}</webarchiving-addon.version>
+
     <!--***START temporary override of versions*** -->
     <!-- ***END temporary override of versions*** -->
 
