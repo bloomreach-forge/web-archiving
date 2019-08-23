@@ -200,9 +200,9 @@
             <p>To change logging level for the addon, add the following <![CDATA[<logger>]]> configuration in conf/log4j-dev.xml and conf/log4j-dist.xml</p>
             <div class="brush: xml">
               <source><![CDATA[
-    <logger name="org.onehippo.forge.webarchiving">
+    <Logger name="org.onehippo.forge.webarchiving">
       <level value="info"/>
-    </logger>]]>
+    </Logger>]]>
               </source>
             </div>
           </li>
