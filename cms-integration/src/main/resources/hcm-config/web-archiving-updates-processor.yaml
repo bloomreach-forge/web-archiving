@@ -1,0 +1,18 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:modules/scheduler/hippo:moduleconfig/webarchivingaddon:
+      jcr:primaryType: hipposched:jobgroup
+      /updates-processor:
+        jcr:primaryType: hipposched:repositoryjob
+        hipposched:attributeNames: [daysToLive, searchLimit]
+        hipposched:attributeValues: ['365', '1000']
+        hipposched:enabled: true
+        hipposched:repositoryJobClass: org.onehippo.forge.webarchiving.cms.WebArchiveUpdatesProcessor
+        /hipposched:triggers:
+          jcr:primaryType: hipposched:triggers
+          /nightly:
+            jcr:primaryType: hipposched:crontrigger
+            jcr:mixinTypes: ['mix:lockable']
+            jcr:uuid: f9626653-d12a-498e-ae7c-da0555b52a58
+            hipposched:cronExpression: 0 0/1 * 1/1 * ? *
+            hipposched:enabled: true

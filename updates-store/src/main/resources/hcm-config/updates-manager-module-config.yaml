@@ -7,5 +7,5 @@ definitions:
         value: org.onehippo.forge.webarchiving.updatesstore.jcr.JcrWebArchiveUpdateJobsManager
       batchSize:
         operation: override
-          type: string
-          value: 100
+        type: string
+        value: '100'
