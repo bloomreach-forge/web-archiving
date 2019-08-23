@@ -61,7 +61,7 @@ public class TesterWebArchiveManager implements WebArchiveManager, LifeCycle, Di
             log.warn("Can't even sleep for {} seconds", testerSleepTimeInSeconds);
         }
 
-        if (update.hashCode() % 2 != 0) {
+        if (System.currentTimeMillis() % 2 != 0) {
             throw new WebArchiveUpdateException("It's an odd second, web archive is closed now");
         }
     }
