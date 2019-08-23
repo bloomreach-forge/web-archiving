@@ -58,6 +58,8 @@ public class ChannelPublicationEventListener implements ComponentManagerAware {
         }
 
         final ChannelEventType type = event.getChannelEventType();
+        final String projectId = event.getEditingMount().getChannel().getBranchId();
+
         if (ChannelEventType.PUBLISH != type) {
             log.debug("Skipping ChannelEvent '{}' because type is not equal to {}.", type, ChannelEventType.PUBLISH);
             return;

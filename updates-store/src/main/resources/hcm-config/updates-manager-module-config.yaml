@@ -1,0 +1,11 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:modules/web-archiving-addon-services-daemon/hippo:moduleconfig/updatesmanager:
+      className:
+        operation: override
+        type: string
+        value: org.onehippo.forge.webarchiving.updatesstore.jcr.JcrWebArchiveUpdateJobsManager
+      batchSize:
+        operation: override
+          type: string
+          value: 100

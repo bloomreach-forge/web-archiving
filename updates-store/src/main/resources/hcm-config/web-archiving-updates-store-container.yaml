@@ -1,0 +1,4 @@
+definitions:
+  config:
+    /webarchivingaddon:updatesstore:
+      jcr:primaryType: webarchivingaddon:updatejobsstore
