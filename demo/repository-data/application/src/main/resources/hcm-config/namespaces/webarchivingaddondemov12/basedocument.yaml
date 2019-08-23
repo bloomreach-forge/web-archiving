@@ -1,0 +1,15 @@
+definitions:
+  config:
+    /hippo:namespaces/webarchivingaddondemov12/basedocument:
+      jcr:primaryType: hipposysedit:templatetype
+      jcr:mixinTypes: ['mix:referenceable']
+      jcr:uuid: d3e4629d-3696-476b-b837-b7c5d9fced3e
+      /hipposysedit:nodetype:
+        jcr:primaryType: hippo:handle
+        jcr:mixinTypes: ['mix:referenceable']
+        jcr:uuid: d18c3910-a65b-4b83-beff-27a3a4fc1b05
+        /hipposysedit:nodetype:
+          jcr:primaryType: hipposysedit:nodetype
+          jcr:mixinTypes: ['hipposysedit:remodel']
+          hipposysedit:supertype: ['hippo:document', 'hippostdpubwf:document', 'hippostd:publishableSummary']
+          hipposysedit:uri: http://www.onehippo.org/webarchivingaddondemov12/nt/1.0

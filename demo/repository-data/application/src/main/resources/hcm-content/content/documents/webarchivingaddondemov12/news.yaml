@@ -1,0 +1,222 @@
+/content/documents/webarchivingaddondemov12/news:
+  jcr:primaryType: hippostd:folder
+  jcr:mixinTypes: ['hippotranslation:translated', 'mix:referenceable']
+  jcr:uuid: ea76f24f-9eba-47a3-ba19-dda8a481f633
+  hippostd:foldertype: [new-news-document, new-news-folder]
+  hippotranslation:id: 59675ff6-23fd-44d9-9434-2640bf3a5ee8
+  hippotranslation:locale: en
+  /2019:
+    jcr:primaryType: hippostd:folder
+    jcr:mixinTypes: ['hippotranslation:translated', 'mix:referenceable']
+    jcr:uuid: 64d2f125-30bf-43ce-a9c2-eb42b5f57c0c
+    hippostd:foldertype: [new-news-document, new-news-folder]
+    hippotranslation:id: 60466344-c576-4fa8-a8f7-ea39055a26dc
+    hippotranslation:locale: en
+    /08:
+      jcr:primaryType: hippostd:folder
+      jcr:mixinTypes: ['hippotranslation:translated', 'mix:referenceable']
+      jcr:uuid: 6861bf67-14ff-409a-88ac-4c150b071baa
+      hippostd:foldertype: [new-news-document, new-news-folder]
+      hippotranslation:id: 45d54c9d-a61a-4b84-b5c5-51e34ae1c071
+      hippotranslation:locale: en
+      /the-medusa-news:
+        jcr:primaryType: hippo:handle
+        jcr:mixinTypes: ['hippo:named', 'mix:referenceable']
+        jcr:uuid: c580ac64-3874-4717-a6d9-e5ad72080abe
+        hippo:name: The medusa news
+        /the-medusa-news:
+          jcr:primaryType: webarchivingaddondemov12:newsdocument
+          jcr:mixinTypes: ['mix:referenceable']
+          jcr:uuid: 75bccdc9-2139-4849-b860-aed77004379a
+          hippo:availability: [live, preview]
+          hippostd:holder: admin
+          hippostd:state: published
+          hippostdpubwf:createdBy: admin
+          hippostdpubwf:creationDate: 2013-11-12T13:03:00+01:00
+          hippostdpubwf:lastModificationDate: 2013-11-12T13:04:00+01:00
+          hippostdpubwf:lastModifiedBy: admin
+          hippostdpubwf:publicationDate: 2013-11-12T13:04:00+01:00
+          hippotranslation:id: 38f0a835-ef8b-405a-8f23-bc874a0fbf81
+          hippotranslation:locale: en
+          webarchivingaddondemov12:author: Alfred Anonymous
+          webarchivingaddondemov12:date: 2019-08-23T16:36:00+02:00
+          webarchivingaddondemov12:documenttype: news
+          webarchivingaddondemov12:introduction: Lorem ipsum dolor sit amet, consectetur
+            adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore
+            magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco
+            laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
+            in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
+            pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa
+            qui officia deserunt mollit anim id est laborum
+          webarchivingaddondemov12:location: Rotterdam
+          webarchivingaddondemov12:source: ''
+          webarchivingaddondemov12:title: The medusa news
+          /webarchivingaddondemov12:content:
+            jcr:primaryType: hippostd:html
+            hippostd:content: |-
+              <html>
+                        <body>
+
+                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+                        tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+                        quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+                        consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum
+                        dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident,
+                        sunt in culpa qui officia deserunt mollit anim id est laborum</p>
+
+                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+                        tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+                        quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+                        consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum
+                        dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident,
+                        sunt in culpa qui officia deserunt mollit anim id est laborum</p>
+
+                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+                        tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+                        quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+                        consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum
+                        dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident,
+                        sunt in culpa qui officia deserunt mollit anim id est laborum </p>
+
+                        </body>
+                        </html>
+          /webarchivingaddondemov12:image:
+            jcr:primaryType: hippogallerypicker:imagelink
+            hippo:docbase: 4709f797-61ae-4c36-93d4-63b5d50fc200
+            hippo:facets: []
+            hippo:modes: []
+            hippo:values: []
+      /2013-harvest:
+        jcr:primaryType: hippo:handle
+        jcr:mixinTypes: ['hippo:named', 'mix:referenceable']
+        jcr:uuid: 30092f4e-2ef7-4c72-86a5-8ce895908937
+        hippo:name: 2013 harvest
+        /2013-harvest:
+          jcr:primaryType: webarchivingaddondemov12:newsdocument
+          jcr:mixinTypes: ['mix:referenceable']
+          jcr:uuid: aa01fd41-e84d-430b-8b32-71239b3bfc5b
+          hippo:availability: [live, preview]
+          hippostd:holder: admin
+          hippostd:state: published
+          hippostdpubwf:createdBy: admin
+          hippostdpubwf:creationDate: 2013-11-12T14:31:00+01:00
+          hippostdpubwf:lastModificationDate: 2013-11-12T14:31:00+01:00
+          hippostdpubwf:lastModifiedBy: admin
+          hippostdpubwf:publicationDate: 2013-11-12T14:31:00+01:00
+          hippotranslation:id: 04ce341c-7b1d-40e0-a74b-5c3ee40ebe4c
+          hippotranslation:locale: en
+          webarchivingaddondemov12:author: Alfred Anonymous
+          webarchivingaddondemov12:date: 2019-08-23T16:36:00+02:00
+          webarchivingaddondemov12:documenttype: news
+          webarchivingaddondemov12:introduction: Lorem ipsum dolor sit amet, consectetur
+            adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore
+            magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco
+            laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
+            in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
+            pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa
+            qui officia deserunt mollit anim id est laborum
+          webarchivingaddondemov12:location: Rome
+          webarchivingaddondemov12:source: ''
+          webarchivingaddondemov12:title: 2013 harvest
+          /webarchivingaddondemov12:content:
+            jcr:primaryType: hippostd:html
+            hippostd:content: |-
+              <html>
+                        <body>
+
+                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+                        tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+                        quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+                        consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum
+                        dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident,
+                        sunt in culpa qui officia deserunt mollit anim id est laborum</p>
+
+                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+                        tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+                        quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+                        consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum
+                        dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident,
+                        sunt in culpa qui officia deserunt mollit anim id est laborum</p>
+
+                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+                        tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+                        quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+                        consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum
+                        dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident,
+                        sunt in culpa qui officia deserunt mollit anim id est laborum </p>
+
+                        </body>
+                        </html>
+          /webarchivingaddondemov12:image:
+            jcr:primaryType: hippogallerypicker:imagelink
+            hippo:docbase: beff458e-e07a-4065-8cad-8d96b67d13ec
+            hippo:facets: []
+            hippo:modes: []
+            hippo:values: []
+      /the-gastropoda-news:
+        jcr:primaryType: hippo:handle
+        jcr:mixinTypes: ['hippo:named', 'mix:referenceable']
+        jcr:uuid: aeda2bcd-b21d-4ead-a2e6-c64a2ca051c8
+        hippo:name: The gastropoda news
+        /the-gastropoda-news:
+          jcr:primaryType: webarchivingaddondemov12:newsdocument
+          jcr:mixinTypes: ['mix:referenceable']
+          jcr:uuid: 23df39e3-6193-40f2-a686-5a4ce37c37fc
+          hippo:availability: [live, preview]
+          hippostd:holder: admin
+          hippostd:state: published
+          hippostdpubwf:createdBy: admin
+          hippostdpubwf:creationDate: 2013-11-12T12:50:00+01:00
+          hippostdpubwf:lastModificationDate: 2013-11-12T12:52:00+01:00
+          hippostdpubwf:lastModifiedBy: admin
+          hippostdpubwf:publicationDate: 2013-11-12T12:52:00+01:00
+          hippotranslation:id: 74373551-3a6e-4b6c-bfe0-b08f682e580a
+          hippotranslation:locale: en
+          webarchivingaddondemov12:author: Alfred Anonymous
+          webarchivingaddondemov12:date: 2019-08-23T16:36:00+02:00
+          webarchivingaddondemov12:documenttype: news
+          webarchivingaddondemov12:introduction: Lorem ipsum dolor sit amet, consectetur
+            adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore
+            magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco
+            laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
+            in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
+            pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa
+            qui officia deserunt mollit anim id est laborum
+          webarchivingaddondemov12:location: Liverpool
+          webarchivingaddondemov12:source: ''
+          webarchivingaddondemov12:title: The gastropoda news
+          /webarchivingaddondemov12:content:
+            jcr:primaryType: hippostd:html
+            hippostd:content: |-
+              <html>
+                        <body>
+
+                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+                        tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+                        quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+                        consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum
+                        dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident,
+                        sunt in culpa qui officia deserunt mollit anim id est laborum</p>
+
+                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+                        tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+                        quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+                        consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum
+                        dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident,
+                        sunt in culpa qui officia deserunt mollit anim id est laborum </p>
+
+                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+                        tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+                        quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+                        consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum
+                        dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident,
+                        sunt in culpa qui officia deserunt mollit anim id est laborum </p>
+
+                        </body>
+                        </html>
+          /webarchivingaddondemov12:image:
+            jcr:primaryType: hippogallerypicker:imagelink
+            hippo:docbase: 3c740fcf-8ec5-4f00-a713-ff96caa645c8
+            hippo:facets: []
+            hippo:modes: []
+            hippo:values: []

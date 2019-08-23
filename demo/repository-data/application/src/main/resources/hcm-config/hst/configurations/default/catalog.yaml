@@ -1,0 +1,41 @@
+definitions:
+  config:
+    /hst:hst/hst:configurations/hst:default/hst:catalog/essentials-catalog:
+      jcr:primaryType: hst:containeritempackage
+      /banner:
+        jcr:primaryType: hst:containeritemcomponent
+        hst:componentclassname: org.onehippo.cms7.essentials.components.EssentialsBannerComponent
+        hst:iconpath: images/essentials/catalog-component-icons/banner.png
+        hst:label: Banner
+        hst:template: essentials-banner
+        hst:xtype: hst.item
+      /carousel:
+        jcr:primaryType: hst:containeritemcomponent
+        hst:componentclassname: org.onehippo.cms7.essentials.components.EssentialsCarouselComponent
+        hst:iconpath: images/essentials/catalog-component-icons/carousel.png
+        hst:label: Carousel
+        hst:template: essentials-carousel
+        hst:xtype: hst.item
+      /list:
+        jcr:primaryType: hst:containeritemcomponent
+        hst:componentclassname: org.onehippo.cms7.essentials.components.EssentialsListComponent
+        hst:iconpath: images/essentials/catalog-component-icons/generic-list.png
+        hst:label: Generic List
+        hst:template: list-component
+        hst:xtype: hst.item
+      /menu:
+        jcr:primaryType: hst:containeritemcomponent
+        hst:componentclassname: org.onehippo.cms7.essentials.components.EssentialsMenuComponent
+        hst:iconpath: images/essentials/catalog-component-icons/menu.png
+        hst:label: Menu
+        hst:parameternames: [menu]
+        hst:parametervalues: [main]
+        hst:template: essentials-menu
+        hst:xtype: hst.item
+      /newslist:
+        jcr:primaryType: hst:containeritemcomponent
+        hst:componentclassname: org.onehippo.cms7.essentials.components.EssentialsNewsComponent
+        hst:iconpath: images/essentials/catalog-component-icons/news-list.png
+        hst:label: News List
+        hst:template: newslist-main-newslist
+        hst:xtype: hst.item
