@@ -1,5 +1,0 @@
-definitions:
-  config:
-    /hst:hst/hst:sites/webarchivingaddondemov12:
-      jcr:primaryType: hst:site
-      hst:content: /content/documents/webarchivingaddondemov12

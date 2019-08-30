@@ -1,7 +1,0 @@
-/content/gallery/webarchivingaddondemov12:
-  jcr:primaryType: hippogallery:stdImageGallery
-  jcr:mixinTypes: ['hippo:named', 'mix:referenceable']
-  jcr:uuid: 3a6d0909-4b93-4264-920c-04b04fa738c8
-  hippo:name: Web Archiving Addon Demo v12
-  hippostd:foldertype: [new-image-folder]
-  hippostd:gallerytype: ['hippogallery:imageset']

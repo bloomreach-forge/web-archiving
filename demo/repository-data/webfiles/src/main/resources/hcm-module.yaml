@@ -1,5 +1,0 @@
-group: 
-  name: webarchivingaddondemov12
-  after: hippo-cms
-project: webarchivingaddondemov12
-module: webarchivingaddondemov12-repository-data-webfiles

@@ -1,4 +1,0 @@
-definitions:
-  config:
-    /hst:hst/hst:configurations/webarchivingaddondemov12/hst:sitemenus:
-      jcr:primaryType: hst:sitemenus
