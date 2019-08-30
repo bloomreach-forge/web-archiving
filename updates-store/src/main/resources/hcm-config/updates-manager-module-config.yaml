@@ -4,7 +4,7 @@ definitions:
       className:
         operation: override
         type: string
-        value: org.onehippo.forge.webarchiving.updatesstore.jcr.JcrWebArchiveUpdateJobsManager
+        value: org.bloomreach.forge.webarchiving.updatesstore.jcr.JcrWebArchiveUpdateJobsManager
       batchSize:
         operation: override
         type: string

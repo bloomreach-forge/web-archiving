@@ -14,7 +14,7 @@ definitions:
                                  \  limitations under the License.\r\n  -->\r\n<scxml version=\"1.0\"\r\n \
                                  \      xmlns=\"http://www.w3.org/2005/07/scxml\"\r\n       xmlns:hippo=\"\
                                  http://www.onehippo.org/cms7/repository/scxml\"\r\n       xmlns:cs=\"http://commons.apache.org/scxml\"\
-                                 \r\n       xmlns:webarchivingaddon=\"http://www.onehippo.org/cms7/repository/scxml/webarchivingaddon\"\
+                                 \r\n       xmlns:webarchivingaddon=\"http://www.bloomreach.org/cms7/repository/scxml/webarchivingaddon\"\
                                  >\r\n\r\n  <script>\r\n    def getScxmlId() {\r\n    workflowContext.scxmlId\r\
                                  \n    }\r\n\r\n    // draft variant property method\r\n    def getDraft()\
                                  \ {\r\n    workflowData.documents['draft']\r\n    }\r\n\r\n    // unpublished\
@@ -845,4 +845,4 @@ definitions:
       /externalArchiveOnPublish:
         jcr:primaryType: hipposcxml:action
         hipposcxml:classname: org.onehippo.forge.webarchiving.cms.scxml.WebArchivingAction
-        hipposcxml:namespace: http://www.onehippo.org/cms7/repository/scxml/webarchivingaddon
+        hipposcxml:namespace: http://www.bloomreach.org/cms7/repository/scxml/webarchivingaddon

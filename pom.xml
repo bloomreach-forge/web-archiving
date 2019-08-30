@@ -23,7 +23,7 @@
   </parent>
 
   <name>BloomReach Web Archiving Addon</name>
-  <groupId>org.onehippo.forge</groupId>
+  <groupId>org.bloomreach.forge</groupId>
   <artifactId>web-archiving-addon</artifactId>
   <version>4.0.0-SNAPSHOT</version>
   <packaging>pom</packaging>
@@ -179,7 +179,6 @@
     <module>archive-managers</module>
     <module>cms-integration</module>
     <module>hst-url-service</module>
-    <module>web-archiving-addon-demo-v13</module>
   </modules>
 
   <profiles>

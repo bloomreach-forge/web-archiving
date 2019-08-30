@@ -8,4 +8,4 @@ definitions:
       className:
         operation: override
         type: string
-        value: org.onehippo.forge.webarchiving.archivemanagers.archiefweb.ArchiefWebArchiveManager
+        value: org.bloomreach.forge.webarchiving.archivemanagers.archiefweb.ArchiefWebArchiveManager

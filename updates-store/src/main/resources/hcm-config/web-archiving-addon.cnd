@@ -1,6 +1,6 @@
 <'mix'='http://www.jcp.org/jcr/mix/1.0'>
 <'nt'='http://www.jcp.org/jcr/nt/1.0'>
-<'webarchivingaddon'='http://www.onehippo.org/webarchivingaddon/nt/1.0'>
+<'webarchivingaddon'='http://www.bloomreach.org/webarchivingaddon/nt/1.0'>
 
 [webarchivingaddon:update] > nt:base
 	- webarchivingaddon:id (string)

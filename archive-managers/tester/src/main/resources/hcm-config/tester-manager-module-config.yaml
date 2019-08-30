@@ -2,5 +2,5 @@ definitions:
   config:
     /hippo:configuration/hippo:modules/web-archiving-addon-services-daemon/hippo:moduleconfig/archivemanager:
       className:
-        value: org.onehippo.forge.webarchiving.archivemanagers.tester.TesterWebArchiveManager
+        value: org.bloomreach.forge.webarchiving.archivemanagers.tester.TesterWebArchiveManager
       tester.sleep.seconds: '3'

@@ -70,21 +70,21 @@
             <div class="brush: xml">
               <source><![CDATA[
     <dependency>
-      <groupId>org.onehippo.forge</groupId>
+      <groupId>org.bloomreach.forge</groupId>
       <artifactId>web-archiving-addon-common</artifactId>
       <version>${webarchiving-addon.version}</version>
       <scope>provided</scope>
     </dependency>
 
     <dependency>
-      <groupId>org.onehippo.forge</groupId>
+      <groupId>org.bloomreach.forge</groupId>
       <artifactId>web-archiving-addon-cms-dependencies</artifactId>
       <version>${webarchiving-addon.version}</version>
       <type>pom</type>
     </dependency>
 
     <dependency>
-      <groupId>org.onehippo.forge</groupId>
+      <groupId>org.bloomreach.forge</groupId>
       <artifactId>web-archiving-addon-hst-dependencies</artifactId>
       <version>${webarchiving-addon.version}</version>
       <type>pom</type>
@@ -92,14 +92,14 @@
 
     <!--Uncomment to use the ArchiefWeb manager
     <dependency>
-      <groupId>org.onehippo.forge</groupId>
+      <groupId>org.bloomreach.forge</groupId>
       <artifactId>web-archiving-addon-archive-manager-archiefweb</artifactId>
       <version>${webarchiving-addon.version}</version>
     </dependency>-->
 
     <!--The "Tester" manager is now enabled -->
     <dependency>
-      <groupId>org.onehippo.forge</groupId>
+      <groupId>org.bloomreach.forge</groupId>
       <artifactId>web-archiving-addon-archive-manager-tester</artifactId>
       <version>${webarchiving-addon.version}</version>
     </dependency>]]>
@@ -112,7 +112,7 @@
             <div class="brush: xml">
               <source><![CDATA[
     <dependency>
-      <groupId>org.onehippo.forge</groupId>
+      <groupId>org.bloomreach.forge</groupId>
       <artifactId>web-archiving-addon-common</artifactId>
       <scope>provided</scope>
     </dependency>]]>
@@ -137,7 +137,7 @@
               <container>
                 <dependencies>
                   <dependency>
-                    <groupId>org.onehippo.forge</groupId>
+                    <groupId>org.bloomreach.forge</groupId>
                     <artifactId>web-archiving-addon-common</artifactId>
                     <classpath>shared</classpath>
                   </dependency>
@@ -157,17 +157,17 @@
             <div class="brush: xml">
               <source><![CDATA[
     <dependency>
-      <groupId>org.onehippo.forge</groupId>
+      <groupId>org.bloomreach.forge</groupId>
       <artifactId>web-archiving-addon-cms-dependencies</artifactId>
       <type>pom</type>
     </dependency>
     <dependency>
-      <groupId>org.onehippo.forge</groupId>
+      <groupId>org.bloomreach.forge</groupId>
       <artifactId>web-archiving-addon-archive-manager-tester</artifactId>
     </dependency>
     <!--
         <dependency>
-          <groupId>org.onehippo.forge</groupId>
+          <groupId>org.bloomreach.forge</groupId>
           <artifactId>web-archiving-addon-archive-manager-archiefweb</artifactId>
         </dependency>
     -->]]>
@@ -184,7 +184,7 @@
             <div class="brush: xml">
               <source><![CDATA[
     <dependency>
-      <groupId>org.onehippo.forge</groupId>
+      <groupId>org.bloomreach.forge</groupId>
       <artifactId>web-archiving-addon-hst-dependencies</artifactId>
       <type>pom</type>
     </dependency>]]>
@@ -200,7 +200,7 @@
             <p>To change logging level for the addon, add the following <![CDATA[<logger>]]> configuration in conf/log4j-dev.xml and conf/log4j-dist.xml</p>
             <div class="brush: xml">
               <source><![CDATA[
-    <Logger name="org.onehippo.forge.webarchiving" level="info"/>]]>
+    <Logger name="org.bloomreach.forge.webarchiving" level="info"/>]]>
               </source>
             </div>
           </li>

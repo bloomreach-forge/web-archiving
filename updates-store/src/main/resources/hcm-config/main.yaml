@@ -1,5 +1,5 @@
 definitions:
   namespace:
     webarchivingaddon:
-      uri: http://www.onehippo.org/webarchivingaddon/nt/1.0
+      uri: http://www.bloomreach.org/webarchivingaddon/nt/1.0
       cnd: web-archiving-addon.cnd

@@ -7,7 +7,7 @@ definitions:
         hipposched:attributeNames: [daysToLive, searchLimit]
         hipposched:attributeValues: ['365', '1000']
         hipposched:enabled: true
-        hipposched:repositoryJobClass: org.onehippo.forge.webarchiving.cms.WebArchiveUpdatesProcessor
+        hipposched:repositoryJobClass: org.bloomreach.forge.webarchiving.cms.WebArchiveUpdatesProcessor
         /hipposched:triggers:
           jcr:primaryType: hipposched:triggers
           /nightly:

@@ -2,7 +2,7 @@ definitions:
   config:
     /hippo:configuration/hippo:modules/web-archiving-addon-services-daemon:
       jcr:primaryType: hipposys:module
-      hipposys:className: org.onehippo.forge.webarchiving.cms.WebArchivingServicesDaemonModule
+      hipposys:className: org.bloomreach.forge.webarchiving.cms.WebArchivingServicesDaemonModule
       hipposys:cmsonly: true
       /hippo:moduleconfig:
         jcr:primaryType: hipposys:moduleconfig
@@ -15,4 +15,4 @@ definitions:
           className: ''
         /channelpub:
           jcr:primaryType: hipposys:moduleconfig
-          className: 'org.onehippo.forge.webarchiving.cms.events.ChannelPublicationListenerImpl'
+          className: 'org.bloomreach.forge.webarchiving.cms.events.ChannelPublicationListenerImpl'

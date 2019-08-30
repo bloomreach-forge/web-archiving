@@ -19,7 +19,7 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd">
 
-  <bean class="org.onehippo.forge.webarchiving.hst.service.HstUrlServiceImpl"
+  <bean class="org.bloomreach.forge.webarchiving.hst.service.HstUrlServiceImpl"
         init-method="registerService" destroy-method="unregisterService">
     <property name="contextPath" value="#{servletContext.contextPath}"/>
     <property name="linkCreator" ref="org.hippoecm.hst.core.linking.HstLinkCreator"/>
@@ -31,6 +31,6 @@
     <property name="requestPath" value="/"/>
   </bean>
 
-  <bean class="org.onehippo.forge.webarchiving.hst.events.ChannelPublicationEventListener"
+  <bean class="org.bloomreach.forge.webarchiving.hst.events.ChannelPublicationEventListener"
         init-method="init" destroy-method="destroy"/>
 </beans>
