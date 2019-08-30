@@ -1,0 +1,6 @@
+site: web-archiving-addon-demo-v13
+group: web-archiving-addon-demo-v13
+project: web-archiving-addon-demo-v13
+module:
+  name: web-archiving-addon-demo-v13-repository-data-site-development
+  after: web-archiving-addon-demo-v13-repository-data-site

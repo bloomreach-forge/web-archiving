@@ -1,0 +1,5 @@
+definitions:
+  namespace:
+    webarchivingaddondemov13:
+      uri: http://www.webarchivingaddondemov13.com/webarchivingaddondemov13/nt/1.0
+      cnd: namespaces/web-archiving-addon-demo-v13.cnd

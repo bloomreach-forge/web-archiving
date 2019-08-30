@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<project>
+  <projectNamespace>webarchivingaddondemov13</projectNamespace>
+  <confirmParams>false</confirmParams>
+  <selectedProjectPackage>org.bloomreach.forge.webarchiving</selectedProjectPackage>
+  <selectedBeansPackage>org.bloomreach.forge.webarchiving.beans</selectedBeansPackage>
+  <selectedComponentsPackage>org.bloomreach.forge.webarchiving.components</selectedComponentsPackage>
+  <selectedRestPackage>org.bloomreach.forge.webarchiving.rest</selectedRestPackage>
+  <hstRoot>/hst:webarchivingaddondemov13</hstRoot>
+  <webfileBundleName>site</webfileBundleName>
+  <setupDone>false</setupDone>
+  <useSamples>true</useSamples>
+  <extraTemplates>true</extraTemplates>
+</project>

@@ -1,0 +1,6 @@
+group: 
+  name: web-archiving-addon-demo-v13
+  after: hippo-cms
+project: web-archiving-addon-demo-v13
+module:
+  name: web-archiving-addon-demo-v13-repository-data-site
