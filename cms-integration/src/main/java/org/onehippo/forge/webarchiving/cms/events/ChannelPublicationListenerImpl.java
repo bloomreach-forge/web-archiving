@@ -19,8 +19,7 @@ package org.onehippo.forge.webarchiving.cms.events;
 import java.util.Map;
 
 import org.onehippo.cms7.event.HippoEvent;
-import org.onehippo.cms7.services.HippoServiceRegistry;
-import org.onehippo.cms7.services.eventbus.HippoEventBus;
+import org.onehippo.cms7.services.eventbus.HippoEventListenerRegistry;
 import org.onehippo.cms7.services.eventbus.Subscribe;
 import org.onehippo.forge.webarchiving.cms.util.LifeCycle;
 import org.onehippo.forge.webarchiving.common.api.ChannelPublicationListener;
@@ -38,16 +37,13 @@ public class ChannelPublicationListenerImpl implements ChannelPublicationListene
     @Override
     public synchronized void initialize(Map<String, String> props) {
         log.debug("Initializing {}, registering to Hippo Event Bus", this.getClass().getName());
-        HippoServiceRegistry.registerService(this, HippoEventBus.class);
-
-        //TODO HippoServiceRegistry.registerService(this, PersistedHippoEventsService.class);
+        HippoEventListenerRegistry.get().register(this);
     }
 
     @Override
     public void destroy() {
         log.debug("Destroying {}", this.getClass().getName());
-        HippoServiceRegistry.unregisterService(this, HippoEventBus.class);
-        //TODO HippoServiceRegistry.unregisterService(this, PersistedHippoEventsService.class);
+        HippoEventListenerRegistry.get().unregister(this);
     }
 
     public String getEventCategory() {

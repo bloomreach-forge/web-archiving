@@ -21,7 +21,7 @@
   <parent>
     <groupId>org.onehippo.forge</groupId>
     <artifactId>web-archiving-addon-archive-managers</artifactId>
-    <version>3.0.0-SNAPSHOT</version>
+    <version>4.0.0-SNAPSHOT</version>
   </parent>
 
   <name>BloomReach Web Archiving Addon Connector Archiefweb</name>
@@ -46,10 +46,10 @@
       <artifactId>hippo-services</artifactId>
       <scope>provided</scope>
     </dependency>
-    <dependency>
+<!--    <dependency>
       <groupId>com.squareup.okhttp3</groupId>
       <artifactId>okhttp</artifactId>
-    </dependency>
+    </dependency>-->
   </dependencies>
 
   <build>

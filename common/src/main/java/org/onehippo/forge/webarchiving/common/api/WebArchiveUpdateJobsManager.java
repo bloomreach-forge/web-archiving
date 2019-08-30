@@ -20,7 +20,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import org.onehippo.cms7.services.SingletonService;
 import org.onehippo.forge.webarchiving.common.error.WebArchiveUpdateException;
 import org.onehippo.forge.webarchiving.common.model.WebArchiveUpdateJob;
 import org.onehippo.forge.webarchiving.common.model.WebArchiveUpdateJobStatus;
@@ -28,7 +27,6 @@ import org.onehippo.forge.webarchiving.common.model.WebArchiveUpdateJobStatus;
 /**
  * Web archive update manager, responsible for storing/reading web archive update jobs.
  */
-@SingletonService
 public interface WebArchiveUpdateJobsManager {
 
     /**

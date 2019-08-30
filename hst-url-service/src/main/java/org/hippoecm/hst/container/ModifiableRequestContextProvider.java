@@ -27,10 +27,10 @@ public final class ModifiableRequestContextProvider {
     }
 
     public static void set(HstRequestContext requestContext) {
-        RequestContextProvider.set(requestContext);
+        new RequestContextProvider.ModifiableRequestContextProvider().set(requestContext);
     }
 
     public static void clear() {
-        RequestContextProvider.clear();
+        new RequestContextProvider.ModifiableRequestContextProvider().clear();
     }
 }

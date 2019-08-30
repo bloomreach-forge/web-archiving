@@ -30,6 +30,8 @@ import org.hippoecm.hst.core.internal.HstRequestContextComponent;
 import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.linking.HstLinkCreator;
 import org.hippoecm.hst.core.request.ResolvedMount;
+import org.hippoecm.hst.platform.model.HstModel;
+import org.hippoecm.hst.platform.model.HstModelRegistry;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.forge.webarchiving.common.api.HstUrlService;
@@ -55,25 +57,31 @@ public class HstUrlServiceImpl implements HstUrlService {
     public String[] getAllUrls(Node handleNode) throws WebArchiveUpdateException {
         List<String> urls = new ArrayList<>();
         try {
-            handleNode.isNodeType(HippoNodeType.NT_HANDLE);
+            if(!handleNode.isNodeType(HippoNodeType.NT_HANDLE)){
+                log.warn("Service called for a non handle node");
+            } else {
+                HstModelRegistry hstModelRegistry = HippoServiceRegistry.getService(HstModelRegistry.class);
+                HstModel hstModel = hstModelRegistry.getHstModel(contextPath);
+                HstLinkCreator linkCreator = hstModel.getHstLinkCreator();
 
-            HstMutableRequestContext requestContext = hstRequestContextComponent.create();
-            ModifiableRequestContextProvider.set(requestContext);
-            ResolvedMount resolvedMount = hstManager.getVirtualHosts().matchMount(host, contextPath, requestPath);
-            requestContext.setBaseURL(new LocalHstContainerURL(host, port, contextPath, requestPath, resolvedMount.getResolvedMountPath()));
-            requestContext.setResolvedMount(resolvedMount);
-            requestContext.matchingFinished();
-            requestContext.setURLFactory(hstURLFactory);
+                HstMutableRequestContext requestContext = hstRequestContextComponent.create();
+                ModifiableRequestContextProvider.set(requestContext);
+                ResolvedMount resolvedMount = hstManager.getVirtualHosts().matchMount(host, contextPath, requestPath);
+                requestContext.setBaseURL(new LocalHstContainerURL(host, port, contextPath, requestPath, resolvedMount.getResolvedMountPath()));
+                requestContext.setResolvedMount(resolvedMount);
+                requestContext.matchingFinished();
+                requestContext.setURLFactory(hstURLFactory);
 
-            //List<HstLink> links = linkCreator.createAll(handleNode, requestContext, host, null, true);
-            List<HstLink> all = linkCreator.createAll(handleNode, requestContext, true);
-            //List<HstLink> allAvailableCanonicals = linkCreator.createAllAvailableCanonicals(handleNode, requestContext);
+                //List<HstLink> links = linkCreator.createAll(handleNode, requestContext, host, null, true);
+                List<HstLink> all = linkCreator.createAll(handleNode, requestContext, true);
+                //List<HstLink> allAvailableCanonicals = linkCreator.createAllAvailableCanonicals(handleNode, requestContext);
 
-            //urls.addAll(links.stream().map(link -> link.toUrlForm(requestContext, true)).collect(Collectors.toList()));
-            urls.addAll(all.stream().map(link -> link.toUrlForm(requestContext, true)).collect(Collectors.toList()));
-            //urls.addAll(allAvailableCanonicals.stream().map(link -> link.toUrlForm(requestContext, true)).collect(Collectors.toList()));
+                //urls.addAll(links.stream().map(link -> link.toUrlForm(requestContext, true)).collect(Collectors.toList()));
+                urls.addAll(all.stream().map(link -> link.toUrlForm(requestContext, true)).collect(Collectors.toList()));
+                //urls.addAll(allAvailableCanonicals.stream().map(link -> link.toUrlForm(requestContext, true)).collect(Collectors.toList()));
 
-            ModifiableRequestContextProvider.clear();
+                ModifiableRequestContextProvider.clear();
+            }
 
 
         } catch (Exception e) {
@@ -85,12 +93,12 @@ public class HstUrlServiceImpl implements HstUrlService {
 
     public void registerService() {
         //TODO Since multiple HST webapps are supported, we need to account for the 'contextPath' in the name to avoid collisions
-        HippoServiceRegistry.registerService(this, HstUrlService.class/*, contextPath + "-" + HstUrlServiceImpl.class.getName()*/);
+        HippoServiceRegistry.register(this, HstUrlService.class);
     }
 
     public void unregisterService() {
         //TODO Since multiple HST webapps are supported, we need to account for the 'contextPath' in the name to avoid collisions
-        HippoServiceRegistry.unregisterService(this, HstUrlService.class/*, contextPath + "-" + HstUrlServiceImpl.class.getName()*/);
+        HippoServiceRegistry.unregister(this, HstUrlService.class);
     }
 
 

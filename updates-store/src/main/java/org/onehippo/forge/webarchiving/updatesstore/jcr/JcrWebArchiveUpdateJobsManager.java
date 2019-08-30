@@ -231,7 +231,7 @@ public class JcrWebArchiveUpdateJobsManager implements WebArchiveUpdateJobsManag
     @Override
     public List<WebArchiveUpdateJob> searchForWebArchiveUpdateJobs(List<WebArchiveUpdateJobStatus> statuses, Map<String, String> searchFilters, int offset,
                                                                    int limit, String orderByPropertyHint, boolean ascending) throws WebArchiveUpdateException {
-        final SearchServiceFactory searchServiceFactory = HippoServiceRegistry.getService(SearchServiceFactory.class, SearchServiceFactory.class.getName());
+        final SearchServiceFactory searchServiceFactory = HippoServiceRegistry.getService(SearchServiceFactory.class);
         if (searchServiceFactory == null) {
             throw new SearchServiceException("Cannot find service by name " + SearchServiceFactory.class.getName());
         }

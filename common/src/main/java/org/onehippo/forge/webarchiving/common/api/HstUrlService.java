@@ -18,13 +18,11 @@ package org.onehippo.forge.webarchiving.common.api;
 
 import javax.jcr.Node;
 
-import org.onehippo.cms7.services.SingletonService;
 import org.onehippo.forge.webarchiving.common.error.WebArchiveUpdateException;
 
 /**
  * Interface that is responsible for providing url information about documents in the CMS
  */
-@SingletonService
 public interface HstUrlService {
 
     /**

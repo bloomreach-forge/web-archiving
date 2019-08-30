@@ -16,14 +16,12 @@
 
 package org.onehippo.forge.webarchiving.common.api;
 
-import org.onehippo.cms7.services.SingletonService;
 import org.onehippo.forge.webarchiving.common.error.WebArchiveUpdateException;
 import org.onehippo.forge.webarchiving.common.model.WebArchiveUpdate;
 
 /**
  * Interface for an external web archive service component.
  */
-@SingletonService
 public interface WebArchiveManager {
 
     /**
