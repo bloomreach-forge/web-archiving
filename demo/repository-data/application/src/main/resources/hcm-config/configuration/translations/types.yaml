@@ -1,0 +1,78 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:types/webarchivingaddondemov13:bannerdocument:
+      jcr:primaryType: hipposys:resourcebundles
+      /en:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Banner
+        webarchivingaddondemov13:content: Content
+        webarchivingaddondemov13:image: Image
+        webarchivingaddondemov13:link: Link
+        webarchivingaddondemov13:title: Title
+      /nl:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Banner
+        webarchivingaddondemov13:content: Inhoud
+        webarchivingaddondemov13:image: Afbeelding
+        webarchivingaddondemov13:link: Link
+        webarchivingaddondemov13:title: Titel
+      /fr:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Bannière
+        webarchivingaddondemov13:content: Contenu
+        webarchivingaddondemov13:image: Image
+        webarchivingaddondemov13:link: Lien
+        webarchivingaddondemov13:title: Titre
+      /de:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Banner
+        webarchivingaddondemov13:content: Inhalt
+        webarchivingaddondemov13:image: Abbildung
+        webarchivingaddondemov13:link: Link
+        webarchivingaddondemov13:title: Titel
+    /hippo:configuration/hippo:translations/hippo:types/webarchivingaddondemov13:newsdocument:
+      jcr:primaryType: hipposys:resourcebundles
+      /en:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: News Item
+        webarchivingaddondemov13:author: Author
+        webarchivingaddondemov13:content: Content
+        webarchivingaddondemov13:date: Date
+        webarchivingaddondemov13:image: Image
+        webarchivingaddondemov13:introduction: Introduction
+        webarchivingaddondemov13:location: Location
+        webarchivingaddondemov13:source: Source
+        webarchivingaddondemov13:title: Title
+      /nl:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Nieuwsbericht
+        webarchivingaddondemov13:author: Auteur
+        webarchivingaddondemov13:content: Inhoud
+        webarchivingaddondemov13:date: Datum
+        webarchivingaddondemov13:image: Afbeelding
+        webarchivingaddondemov13:introduction: Introductie
+        webarchivingaddondemov13:location: Locatie
+        webarchivingaddondemov13:source: Bron
+        webarchivingaddondemov13:title: Titel
+      /de:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: News
+        webarchivingaddondemov13:author: Verfasser
+        webarchivingaddondemov13:content: Inhalt
+        webarchivingaddondemov13:date: Datum
+        webarchivingaddondemov13:image: Abbildung
+        webarchivingaddondemov13:introduction: Einführung
+        webarchivingaddondemov13:location: Standort
+        webarchivingaddondemov13:source: Quelle
+        webarchivingaddondemov13:title: Titel
+      /fr:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Message d'info
+        webarchivingaddondemov13:author: Auteur
+        webarchivingaddondemov13:content: Contenu
+        webarchivingaddondemov13:date: Date
+        webarchivingaddondemov13:image: Image
+        webarchivingaddondemov13:introduction: Introduction
+        webarchivingaddondemov13:location: Lieu
+        webarchivingaddondemov13:source: Source
+        webarchivingaddondemov13:title: Titre

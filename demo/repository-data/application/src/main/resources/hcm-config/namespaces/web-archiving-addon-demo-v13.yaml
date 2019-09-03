@@ -3,3 +3,4 @@ definitions:
     /hippo:namespaces/webarchivingaddondemov13:
       jcr:primaryType: hipposysedit:namespace
       jcr:mixinTypes: ['mix:referenceable']
+      jcr:uuid: d817567f-b9c3-49bb-983f-8ef5853291b0

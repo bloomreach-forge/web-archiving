@@ -1,6 +1,8 @@
 /content/documents/webarchivingaddondemov13:
+  .meta:order-before: administration
   jcr:primaryType: hippostd:folder
   jcr:mixinTypes: ['hippo:named', 'hippotranslation:translated', 'mix:referenceable']
+  jcr:uuid: 819b9a3d-4e74-4b11-a169-dab7617242e4
   hippo:name: Web Archiving Addon Demo v13
   hippostd:foldertype: [new-translated-folder, new-document]
   hippotranslation:id: 996bcac5-86cf-49b5-a7a3-16a74863e814
