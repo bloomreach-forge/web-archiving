@@ -123,7 +123,7 @@
     </Logger>
 
     <!-- project logging -->
-    <Logger name="org.bloomreach.forge.webarchiving" level="debug"/>
+    <Logger name="org.bloomreach.forge.webarchiving" level="info"/>
 
     <Root level="warn">
       <AppenderRef ref="site"/>

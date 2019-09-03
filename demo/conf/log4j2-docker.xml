@@ -51,7 +51,7 @@
     <Logger name="org.apache.jackrabbit.core.query.lucene.ConsistencyCheck" level="info"/>
 
     <!-- project logging -->
-    <Logger name="org.example" level="info"/>
+    <Logger name="org.bloomreach.forge.webarchiving" level="info"/>
 
     <Root level="warn">
       <AppenderRef ref="console"/>
