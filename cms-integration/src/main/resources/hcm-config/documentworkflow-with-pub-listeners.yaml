@@ -844,5 +844,5 @@ definitions:
         hipposcxml:namespace: http://www.onehippo.org/cms7/repository/scxml
       /externalArchiveOnPublish:
         jcr:primaryType: hipposcxml:action
-        hipposcxml:classname: org.onehippo.forge.webarchiving.cms.scxml.WebArchivingAction
+        hipposcxml:classname: org.bloomreach.forge.webarchiving.cms.scxml.WebArchivingAction
         hipposcxml:namespace: http://www.bloomreach.org/cms7/repository/scxml/webarchivingaddon

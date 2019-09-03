@@ -4,3 +4,4 @@ group:
 project: web-archiving-addon
 module:
   name: web-archiving-addon-updates-store
+  after: [web-archiving-addon-cms-integration]
