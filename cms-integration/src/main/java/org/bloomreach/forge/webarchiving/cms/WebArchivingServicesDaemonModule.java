@@ -16,6 +16,7 @@
 
 package org.bloomreach.forge.webarchiving.cms;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.jcr.Node;
@@ -25,25 +26,29 @@ import javax.jcr.Session;
 import org.apache.commons.lang.StringUtils;
 import org.bloomreach.forge.webarchiving.cms.util.CmsUtils;
 import org.bloomreach.forge.webarchiving.cms.util.Discoverable;
-import org.bloomreach.forge.webarchiving.cms.util.LifeCycle;
+import org.bloomreach.forge.webarchiving.cms.util.HSTServicesAwarePlatformManaged;
 import org.bloomreach.forge.webarchiving.cms.util.ModuleSessionAware;
-import org.onehippo.cms7.services.HippoServiceRegistry;
+import org.bloomreach.forge.webarchiving.cms.util.PlatformManaged;
 import org.bloomreach.forge.webarchiving.common.api.ChannelPublicationListener;
+import org.bloomreach.forge.webarchiving.common.api.HstUrlService;
 import org.bloomreach.forge.webarchiving.common.api.WebArchiveManager;
 import org.bloomreach.forge.webarchiving.common.api.WebArchiveUpdateJobsManager;
 import org.bloomreach.forge.webarchiving.common.error.WebArchivingException;
+import org.hippoecm.hst.core.internal.PlatformModelAvailableService;
+import org.onehippo.cms7.services.HippoServiceRegistry;
+import org.onehippo.cms7.services.ProxiedServiceHolder;
+import org.onehippo.cms7.services.ProxiedServiceTracker;
 import org.onehippo.repository.modules.AbstractReconfigurableDaemonModule;
 import org.onehippo.repository.modules.ProvidesService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * TODO It doesn't know until runtime which services are Discoverable
- * Registers services for the web archiving addon
+ * TODO It doesn't know until runtime which services are Discoverable Registers services for the web archiving addon
  */
 @ProvidesService(types = {
-    WebArchiveUpdateJobsManager.class,
-    WebArchiveManager.class
+        WebArchiveUpdateJobsManager.class,
+        WebArchiveManager.class
 })
 public class WebArchivingServicesDaemonModule extends AbstractReconfigurableDaemonModule {
     private static Logger log = LoggerFactory.getLogger(WebArchivingServicesDaemonModule.class);
@@ -51,6 +56,7 @@ public class WebArchivingServicesDaemonModule extends AbstractReconfigurableDaem
     private static final String WEB_ARCHIVE_MANAGER_CONFIG_LOCATION = "archivemanager";
     private static final String WEB_ARCHIVE_UPDATE_JOBS_MANAGER_CONFIG_LOCATION = "updatesmanager";
     private static final String WEB_ARCHIVE_CHANNEL_PUB_LISTENER_CONFIG_LOCATION = "channelpub";
+    private static final String WEB_ARCHIVE_HST_URL_SERVICE_CONFIG_LOCATION = "hsturlservice";
 
     private static final String CLASS_NAME = "className";
 
@@ -61,6 +67,9 @@ public class WebArchivingServicesDaemonModule extends AbstractReconfigurableDaem
     private WebArchiveUpdateJobsManager webArchiveUpdateJobsManager;
     private WebArchiveManager webArchiveManager;
     private ChannelPublicationListener channelPublicationListener;
+    private HstUrlService hstUrlService;
+    private Map<HSTServicesAwarePlatformManaged, ProxiedServiceTracker<PlatformModelAvailableService>> hstPlatformModelAvailableServiceTrackers = new HashMap<>();
+
 
     @Override
     protected void doInitialize(final Session session) throws RepositoryException {
@@ -93,12 +102,14 @@ public class WebArchivingServicesDaemonModule extends AbstractReconfigurableDaem
         shutdownService(webArchiveUpdateJobsManager, WebArchiveUpdateJobsManager.class);
         shutdownService(webArchiveManager, WebArchiveManager.class);
         shutdownService(channelPublicationListener, ChannelPublicationListener.class);
+        shutdownService(hstUrlService, HstUrlService.class);
     }
 
     private void initializeServices(final Node moduleConfig) throws RepositoryException, WebArchivingException {
         webArchiveUpdateJobsManager = initializeService(getServiceConfigNode(moduleConfig, WEB_ARCHIVE_UPDATE_JOBS_MANAGER_CONFIG_LOCATION), WebArchiveUpdateJobsManager.class);
         webArchiveManager = initializeService(getServiceConfigNode(moduleConfig, WEB_ARCHIVE_MANAGER_CONFIG_LOCATION), WebArchiveManager.class);
         channelPublicationListener = initializeService(getServiceConfigNode(moduleConfig, WEB_ARCHIVE_CHANNEL_PUB_LISTENER_CONFIG_LOCATION), ChannelPublicationListener.class);
+        hstUrlService = initializeService(getServiceConfigNode(moduleConfig, WEB_ARCHIVE_HST_URL_SERVICE_CONFIG_LOCATION), HstUrlService.class);
     }
 
     private <T> T initializeService(final Node serviceConfigNode, final Class<T> serviceInterface) throws RepositoryException, WebArchivingException {
@@ -122,12 +133,32 @@ public class WebArchivingServicesDaemonModule extends AbstractReconfigurableDaem
             ((ModuleSessionAware) service).setModuleSession(serviceConfigNode.getSession());
         }
 
-        if (service instanceof LifeCycle) {
-            ((LifeCycle) service).initialize(config);
+        if (service instanceof HSTServicesAwarePlatformManaged) {
+            ProxiedServiceTracker<PlatformModelAvailableService> hstPlatformModelAvailableServiceTracker = new ProxiedServiceTracker<PlatformModelAvailableService>() {
+                @Override
+                public void serviceRegistered(final ProxiedServiceHolder<PlatformModelAvailableService> serviceHolder) {
+                    try {
+                        ((HSTServicesAwarePlatformManaged) service).initialize(config);
+                    } catch (WebArchivingException e) {
+                        log.error("Error while initializing web-archiving-addon services:", e);
+                    }
+                }
+
+                @Override
+                public void serviceUnregistered(final ProxiedServiceHolder<PlatformModelAvailableService> serviceHolder) {
+                    ((HSTServicesAwarePlatformManaged) service).destroy();
+                }
+            };
+
+            HippoServiceRegistry.addTracker(hstPlatformModelAvailableServiceTracker, PlatformModelAvailableService.class);
+            hstPlatformModelAvailableServiceTrackers.put((HSTServicesAwarePlatformManaged) service, hstPlatformModelAvailableServiceTracker);
+
+        } else if (service instanceof PlatformManaged ) {
+            ((PlatformManaged) service).initialize(config);
         }
 
         if (service instanceof Discoverable) {
-            HippoServiceRegistry.registerService(service, serviceInterface);
+            HippoServiceRegistry.register(service, serviceInterface);
         }
         return service;
     }
@@ -143,12 +174,16 @@ public class WebArchivingServicesDaemonModule extends AbstractReconfigurableDaem
 
     private <T, S extends T> void shutdownService(S service, Class<T> serviceInterface) {
         if (service != null) {
-            if (service instanceof LifeCycle) {
-                ((LifeCycle) service).destroy();
+            if (service instanceof HSTServicesAwarePlatformManaged) {
+                HippoServiceRegistry.removeTracker(hstPlatformModelAvailableServiceTrackers.get(service), PlatformModelAvailableService.class);
+            }
+
+            if (service instanceof PlatformManaged) {
+                ((PlatformManaged) service).destroy();
             }
 
             if (service instanceof Discoverable) {
-                HippoServiceRegistry.unregisterService(service, serviceInterface);
+                HippoServiceRegistry.unregister(service, serviceInterface);
             }
         }
     }

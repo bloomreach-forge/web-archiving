@@ -18,71 +18,136 @@ package org.bloomreach.forge.webarchiving.hst.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
+import javax.jcr.Credentials;
 import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 
-import org.bloomreach.forge.webarchiving.hst.util.LocalHstContainerURL;
-import org.hippoecm.hst.configuration.model.HstManager;
-import org.hippoecm.hst.container.ModifiableRequestContextProvider;
-import org.hippoecm.hst.core.component.HstURLFactory;
-import org.hippoecm.hst.core.internal.HstMutableRequestContext;
-import org.hippoecm.hst.core.internal.HstRequestContextComponent;
-import org.hippoecm.hst.core.linking.HstLink;
-import org.hippoecm.hst.core.linking.HstLinkCreator;
-import org.hippoecm.hst.core.request.ResolvedMount;
-import org.hippoecm.hst.platform.model.HstModel;
-import org.hippoecm.hst.platform.model.HstModelRegistry;
-import org.hippoecm.repository.api.HippoNodeType;
-import org.onehippo.cms7.services.HippoServiceRegistry;
+import org.apache.commons.lang3.StringUtils;
+import org.bloomreach.forge.webarchiving.cms.util.Discoverable;
+import org.bloomreach.forge.webarchiving.cms.util.HSTServicesAwarePlatformManaged;
+import org.bloomreach.forge.webarchiving.cms.util.ModuleSessionAware;
 import org.bloomreach.forge.webarchiving.common.api.HstUrlService;
 import org.bloomreach.forge.webarchiving.common.error.WebArchiveUpdateException;
+import org.hippoecm.hst.configuration.hosting.Mount;
+import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
+import org.hippoecm.hst.content.beans.manager.ObjectConverter;
+import org.hippoecm.hst.content.beans.standard.HippoBean;
+import org.hippoecm.hst.content.beans.standard.HippoDocumentBean;
+import org.hippoecm.hst.content.tool.ContentBeansTool;
+import org.hippoecm.hst.core.container.ComponentManager;
+import org.hippoecm.hst.core.linking.HstLink;
+import org.hippoecm.hst.core.linking.HstLinkCreator;
+import org.hippoecm.hst.platform.model.HstModel;
+import org.hippoecm.hst.platform.model.HstModelRegistry;
+import org.hippoecm.hst.site.HstServices;
+import org.hippoecm.repository.api.HippoNodeType;
+import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
-public class HstUrlServiceImpl implements HstUrlService {
+public class HstUrlServiceImpl implements HstUrlService, ModuleSessionAware, HSTServicesAwarePlatformManaged, Discoverable {
     private static final Logger log = LoggerFactory.getLogger(HstUrlServiceImpl.class);
 
-    private String contextPath;
-    private HstLinkCreator linkCreator;
-    private HstRequestContextComponent hstRequestContextComponent;
-    private HstURLFactory hstURLFactory;
-    private HstManager hstManager;
-    private String host;
-    private int port;
-    private String requestPath;
+    protected static final String CONFIG_PROP_ENVIRONMENT = "environment";
+    private String environment;
 
+    protected Session systemSession;
+    protected Session liveUserSession;
+    private ObjectConverter objectConverter;
+
+
+    @Override
+    public synchronized void initialize(final Map<String, String> props) throws WebArchiveUpdateException {
+        environment = props.get(CONFIG_PROP_ENVIRONMENT);
+        if (environment == null) {
+            throw new WebArchiveUpdateException("Property 'environment' is required, for example 'environment=prod'");
+        }
+        if (systemSession == null) {
+            throw new WebArchiveUpdateException("ModuleSession is null");
+        }
+
+        final ComponentManager componentManager = HstServices.getComponentManager();
+        // get a non-pooled live user so use '.delegating'
+        final Credentials liveUserCredentials = componentManager.getComponent(Credentials.class.getName() + ".default.delegating");
+        if (liveUserCredentials == null) {
+            throw new IllegalStateException("Platform webapp should have live user credentials and a repository Spring bean.");
+        }
+
+        try {
+            liveUserSession = systemSession.impersonate(liveUserCredentials);
+        } catch (Exception e) {
+            throw new WebArchiveUpdateException("Cannot login a repository user with live user credentials of the platform webapp.", e);
+        }
+
+        if (liveUserSession == null) {
+            throw new WebArchiveUpdateException("Expected a live user session from the platform webapp.");
+        }
+
+
+        final ContentBeansTool contentBeansTool = componentManager.getComponent(ContentBeansTool.class);
+        objectConverter = contentBeansTool.getObjectConverter();
+
+        if (objectConverter == null) {
+            throw new IllegalStateException("Expected an object converter from the platform webapp.");
+        }
+    }
+
+    @Override
+    public void setModuleSession(Session session) throws RepositoryException {
+        this.systemSession = session;
+    }
+
+    @Override
+    public void destroy() {
+        log.debug("Destroying {}", this.getClass().getName());
+        if (liveUserSession != null) {
+            liveUserSession.logout();
+        }
+    }
 
     public String[] getAllUrls(Node handleNode) throws WebArchiveUpdateException {
         List<String> urls = new ArrayList<>();
         try {
-            if(!handleNode.isNodeType(HippoNodeType.NT_HANDLE)){
-                log.warn("Service called for a non handle node");
-            } else {
-                HstModelRegistry hstModelRegistry = HippoServiceRegistry.getService(HstModelRegistry.class);
-                HstModel hstModel = hstModelRegistry.getHstModel(contextPath);
-                HstLinkCreator linkCreator = hstModel.getHstLinkCreator();
-
-                HstMutableRequestContext requestContext = hstRequestContextComponent.create();
-                ModifiableRequestContextProvider.set(requestContext);
-                ResolvedMount resolvedMount = hstManager.getVirtualHosts().matchMount(host, contextPath, requestPath);
-                requestContext.setBaseURL(new LocalHstContainerURL(host, port, contextPath, requestPath, resolvedMount.getResolvedMountPath()));
-                requestContext.setResolvedMount(resolvedMount);
-                requestContext.matchingFinished();
-                requestContext.setURLFactory(hstURLFactory);
-
-                //List<HstLink> links = linkCreator.createAll(handleNode, requestContext, host, null, true);
-                List<HstLink> all = linkCreator.createAll(handleNode, requestContext, true);
-                //List<HstLink> allAvailableCanonicals = linkCreator.createAllAvailableCanonicals(handleNode, requestContext);
-
-                //urls.addAll(links.stream().map(link -> link.toUrlForm(requestContext, true)).collect(Collectors.toList()));
-                urls.addAll(all.stream().map(link -> link.toUrlForm(requestContext, true)).collect(Collectors.toList()));
-                //urls.addAll(allAvailableCanonicals.stream().map(link -> link.toUrlForm(requestContext, true)).collect(Collectors.toList()));
-
-                ModifiableRequestContextProvider.clear();
+            if (!handleNode.isNodeType(HippoNodeType.NT_HANDLE)) {
+                log.warn("Service called for a non handle node, aborting");
+                return null;
             }
 
+            final HippoBean bean = (HippoBean) objectConverter.getObject(handleNode);
+            if (bean == null) {
+                log.debug("Could not create a bean for '{}'", handleNode.getPath());
+                return null;
+            }
+            if (!HippoDocumentBean.class.isAssignableFrom(bean.getClass())) {
+                log.warn("Expected a HippoDocumentBean but was '{}'", bean.getClass());
+                return null;
+            }
+
+            final HstModelRegistry hstModelRegistry = HippoServiceRegistry.getService(HstModelRegistry.class);
+            if (hstModelRegistry == null) {
+                log.info("Cannot create URLs without hstModelRegistry");
+                return null;
+            }
+
+            final HstModel platformModel = hstModelRegistry.getHstModel(this.getClass().getClassLoader());
+            final HstLinkCreator linkCreator = platformModel.getHstLinkCreator();
+            if (linkCreator == null) {
+                log.info("Cannot create URLs without link creator");
+                return null;
+            }
+
+            final Mount anyMount = platformModel.getVirtualHosts().getMountsByHostGroup(environment).get(0);
+            final List<HstLink> hstLinks = linkCreator.createAll(handleNode, anyMount, environment, "live", true);
+
+            urls.addAll(hstLinks.stream()
+                    .filter(link -> link.getMount().getChannel() != null)
+                    .map(this::getFullyQualifiedURL)
+                    .collect(Collectors.toList()));
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -91,46 +156,23 @@ public class HstUrlServiceImpl implements HstUrlService {
         return urls.toArray(new String[0]);
     }
 
-    public void registerService() {
-        //TODO Since multiple HST webapps are supported, we need to account for the 'contextPath' in the name to avoid collisions
-        HippoServiceRegistry.register(this, HstUrlService.class);
+    private String getFullyQualifiedURL(final HstLink hstLink) {
+        Mount linkMount = hstLink.getMount();
+        final HstSiteMapItem hstSiteMapItem = hstLink.getHstSiteMapItem();
+        return (hstSiteMapItem == null || StringUtils.isBlank(hstLink.getPath())) ?
+                createMountURL(linkMount) :
+                createMountURL(linkMount) + "/" + hstLink.getPath();
     }
 
-    public void unregisterService() {
-        //TODO Since multiple HST webapps are supported, we need to account for the 'contextPath' in the name to avoid collisions
-        HippoServiceRegistry.unregister(this, HstUrlService.class);
-    }
 
-
-    public void setContextPath(String contextPath) {
-        this.contextPath = contextPath;
-    }
-
-    public void setLinkCreator(final HstLinkCreator linkCreator) {
-        this.linkCreator = linkCreator;
-    }
-
-    public void setHstRequestContextComponent(final HstRequestContextComponent hstRequestContextComponent) {
-        this.hstRequestContextComponent = hstRequestContextComponent;
-    }
-
-    public void setHstURLFactory(final HstURLFactory hstURLFactory) {
-        this.hstURLFactory = hstURLFactory;
-    }
-
-    public void setHstManager(final HstManager hstManager) {
-        this.hstManager = hstManager;
-    }
-
-    public void setHost(final String host) {
-        this.host = host;
-    }
-
-    public void setPort(final int port) {
-        this.port = port;
-    }
-
-    public void setRequestPath(final String requestPath) {
-        this.requestPath = requestPath;
+    private String createMountURL(final Mount mount) {
+        String url = mount.getScheme() + "://" + mount.getVirtualHost().getHostName();
+        if (StringUtils.isNotBlank(mount.getContextPath())) {
+            url = url + mount.getContextPath();
+        }
+        if (StringUtils.isNotBlank(mount.getMountPath())) {
+            url = url + mount.getMountPath();
+        }
+        return url;
     }
 }

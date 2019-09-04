@@ -39,6 +39,12 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
+      <groupId>org.bloomreach.forge</groupId>
+      <artifactId>web-archiving-addon-cms-integration</artifactId>
+      <version>${project.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-services</artifactId>
       <scope>provided</scope>
@@ -48,12 +54,12 @@
       <artifactId>hst-api</artifactId>
       <scope>provided</scope>
     </dependency>
-    <!--<dependency>
+    <dependency>
       <groupId>org.onehippo.cms7.hst</groupId>
       <artifactId>hst-commons</artifactId>
       <scope>provided</scope>
     </dependency>
-    <dependency>
+    <!--<dependency>
       <groupId>org.onehippo.cms7.hst.client-modules</groupId>
       <artifactId>hst-page-composer</artifactId>
       <scope>provided</scope>
@@ -68,6 +74,11 @@
       <artifactId>hippo-repository-api</artifactId>
       <scope>provided</scope>
     </dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
+    </dependency>
+
   </dependencies>
 
   <build>
@@ -85,6 +96,7 @@
         <filtering>false</filtering>
         <directory>src/main/resources</directory>
         <includes>
+          <include>**/*.yaml</include>
           <include>**/*.xml</include>
         </includes>
       </resource>

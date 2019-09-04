@@ -1,0 +1,11 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:modules/web-archiving-addon-services-daemon/hippo:moduleconfig/hsturlservice:
+      className:
+        operation: override
+        type: string
+        value: org.bloomreach.forge.webarchiving.hst.service.HstUrlServiceImpl
+      environment:
+        operation: override
+        type: string
+        value: dev-localhost

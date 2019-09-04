@@ -50,6 +50,11 @@
       <artifactId>hippo-repository-workflow</artifactId>
       <scope>provided</scope>
     </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7.hst</groupId>
+      <artifactId>hst-api</artifactId>
+      <scope>provided</scope>
+    </dependency>
   </dependencies>
 
   <build>
@@ -62,7 +67,7 @@
         </configuration>
       </plugin>
     </plugins>
-        <resources>
+    <resources>
       <resource>
         <filtering>false</filtering>
         <directory>src/main/resources</directory>

@@ -16,3 +16,7 @@ definitions:
         /channelpub:
           jcr:primaryType: hipposys:moduleconfig
           className: 'org.bloomreach.forge.webarchiving.cms.events.ChannelPublicationListenerImpl'
+        /hsturlservice:
+          jcr:primaryType: hipposys:moduleconfig
+          className: ''
+          environment: ''
