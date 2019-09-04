@@ -19,19 +19,41 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>org.onehippo.forge</groupId>
+    <groupId>org.bloomreach.forge</groupId>
     <artifactId>web-archiving-addon</artifactId>
     <version>4.0.0-SNAPSHOT</version>
   </parent>
 
-  <name>BloomReach Web Archiving Addon Bill Of Materials</name>
-  <artifactId>web-archiving-addon-bom</artifactId>
+  <name>BloomReach Web Archiving Addon CMS Dependencies</name>
+  <artifactId>web-archiving-addon-cms-dependencies</artifactId>
   <packaging>pom</packaging>
 
-  <modules>
-    <module>cms-dependencies</module>
-    <module>hst-dependencies</module>
-  </modules>
+  <dependencies>
+    <dependency>
+      <groupId>org.bloomreach.forge</groupId>
+      <artifactId>web-archiving-addon-common</artifactId>
+      <version>${project.version}</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.bloomreach.forge</groupId>
+      <artifactId>web-archiving-addon-cms-integration</artifactId>
+      <version>${project.version}</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.bloomreach.forge</groupId>
+      <artifactId>web-archiving-addon-updates-store</artifactId>
+      <version>${project.version}</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.bloomreach.forge</groupId>
+      <artifactId>web-archiving-addon-hst-url-service</artifactId>
+      <version>${project.version}</version>
+      <scope>runtime</scope>
+    </dependency>
+  </dependencies>
 
   <build>
     <plugins>

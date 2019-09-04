@@ -21,6 +21,12 @@
   </properties>
   <body>
     <section name="Release Notes">
+      <subsection name="4.0.0-SNAPSHOT (unreleased)">
+        <p class="smallinfo">Release Date: n/a</p>
+        <ul>
+          <li>Initial version, compatible with Bloomreach Experience version 13</li>
+        </ul>
+      </subsection>
       <subsection name="1.0.0-SNAPSHOT (unreleased)">
         <p class="smallinfo">Release Date: n/a</p>
         <ul>

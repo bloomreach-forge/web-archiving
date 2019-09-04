@@ -23,7 +23,7 @@
     <section name="Installation">
       <subsection name="Prerequisites">
         <p>
-          This section assumes a standard Hippo CMS or BloomReach Experience project using Maven with a root pom and modules CMS and site. This addon allows for
+          This section assumes a standard Hippo CMS or Bloomreach Experience project using Maven with a root pom and modules CMS and site. This addon allows for
           pluggable Web Archive managers and it is shipped with 2 built-in managers, one for ArchiefWeb and a mock manager for testing purposes. While installing,
           you need to specify which manager you wish to use, please read below.
         </p>
@@ -59,33 +59,18 @@
             </div>
             <p>
               <b>Note:</b>
-              always check for the latest version number and compatibility with the project on the <a href="release-notes.html">Release Notes page</a>.
+              Always check for the latest version number and compatibility with the project on the <a href="release-notes.html">Release Notes page</a>.
             </p>
           </li>
 
           <li>
-            <p>It is recommended to use the <![CDATA[<dependencyManagement><dependencies>]]> section to set the version of all the addon artifacts. Please pay extra attention
-              to dependencies that need to have a "provided" scope. Depending which manager you want to use, comment and uncomment the corresponding dependencies below:
+            <p>It is recommended to use the <![CDATA[<dependencyManagement><dependencies>]]> section to set the version of all the addon artifacts. Depending which manager you want to use, comment and uncomment the corresponding dependencies below:
             </p>
             <div class="brush: xml">
               <source><![CDATA[
     <dependency>
       <groupId>org.bloomreach.forge</groupId>
-      <artifactId>web-archiving-addon-common</artifactId>
-      <version>${webarchiving-addon.version}</version>
-      <scope>provided</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.bloomreach.forge</groupId>
       <artifactId>web-archiving-addon-cms-dependencies</artifactId>
-      <version>${webarchiving-addon.version}</version>
-      <type>pom</type>
-    </dependency>
-
-    <dependency>
-      <groupId>org.bloomreach.forge</groupId>
-      <artifactId>web-archiving-addon-hst-dependencies</artifactId>
       <version>${webarchiving-addon.version}</version>
       <type>pom</type>
     </dependency>
@@ -106,46 +91,6 @@
               </source>
             </div>
           </li>
-
-          <li>
-            <p>Add the "common" artifact as a direct, provided dependency to the <![CDATA[<dependencies>]]> section</p>
-            <div class="brush: xml">
-              <source><![CDATA[
-    <dependency>
-      <groupId>org.bloomreach.forge</groupId>
-      <artifactId>web-archiving-addon-common</artifactId>
-      <scope>provided</scope>
-    </dependency>]]>
-              </source>
-            </div>
-          </li>
-
-          <li>
-            <p>Add the "common" artifact as a shared lib dependency via the cargo.run profile. If you are creating a distribution, make sure the artifact is also
-              listed in src/main/assembly/shared-lib-component.xml
-            </p>
-            <div class="brush: xml">
-              <source><![CDATA[
-    <profile>
-      <id>cargo.run</id>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.codehaus.cargo</groupId>
-            <artifactId>cargo-maven2-plugin</artifactId>
-            <configuration>
-              <container>
-                <dependencies>
-                  <dependency>
-                    <groupId>org.bloomreach.forge</groupId>
-                    <artifactId>web-archiving-addon-common</artifactId>
-                    <classpath>shared</classpath>
-                  </dependency>
-                </dependencies>
-                ...]]>
-              </source>
-            </div>
-          </li>
         </ol>
       </subsection>
 
@@ -153,14 +98,17 @@
       <subsection name="Installation in CMS module">
         <ol>
           <li>
-            <p>Add the following dependencies to the cms pom.xml, notice the provided dependency and comment/uncomment the desired Web Archive manager</p>
+            <p>Add the following dependency to the cms-dependencies module pom.xml and comment/uncomment the desired Web Archive manager</p>
             <div class="brush: xml">
               <source><![CDATA[
+
+
     <dependency>
       <groupId>org.bloomreach.forge</groupId>
       <artifactId>web-archiving-addon-cms-dependencies</artifactId>
       <type>pom</type>
     </dependency>
+
     <dependency>
       <groupId>org.bloomreach.forge</groupId>
       <artifactId>web-archiving-addon-archive-manager-tester</artifactId>
@@ -177,27 +125,10 @@
         </ol>
       </subsection>
 
-      <subsection name="Installation in Site module">
-        <ol>
-          <li>
-            <p>Add the following dependencies to the site pom.xml</p>
-            <div class="brush: xml">
-              <source><![CDATA[
-    <dependency>
-      <groupId>org.bloomreach.forge</groupId>
-      <artifactId>web-archiving-addon-hst-dependencies</artifactId>
-      <type>pom</type>
-    </dependency>]]>
-              </source>
-            </div>
-          </li>
-        </ol>
-      </subsection>
-
       <subsection name="Logging">
         <ol>
           <li>
-            <p>To change logging level for the addon, add the following <![CDATA[<logger>]]> configuration in conf/log4j-dev.xml and conf/log4j-dist.xml</p>
+            <p>To change logging level for the addon, add the following <![CDATA[<logger>]]> configuration in files conf/log4j-dev.xml, conf/log4j-dist.xml and conf/log4j2-docker.xml</p>
             <div class="brush: xml">
               <source><![CDATA[
     <Logger name="org.bloomreach.forge.webarchiving" level="info"/>]]>
