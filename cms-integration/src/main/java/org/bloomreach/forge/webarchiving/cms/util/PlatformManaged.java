@@ -27,7 +27,7 @@ import org.onehippo.repository.modules.DaemonModule;
  * Services can implement this interface in order to initialize and destroy themselves on each lifecycle method call.
  * The service initiator module (typically a {@link DaemonModule} implementation) manages this lifecycle.
  */
-public interface LifeCycle {
+public interface PlatformManaged {
 
     /**
      * Do initialization using the {@code props}.

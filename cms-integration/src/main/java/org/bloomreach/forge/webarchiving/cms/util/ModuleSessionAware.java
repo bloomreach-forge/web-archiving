@@ -16,6 +16,7 @@
 
 package org.bloomreach.forge.webarchiving.cms.util;
 
+import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import org.onehippo.repository.modules.DaemonModule;
 
@@ -29,5 +30,5 @@ public interface ModuleSessionAware {
      * Set the JCR session provided to the underlying (daemon) module.
      * @param moduleSession the JCR session provided to the underlying (daemon) module
      */
-    void setModuleSession(Session moduleSession);
+    void setModuleSession(Session moduleSession) throws RepositoryException;
 }

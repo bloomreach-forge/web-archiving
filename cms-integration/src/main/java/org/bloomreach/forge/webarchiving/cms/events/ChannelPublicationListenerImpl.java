@@ -18,7 +18,7 @@ package org.bloomreach.forge.webarchiving.cms.events;
 
 import java.util.Map;
 
-import org.bloomreach.forge.webarchiving.cms.util.LifeCycle;
+import org.bloomreach.forge.webarchiving.cms.util.PlatformManaged;
 import org.onehippo.cms7.event.HippoEvent;
 import org.onehippo.cms7.services.eventbus.HippoEventListenerRegistry;
 import org.onehippo.cms7.services.eventbus.Subscribe;
@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Implementation of {@link ChannelPublicationListener}
  */
-public class ChannelPublicationListenerImpl implements ChannelPublicationListener, LifeCycle {
+public class ChannelPublicationListenerImpl implements ChannelPublicationListener, PlatformManaged {
     private static Logger log = LoggerFactory.getLogger(ChannelPublicationListenerImpl.class);
 
     @Override

@@ -14,23 +14,15 @@
  * limitations under the License.
  */
 
-package org.hippoecm.hst.container;
+package org.bloomreach.forge.webarchiving.cms.util;
 
-import org.hippoecm.hst.core.request.HstRequestContext;
+import org.onehippo.repository.modules.DaemonModule;
 
-public final class ModifiableRequestContextProvider {
-    private ModifiableRequestContextProvider() {
-    }
-
-    public static HstRequestContext get() {
-        return RequestContextProvider.get();
-    }
-
-    public static void set(HstRequestContext requestContext) {
-        new RequestContextProvider.ModifiableRequestContextProvider().set(requestContext);
-    }
-
-    public static void clear() {
-        new RequestContextProvider.ModifiableRequestContextProvider().clear();
-    }
+/**
+ * Component module lifecycle abstraction with dependence on the initialization of HST Services.
+ *
+ * Services can implement this interface in order to initialize and destroy themselves after HSTServices have been initialized.
+ * The service initiator module (typically a {@link DaemonModule} implementation) manages this lifecycle.
+ */
+public interface HSTServicesAwarePlatformManaged extends PlatformManaged {
 }

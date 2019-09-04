@@ -19,7 +19,7 @@ package org.bloomreach.forge.webarchiving.archivemanagers.tester;
 import java.util.Map;
 
 import org.bloomreach.forge.webarchiving.cms.util.Discoverable;
-import org.bloomreach.forge.webarchiving.cms.util.LifeCycle;
+import org.bloomreach.forge.webarchiving.cms.util.PlatformManaged;
 import org.bloomreach.forge.webarchiving.common.api.WebArchiveManager;
 import org.bloomreach.forge.webarchiving.common.error.WebArchiveUpdateException;
 import org.bloomreach.forge.webarchiving.common.model.WebArchiveUpdate;
@@ -27,7 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
-public class TesterWebArchiveManager implements WebArchiveManager, LifeCycle, Discoverable {
+public class TesterWebArchiveManager implements WebArchiveManager, PlatformManaged, Discoverable {
     private static final Logger log = LoggerFactory.getLogger(TesterWebArchiveManager.class);
 
     private int testerSleepTimeInSeconds = 10;

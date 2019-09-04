@@ -23,13 +23,21 @@ import java.util.Map;
 import java.util.Random;
 import java.util.stream.Collectors;
 
-import javax.jcr.Credentials;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 
 import org.apache.commons.lang.StringUtils;
+import org.bloomreach.forge.webarchiving.cms.util.Discoverable;
+import org.bloomreach.forge.webarchiving.cms.util.PlatformManaged;
+import org.bloomreach.forge.webarchiving.cms.util.ModuleSessionAware;
+import org.bloomreach.forge.webarchiving.common.api.WebArchiveUpdateJobsManager;
+import org.bloomreach.forge.webarchiving.common.error.WebArchiveUpdateException;
+import org.bloomreach.forge.webarchiving.common.model.WebArchiveUpdate;
+import org.bloomreach.forge.webarchiving.common.model.WebArchiveUpdateJob;
+import org.bloomreach.forge.webarchiving.common.model.WebArchiveUpdateJobStatus;
+import org.bloomreach.forge.webarchiving.common.model.WebArchiveUpdateType;
 import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.search.query.OrderClause;
@@ -47,22 +55,13 @@ import org.onehippo.cms7.services.search.result.QueryResult;
 import org.onehippo.cms7.services.search.service.SearchService;
 import org.onehippo.cms7.services.search.service.SearchServiceException;
 import org.onehippo.cms7.services.search.service.SearchServiceFactory;
-import org.bloomreach.forge.webarchiving.cms.util.Discoverable;
-import org.bloomreach.forge.webarchiving.cms.util.LifeCycle;
-import org.bloomreach.forge.webarchiving.cms.util.ModuleSessionAware;
-import org.bloomreach.forge.webarchiving.common.api.WebArchiveUpdateJobsManager;
-import org.bloomreach.forge.webarchiving.common.error.WebArchiveUpdateException;
-import org.bloomreach.forge.webarchiving.common.model.WebArchiveUpdate;
-import org.bloomreach.forge.webarchiving.common.model.WebArchiveUpdateJob;
-import org.bloomreach.forge.webarchiving.common.model.WebArchiveUpdateJobStatus;
-import org.bloomreach.forge.webarchiving.common.model.WebArchiveUpdateType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * A {@link WebArchiveUpdateJobsManager} implementation which stores data into JCR repository.
  */
-public class JcrWebArchiveUpdateJobsManager implements WebArchiveUpdateJobsManager, ModuleSessionAware, LifeCycle, Discoverable {
+public class JcrWebArchiveUpdateJobsManager implements WebArchiveUpdateJobsManager, ModuleSessionAware, PlatformManaged, Discoverable {
 
     private static Logger log = LoggerFactory.getLogger(JcrWebArchiveUpdateJobsManager.class);
 
@@ -71,7 +70,7 @@ public class JcrWebArchiveUpdateJobsManager implements WebArchiveUpdateJobsManag
     protected static final int DEFAULT_BATCH_SIZE = 100;
 
     private static final Object mutex = new Object();
-    protected Session moduleSession;
+    protected Session systemSession;
     protected long batchSize = DEFAULT_BATCH_SIZE;
 
     @Override
@@ -88,28 +87,37 @@ public class JcrWebArchiveUpdateJobsManager implements WebArchiveUpdateJobsManag
         }
     }
 
+
     @Override
-    public void destroy() {
-        log.debug("Destroying {}", this.getClass().getName());
+    public void setModuleSession(Session session) throws RepositoryException {
+        if (session == null) {
+            throw new RepositoryException("ModuleSession is null");
+        }
+        try {
+            systemSession = session.impersonate(new SimpleCredentials("system", new char[]{}));
+        } catch (Exception e) {
+            throw new RepositoryException(e);
+        }
     }
 
     @Override
-    public void setModuleSession(Session session) {
-        this.moduleSession = session;
+    public void destroy() {
+        log.debug("Destroying {}", this.getClass().getName());
+        if (systemSession != null) {
+            systemSession.logout();
+        }
     }
 
     @Override
     public String createWebArchiveUpdateJob(WebArchiveUpdateJob webArchiveUpdateJob) throws WebArchiveUpdateException {
         String updateJobId;
-        Session session = null;
         try {
             WebArchiveUpdate webArchiveUpdate = webArchiveUpdateJob.getWebArchiveUpdate();
             if (webArchiveUpdate == null) {
                 throw new WebArchiveUpdateException("Job does not contain an update {}", webArchiveUpdateJob);
             }
 
-            session = getSession();
-            Node jobNode = createJobNode(session);
+            Node jobNode = createJobNode(systemSession);
             bindWebArchiveUpdateJobNode(jobNode, webArchiveUpdateJob);
 
             updateJobId = jobNode.getName();
@@ -118,12 +126,8 @@ public class JcrWebArchiveUpdateJobsManager implements WebArchiveUpdateJobsManag
             createWebArchiveUpdate(jobNode, webArchiveUpdate);
 
         } catch (RepositoryException e) {
-            refreshSession(session);
+            refreshSession(systemSession);
             throw new WebArchiveUpdateException(e, "Error while creating job {}", webArchiveUpdateJob);
-        } finally {
-            if (session != null) {
-                session.logout();
-            }
         }
         return updateJobId;
     }
@@ -131,17 +135,11 @@ public class JcrWebArchiveUpdateJobsManager implements WebArchiveUpdateJobsManag
     @Override
     public WebArchiveUpdateJob getWebArchiveUpdateJobById(String webArchiveUpdateJobId) throws WebArchiveUpdateException {
         WebArchiveUpdateJob job = new WebArchiveUpdateJob();
-        Session session = null;
         try {
-            session = getSession();
-            Node jobNode = getJobsStoreNode(session).getNode(webArchiveUpdateJobId);
+            Node jobNode = getJobsStoreNode(systemSession).getNode(webArchiveUpdateJobId);
             mapWebArchiveJob(jobNode, job);
         } catch (RepositoryException e) {
             throw new WebArchiveUpdateException(e);
-        } finally {
-            if (session != null) {
-                session.logout();
-            }
         }
         return job;
     }
@@ -152,25 +150,19 @@ public class JcrWebArchiveUpdateJobsManager implements WebArchiveUpdateJobsManag
             throw new WebArchiveUpdateException("No identifier in job {}", webArchiveUpdateJob);
         }
 
-        Session session = null;
         try {
-            session = getSession();
-            Node jobNode = getJobsStoreNode(session).getNode(webArchiveUpdateJob.getId());
+            Node jobNode = getJobsStoreNode(systemSession).getNode(webArchiveUpdateJob.getId());
 
             if (!jobNode.isNodeType("mix:referenceable")) {
                 jobNode.addMixin("mix:referenceable");
             }
 
             bindWebArchiveUpdateJobNode(jobNode, webArchiveUpdateJob);
-            session.save();
+            systemSession.save();
 
         } catch (RepositoryException e) {
-            refreshSession(session);
+            refreshSession(systemSession);
             throw new WebArchiveUpdateException(e, "Error while creating job {}", webArchiveUpdateJob);
-        } finally {
-            if (session != null) {
-                session.logout();
-            }
         }
     }
 
@@ -179,13 +171,11 @@ public class JcrWebArchiveUpdateJobsManager implements WebArchiveUpdateJobsManag
         int batchCount = 0;
         int totalJobsDeleted = 0;
         final StringBuilder infoText = new StringBuilder("Deleted web archive update jobs:\n");
-        Session session = null;
 
         try {
-            session = getSession();
             for (WebArchiveUpdateJob job : webArchiveUpdateJobs) {
                 try {
-                    Node node = getJobsStoreNode(session).getNode(job.getId());
+                    Node node = getJobsStoreNode(systemSession).getNode(job.getId());
                     log.debug("Removing node {}", node.getPath());
                     node.remove();
 
@@ -199,7 +189,7 @@ public class JcrWebArchiveUpdateJobsManager implements WebArchiveUpdateJobsManag
                 if (batchCount >= batchSize) {
                     log.debug("Saving a batch of {} after a total of {} deletions", batchCount, totalJobsDeleted);
                     batchCount = 0;
-                    session.save();
+                    systemSession.save();
 
                     // pause for the save to be propagated (cluster, Lucene)
                     try {
@@ -210,21 +200,17 @@ public class JcrWebArchiveUpdateJobsManager implements WebArchiveUpdateJobsManag
             }
 
             // last batch save
-            if (session.hasPendingChanges()) {
-                session.save();
+            if (systemSession.hasPendingChanges()) {
+                systemSession.save();
             }
             if (totalJobsDeleted > 0) {
                 log.info(infoText.toString());
             }
         } catch (RepositoryException e) {
-            refreshSession(session);
+            refreshSession(systemSession);
             throw new WebArchiveUpdateException(e,
-                "Error while deleting job {}",
-                Arrays.stream(webArchiveUpdateJobs).map(WebArchiveUpdateJob::getId).collect(Collectors.toList()));
-        } finally {
-            if (session != null) {
-                session.logout();
-            }
+                    "Error while deleting job {}",
+                    Arrays.stream(webArchiveUpdateJobs).map(WebArchiveUpdateJob::getId).collect(Collectors.toList()));
         }
     }
 
@@ -239,10 +225,8 @@ public class JcrWebArchiveUpdateJobsManager implements WebArchiveUpdateJobsManag
         List<WebArchiveUpdateJob> jobs = new LinkedList<>();
 
         if (limit > 0) {
-            Session session = null;
             try {
-                session = getSession();
-                final SearchService searchService = searchServiceFactory.createSearchService(session);
+                final SearchService searchService = searchServiceFactory.createSearchService(systemSession);
                 Query query = createSearchQuery(searchService, WebArchivingConstants.NT_WEB_ARCHIVE_UPDATE_JOB, statuses, searchFilters);
 
                 if (StringUtils.isNotBlank(orderByPropertyHint)) {
@@ -263,15 +247,11 @@ public class JcrWebArchiveUpdateJobsManager implements WebArchiveUpdateJobsManag
                 for (final HitIterator hits = result.getHits(); hits.hasNext(); ) {
                     final Hit hit = hits.next();
                     final String uuid = hit.getSearchDocument().getContentId().toIdentifier();
-                    final WebArchiveUpdateJob job = getWebArchiveUpdateJobByUuid(uuid, session);
+                    final WebArchiveUpdateJob job = getWebArchiveUpdateJobByUuid(uuid, systemSession);
                     jobs.add(job);
                 }
             } catch (SearchServiceException | RepositoryException e) {
                 throw new WebArchiveUpdateException(e);
-            } finally {
-                if (session != null) {
-                    session.logout();
-                }
             }
         }
         return jobs;
@@ -426,17 +406,6 @@ public class JcrWebArchiveUpdateJobsManager implements WebArchiveUpdateJobsManag
         } catch (RepositoryException e) {
             log.error("Failed to refresh.", e);
         }
-    }
-
-    protected Session getSession() throws RepositoryException {
-        if (moduleSession != null) {
-            return moduleSession.impersonate(getSystemCredentials());
-        }
-        throw new RepositoryException("ModuleSession is null");
-    }
-
-    protected Credentials getSystemCredentials() {
-        return new SimpleCredentials("system", new char[]{});
     }
 
     protected Node getJobsStoreNode(final Session session) throws RepositoryException {
