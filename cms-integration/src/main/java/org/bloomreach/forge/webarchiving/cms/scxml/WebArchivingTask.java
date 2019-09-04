@@ -65,7 +65,7 @@ public class WebArchivingTask extends AbstractDocumentTask {
             return null;
         }
 
-        if (urls.isEmpty()) {
+        if (urls == null || urls.isEmpty()) {
             log.info("No public urls for document {}, skipping creation of job", handle.getPath());
             return null;
         }
