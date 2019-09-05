@@ -133,19 +133,19 @@
         <type>pom</type>
       </dependency>
 
-      <!--Uncomment to use the ArchiefWeb manager
       <dependency>
         <groupId>org.bloomreach.forge</groupId>
         <artifactId>web-archiving-addon-archive-manager-archiefweb</artifactId>
         <version>${webarchiving-addon.version}</version>
-      </dependency>-->
+      </dependency>
 
-      <!--The "Tester" manager is now enabled -->
+<!--
       <dependency>
         <groupId>org.bloomreach.forge</groupId>
         <artifactId>web-archiving-addon-archive-manager-tester</artifactId>
         <version>${webarchiving-addon.version}</version>
       </dependency>
+-->
 
     </dependencies>
   </dependencyManagement>

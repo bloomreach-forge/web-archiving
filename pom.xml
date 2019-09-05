@@ -58,7 +58,6 @@
   </distributionManagement>
 
   <properties>
-
     <maven.plugin.site.version>3.6</maven.plugin.site.version>
 
     <hippo.services.version>13.3.0</hippo.services.version>
@@ -66,10 +65,6 @@
     <hippo.hst.version>13.3.0</hippo.hst.version>
     <hippo.addon-search-service.version>13.3.0</hippo.addon-search-service.version>
     <commons.lang3.version>3.9</commons.lang3.version>
-    <!--<junit.version>4.12</junit.version>
-    <okhttp.version>3.4.2</okhttp.version>-->
-
-
   </properties>
 
   <repositories>
@@ -111,12 +106,6 @@
         <version>${hippo.hst.version}</version>
         <scope>provided</scope>
       </dependency>
-      <!--TODO CLEANUP <dependency>
-        <groupId>org.onehippo.cms7.hst.client-modules</groupId>
-        <artifactId>hst-page-composer</artifactId>
-        <version>${hippo.hst.version}</version>
-        <scope>provided</scope>
-      </dependency>-->
       <dependency>
         <groupId>org.apache.commons</groupId>
         <artifactId>commons-lang3</artifactId>
@@ -138,11 +127,6 @@
         <artifactId>hippo-search-service-jcr</artifactId>
         <version>${hippo.addon-search-service.version}</version>
       </dependency>
-      <!--TODO CLEANUP <dependency>
-        <groupId>com.squareup.okhttp3</groupId>
-        <artifactId>okhttp</artifactId>
-        <version>${okhttp.version}</version>
-      </dependency>-->
     </dependencies>
   </dependencyManagement>
 

@@ -29,6 +29,15 @@
         </p>
       </subsection>
 
+      <subsection name="Dependency to CRISP">
+        <ol>
+          <li>
+            <p>The ArchiefWeb manager depends on the CRISP addon for communication to the external Archiving agency. Install the CRISP addon as described in <a href="https://documentation.bloomreach.com/library/concepts/crisp-api/installation.html">Installing CRISP Addon</a>.
+            </p>
+          </li>
+        </ol>
+      </subsection>
+
       <subsection name="Root pom: repositories, version management and dependency management">
         <ol>
           <li>
