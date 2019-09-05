@@ -5,7 +5,7 @@ definitions:
         operation: override
         type: string
         value: org.bloomreach.forge.webarchiving.hst.service.HstUrlServiceImpl
-      environment:
+      hostGroupName:
         operation: override
         type: string
         value: dev-localhost

@@ -53,8 +53,8 @@ import org.slf4j.LoggerFactory;
 public class HstUrlServiceImpl implements HstUrlService, ModuleSessionAware, HSTServicesAwarePlatformManaged, Discoverable {
     private static final Logger log = LoggerFactory.getLogger(HstUrlServiceImpl.class);
 
-    protected static final String CONFIG_PROP_ENVIRONMENT = "environment";
-    private String environment;
+    protected static final String CONFIG_PROP_HOSTGROUPNAME = "hostGroupName";
+    private String hostGroupName;
 
     protected Session systemSession;
     protected Session liveUserSession;
@@ -63,9 +63,9 @@ public class HstUrlServiceImpl implements HstUrlService, ModuleSessionAware, HST
 
     @Override
     public synchronized void initialize(final Map<String, String> props) throws WebArchiveUpdateException {
-        environment = props.get(CONFIG_PROP_ENVIRONMENT);
-        if (environment == null) {
-            throw new WebArchiveUpdateException("Property 'environment' is required, for example 'environment=prod'");
+        hostGroupName = props.get(CONFIG_PROP_HOSTGROUPNAME);
+        if (hostGroupName == null) {
+            throw new WebArchiveUpdateException("Property 'hostGroupName' is required, for example 'hostGroupName=prod'");
         }
         if (systemSession == null) {
             throw new WebArchiveUpdateException("ModuleSession is null");
@@ -141,8 +141,8 @@ public class HstUrlServiceImpl implements HstUrlService, ModuleSessionAware, HST
                 return null;
             }
 
-            final Mount anyMount = platformModel.getVirtualHosts().getMountsByHostGroup(environment).get(0);
-            final List<HstLink> hstLinks = linkCreator.createAll(handleNode, anyMount, environment, "live", true);
+            final Mount anyMount = platformModel.getVirtualHosts().getMountsByHostGroup(hostGroupName).get(0);
+            final List<HstLink> hstLinks = linkCreator.createAll(handleNode, anyMount, hostGroupName, "live", true);
 
             urls.addAll(hstLinks.stream()
                     .filter(link -> link.getMount().getChannel() != null)
