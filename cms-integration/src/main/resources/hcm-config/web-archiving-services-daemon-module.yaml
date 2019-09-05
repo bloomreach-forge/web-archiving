@@ -19,4 +19,3 @@ definitions:
         /hsturlservice:
           jcr:primaryType: hipposys:moduleconfig
           className: ''
-          hostGroupName: ''

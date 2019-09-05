@@ -37,5 +37,7 @@ public interface WebArchiveManager {
      *
      * @return information for the underlying archive manager implementation.
      */
-    String getArchiveManagerInfo();
+    default String getArchiveManagerInfo(){
+        return this.getClass().getName();
+    }
 }

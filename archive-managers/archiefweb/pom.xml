@@ -30,6 +30,7 @@
 
   <properties>
     <hippo.addon-crisp.version>13.3.0</hippo.addon-crisp.version>
+    <org.json.version>20090211</org.json.version>
   </properties>
 
   <dependencies>
@@ -72,6 +73,12 @@
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-addon-crisp-repository</artifactId>
       <version>${hippo.addon-crisp.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.json</groupId>
+      <artifactId>json</artifactId>
+      <version>${org.json.version}</version>
       <scope>provided</scope>
     </dependency>
   </dependencies>

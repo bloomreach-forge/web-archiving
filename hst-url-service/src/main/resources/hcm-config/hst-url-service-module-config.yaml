@@ -5,7 +5,4 @@ definitions:
         operation: override
         type: string
         value: org.bloomreach.forge.webarchiving.hst.service.HstUrlServiceImpl
-      hostGroupName:
-        operation: override
-        type: string
-        value: dev-localhost
+      hostGroupName: dev-localhost

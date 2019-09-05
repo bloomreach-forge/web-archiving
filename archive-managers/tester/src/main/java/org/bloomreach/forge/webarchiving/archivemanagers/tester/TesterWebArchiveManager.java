@@ -62,12 +62,12 @@ public class TesterWebArchiveManager implements WebArchiveManager, PlatformManag
         }
 
         if (System.currentTimeMillis() % 2 != 0) {
-            throw new WebArchiveUpdateException("It's an odd second, web archive is closed now");
+            throw new WebArchiveUpdateException("Web archive is closed now");
         }
     }
 
     @Override
     public String getArchiveManagerInfo() {
-        return "Tester Web Archive Manager [" + this.getClass().getSimpleName() + "]";
+        return "Tester Web Archive Manager [" + this.getClass().getName() + "]";
     }
 }
