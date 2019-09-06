@@ -58,7 +58,7 @@
   </distributionManagement>
 
   <properties>
-    <maven.plugin.site.version>3.6</maven.plugin.site.version>
+    <maven.plugin.site.version>3.7.1</maven.plugin.site.version>
 
     <hippo.services.version>13.3.0</hippo.services.version>
     <hippo.repository.version>13.3.0</hippo.repository.version>

@@ -22,29 +22,44 @@
   <body>
     <section name="Configuration">
       <subsection name="General">
-        <p>This addon is preconfigured and should work out of the box upon installation.</p>
+        <p>This addon employs a number of modules to perform its operations:
+          <ul>
+            <li>
+              <p>Archive manager: the module that connects to an external archiving agency and requests an archiving operation</p>
+            </li>
+            <li>
+              <p>Updates jobs manager: this module creates WebArchiveUpdate jobs in a queue implemented via a JCR dedicated node structure</p>
+            </li>
+            <li>
+              <p>Updates processor: An implementation of org.onehippo.repository.scheduling.RepositoryJob that consumes the WebArchive updates from the queue</p>
+            </li>
+            <li>
+              <p>SCXML action: an action registered for both publication and depublication of documents</p>
+            </li>
+            <li>
+              <p>Channel publication listener: registered when a channel is published or taken offline</p>
+            </li>
+            <li>
+              <p>HST URL service: retrieves all URLs for a document that was published or was taken offline</p>
+            </li>
+          </ul>
+          <p>These modules are initialised by a daemon module (org.bloomreach.forge.webarchiving.cms.WebArchivingServicesDaemonModule)</p>
+        </p>
       </subsection>
 
       <subsection name="Archive manager">
         <p>The most important configuration is about selecting the Web Archive manager to be used. This is governed by dependency management in your pom,
-          please see <a href="install.html">install page</a>.
-        </p>
-      </subsection>
-
-      <subsection name="Manager Parameters">
+          please see <a href="install.html">install page</a>.</p>
         <p>Depending on the manager used, different parameters will be exposed. The configuration can be found under
           /hippo:configuration/hippo:modules/web-archiving-addon-services-daemon/archivemanager</p>
+        <p>
+          For maintainability reasons, the api request format as well as the credentials needed for using the service are configurable under: /hippo:configuration/hippo:modules/crispregistry/hippo:moduleconfig/crisp:resourceresolvercontainer/archiefWebEndpoint
+          and the location mentioned above</p>
       </subsection>
 
       <subsection name="HST URL service">
-        <p>
-          configure the ewnvironemt in this service (dev-localhost)
-          +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-          +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-          This addon exposes a service in HST that fetches all URLs of a document. Configuration for this service can be found in
-          hst-url-service/src/main/resources/META-INF/hst-assembly/addon/org/bloomreach/forge/webarchiving/hst/web-archiving-hst.xml.
-          You can change the initialization parameters of the "org.bloomreach.forge.webarchiving.hst.service.HstUrlServiceImpl" bean as needed</p>
+        <p>Configuration for this service can be found under /hippo:configuration/hippo:modules/web-archiving-addon-services-daemon/hsturlservice.
+          The service uses a specific host group as registered in hst:hosts. The name of the desired host group to use needs to be configured in the location above.</p>
       </subsection>
     </section>
   </body>
