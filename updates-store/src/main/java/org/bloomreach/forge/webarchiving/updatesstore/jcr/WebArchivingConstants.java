@@ -43,7 +43,6 @@ public final class WebArchivingConstants {
     static final String PROP_TYPE = NS_WEB_ARCHIVING_ADDON + "type";
     static final String PROP_URLS = NS_WEB_ARCHIVING_ADDON + "urls";
 
-    //TODO Update this list
     static final Set<String> BUILTIN_JOB_PROP_NAMES =
         new HashSet<>(Arrays.asList(PROP_STATUS, PROP_CREATED, PROP_LAST_MODIFIED, PROP_CREATOR, PROP_ATTEMPT));
 

@@ -42,9 +42,6 @@ import org.onehippo.repository.modules.ProvidesService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * TODO It doesn't know until runtime which services are Discoverable Registers services for the web archiving addon
- */
 @ProvidesService(types = {
         WebArchiveUpdateJobsManager.class,
         WebArchiveManager.class
