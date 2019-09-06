@@ -56,7 +56,7 @@ public class WebArchiveUpdateJob implements Serializable {
     /**
      * Number of attempt to submit this job
      */
-    private long attempt = 0;
+    private long attempt = 1L;
 
     public WebArchiveUpdateJob() {
         super();
