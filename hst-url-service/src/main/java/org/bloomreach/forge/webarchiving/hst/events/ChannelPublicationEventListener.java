@@ -19,9 +19,13 @@ package org.bloomreach.forge.webarchiving.hst.events;
 import java.util.Calendar;
 
 import org.bloomreach.forge.webarchiving.common.api.WebArchiveManager;
+import org.bloomreach.forge.webarchiving.common.api.WebArchiveUpdateJobsManager;
 import org.bloomreach.forge.webarchiving.common.error.WebArchiveUpdateException;
 import org.bloomreach.forge.webarchiving.common.model.WebArchiveUpdate;
+import org.bloomreach.forge.webarchiving.common.model.WebArchiveUpdateJob;
+import org.bloomreach.forge.webarchiving.common.model.WebArchiveUpdateJobStatus;
 import org.bloomreach.forge.webarchiving.common.model.WebArchiveUpdateType;
+import org.bloomreach.forge.webarchiving.common.util.WebArchiveUpdateJobBuilder;
 import org.hippoecm.hst.pagecomposer.jaxrs.api.ChannelEvent;
 import org.hippoecm.hst.pagecomposer.jaxrs.api.ChannelEvent.ChannelEventType;
 import org.hippoecm.hst.pagecomposer.jaxrs.api.ChannelEventListenerRegistry;
@@ -60,11 +64,11 @@ public class ChannelPublicationEventListener {
         }
 
         final String channelIdentifier = event.getEditingMount().getChannel().getName();
-        final WebArchiveManager webArchiveManager = HippoServiceRegistry.getService(WebArchiveManager.class);
+        final WebArchiveUpdateJobsManager webArchiveUpdateJobsManager = HippoServiceRegistry.getService(WebArchiveUpdateJobsManager.class);
 
-        if (webArchiveManager == null) {
+        if (webArchiveUpdateJobsManager == null) {
             log.error("A required service isn't registered: web-archive-service ({}). Skipping request of update for channel {}",
-                    WebArchiveManager.class, webArchiveManager, channelIdentifier);
+                    WebArchiveUpdateJobsManager.class, webArchiveUpdateJobsManager, channelIdentifier);
             return;
         }
         final String creator = String.join(", ", event.getUserIds());
@@ -76,11 +80,16 @@ public class ChannelPublicationEventListener {
         Calendar now = Calendar.getInstance();
         webArchiveUpdate.setCreated(now);
 
+        WebArchiveUpdateJob job = WebArchiveUpdateJobBuilder.newJob()
+            .setCreated(now)
+            .setLastModified(now)
+            .setStatus(WebArchiveUpdateJobStatus.QUEUED)
+            .setWebArchiveUpdate(webArchiveUpdate)
+            .build();
         try {
-            webArchiveManager.requestUpdate(webArchiveUpdate);
+            webArchiveUpdateJobsManager.createWebArchiveUpdateJob(job);
         } catch (WebArchiveUpdateException e) {
-            log.error("\n====================  Failed to request Web Archive update ====================\n{}" +
-                    "========================================\n", webArchiveUpdate, e);
+            log.error("Failed to create Web Archive update job {}", job);
         }
     }
 }
