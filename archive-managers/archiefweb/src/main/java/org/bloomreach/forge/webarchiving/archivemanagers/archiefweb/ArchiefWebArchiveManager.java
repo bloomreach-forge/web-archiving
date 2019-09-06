@@ -75,34 +75,38 @@ public class ArchiefWebArchiveManager implements WebArchiveManager, PlatformMana
 
     @Override
     public synchronized void requestUpdate(final WebArchiveUpdate update) throws WebArchiveUpdateException {
-        ResourceServiceBroker broker = CrispHstServices.getDefaultResourceServiceBroker(HstServices.getComponentManager());
-        Resource authInfo = broker.resolve("archiefWebEndpoint", authEndpoint,
-                ExchangeHintBuilder.create()
-                        .methodName("POST")
-                        .requestHeader("Content-Type", "application/json;charset=UTF-8")
-                        .requestBody("{\"email\":\"" + username + "\",\n" +
-                                " \"password\":\"" + password + "\"}")
-                        .build());
-
-        if ("Authentication successful.".equals(authInfo.getValue("message"))) {
-            String jwtToken = authInfo.getValue("jwt", String.class);
-            Resource operationResource = broker.resolve("archiefWebEndpoint", requestEndpoint,
+        try {
+            ResourceServiceBroker broker = CrispHstServices.getDefaultResourceServiceBroker(HstServices.getComponentManager());
+            Resource authInfo = broker.resolve("archiefWebEndpoint", authEndpoint,
                     ExchangeHintBuilder.create()
                             .methodName("POST")
                             .requestHeader("Content-Type", "application/json;charset=UTF-8")
-                            .requestHeader("Authorization", "Bearer " + jwtToken)
-                            .requestBody(createRequestBody(update))
+                            .requestBody("{\"email\":\"" + username + "\",\n" +
+                                    " \"password\":\"" + password + "\"}")
                             .build());
 
-            System.out.println(operationResource.getValue("message"));
-            if ("Action completed successfully.".equals(operationResource.getValue("message"))) {
-                System.out.println("SUCCESS!!");
-            } else {
-                throw new WebArchiveUpdateException("Web archive update failed " + update);
-            }
+            if ("Authentication successful.".equals(authInfo.getValue("message"))) {
+                String jwtToken = authInfo.getValue("jwt", String.class);
+                Resource operationResource = broker.resolve("archiefWebEndpoint", requestEndpoint,
+                        ExchangeHintBuilder.create()
+                                .methodName("POST")
+                                .requestHeader("Content-Type", "application/json;charset=UTF-8")
+                                .requestHeader("Authorization", "Bearer " + jwtToken)
+                                .requestBody(createRequestBody(update))
+                                .build());
 
-        } else {
-            throw new WebArchiveUpdateException("Authentication failed, web archive update " + update);
+                System.out.println(operationResource.getValue("message"));
+                if ("Action completed successfully.".equals(operationResource.getValue("message"))) {
+                    System.out.println("SUCCESS!!");
+                } else {
+                    throw new WebArchiveUpdateException("Web archive update failed " + update);
+                }
+
+            } else {
+                throw new WebArchiveUpdateException("Authentication failed, web archive update " + update);
+            }
+        } catch (Throwable e) {
+            //TODO DO SOMETHING
         }
     }
 

@@ -14,4 +14,4 @@ definitions:
         >\r\n        <property name=\"requestFactory\" ref=\"org.springframework.http.client.ClientHttpRequestFactory\"\
         \ />\r\n      </bean>\r\n    </property>\r\n  </bean>\r\n</beans>"
       crisp:propnames: [archiefweb.api.base.uri]
-      crisp:propvalues: ['http://ondemandsp1.archiefweb.eu/api']
+      crisp:propvalues: ['https://ondemandsp1.archiefweb.eu/api']
