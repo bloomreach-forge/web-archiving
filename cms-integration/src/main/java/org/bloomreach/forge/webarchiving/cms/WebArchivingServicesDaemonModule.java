@@ -29,7 +29,6 @@ import org.bloomreach.forge.webarchiving.cms.util.Discoverable;
 import org.bloomreach.forge.webarchiving.cms.util.HSTServicesAwarePlatformManaged;
 import org.bloomreach.forge.webarchiving.cms.util.ModuleSessionAware;
 import org.bloomreach.forge.webarchiving.cms.util.PlatformManaged;
-import org.bloomreach.forge.webarchiving.common.api.ChannelPublicationListener;
 import org.bloomreach.forge.webarchiving.common.api.HstUrlService;
 import org.bloomreach.forge.webarchiving.common.api.WebArchiveManager;
 import org.bloomreach.forge.webarchiving.common.api.WebArchiveUpdateJobsManager;
@@ -55,7 +54,6 @@ public class WebArchivingServicesDaemonModule extends AbstractReconfigurableDaem
 
     private static final String WEB_ARCHIVE_MANAGER_CONFIG_LOCATION = "archivemanager";
     private static final String WEB_ARCHIVE_UPDATE_JOBS_MANAGER_CONFIG_LOCATION = "updatesmanager";
-    private static final String WEB_ARCHIVE_CHANNEL_PUB_LISTENER_CONFIG_LOCATION = "channelpub";
     private static final String WEB_ARCHIVE_HST_URL_SERVICE_CONFIG_LOCATION = "hsturlservice";
 
     private static final String CLASS_NAME = "className";
@@ -66,7 +64,6 @@ public class WebArchivingServicesDaemonModule extends AbstractReconfigurableDaem
 
     private WebArchiveUpdateJobsManager webArchiveUpdateJobsManager;
     private WebArchiveManager webArchiveManager;
-    private ChannelPublicationListener channelPublicationListener;
     private HstUrlService hstUrlService;
     private Map<HSTServicesAwarePlatformManaged, ProxiedServiceTracker<PlatformModelAvailableService>> hstPlatformModelAvailableServiceTrackers = new HashMap<>();
 
@@ -101,14 +98,12 @@ public class WebArchivingServicesDaemonModule extends AbstractReconfigurableDaem
     private void shutdownServices() {
         shutdownService(webArchiveUpdateJobsManager, WebArchiveUpdateJobsManager.class);
         shutdownService(webArchiveManager, WebArchiveManager.class);
-        shutdownService(channelPublicationListener, ChannelPublicationListener.class);
         shutdownService(hstUrlService, HstUrlService.class);
     }
 
     private void initializeServices(final Node moduleConfig) throws RepositoryException, WebArchivingException {
         webArchiveUpdateJobsManager = initializeService(getServiceConfigNode(moduleConfig, WEB_ARCHIVE_UPDATE_JOBS_MANAGER_CONFIG_LOCATION), WebArchiveUpdateJobsManager.class);
         webArchiveManager = initializeService(getServiceConfigNode(moduleConfig, WEB_ARCHIVE_MANAGER_CONFIG_LOCATION), WebArchiveManager.class);
-        channelPublicationListener = initializeService(getServiceConfigNode(moduleConfig, WEB_ARCHIVE_CHANNEL_PUB_LISTENER_CONFIG_LOCATION), ChannelPublicationListener.class);
         hstUrlService = initializeService(getServiceConfigNode(moduleConfig, WEB_ARCHIVE_HST_URL_SERVICE_CONFIG_LOCATION), HstUrlService.class);
     }
 

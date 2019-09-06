@@ -131,6 +131,36 @@
               </source>
             </div>
           </li>
+          <li>
+            <p>Create a new xml file in your cms module, under src/main/resources/META-INF/hst-assembly/overrides/web-archiving-channel-pub-listener.xml, and register the channel publication listener:</p>
+            <div class="brush: xml">
+              <source><![CDATA[
+    <?xml version="1.0" encoding="UTF-8"?>
+    <beans xmlns="http://www.springframework.org/schema/beans"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+      <bean class="org.bloomreach.forge.webarchiving.hst.events.ChannelPublicationEventListener"
+            init-method="init" destroy-method="destroy"/>
+
+    </beans>]]>
+              </source>
+            </div>
+            <p>Make sure to add a 'resources' section to your pom.xml, enabling the inclusion of xml files</p>
+            <div class="brush: xml">
+              <source><![CDATA[
+    <resources>
+      <resource>
+        <filtering>false</filtering>
+        <directory>src/main/resources</directory>
+        <includes>
+          <include>**/*.xml</include>
+        </includes>
+      </resource>
+    </resources>]]>
+              </source>
+            </div>
+          </li>
         </ol>
       </subsection>
 
