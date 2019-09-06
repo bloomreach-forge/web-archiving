@@ -114,6 +114,7 @@ public class ArchiefWebArchiveManager implements WebArchiveManager, PlatformMana
         JSONObject payload = new JSONObject();
         try {
             payload.put("url", new JSONArray(update.getUrls()));
+            //TODO Use 'delete' operation on document unpublish
             payload.put("action", "add");
         } catch (JSONException e) {
             throw new WebArchiveUpdateException(e, "Error while creating web archive update request body");
