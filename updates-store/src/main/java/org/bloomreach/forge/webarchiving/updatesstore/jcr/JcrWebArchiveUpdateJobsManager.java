@@ -314,7 +314,7 @@ public class JcrWebArchiveUpdateJobsManager implements WebArchiveUpdateJobsManag
         job.setCreated(JcrUtils.getDateProperty(jobNode, WebArchivingConstants.PROP_CREATED, null));
         job.setLastModified(JcrUtils.getDateProperty(jobNode, WebArchivingConstants.PROP_LAST_MODIFIED, null));
         job.setStatus(mapStatus(jobNode, WebArchivingConstants.PROP_STATUS));
-        job.setAttempt(JcrUtils.getLongProperty(jobNode, WebArchivingConstants.PROP_ATTEMPT, 0L));
+        job.setAttempt(JcrUtils.getLongProperty(jobNode, WebArchivingConstants.PROP_ATTEMPT, 1L));
 
         Node updateNode = jobNode.getNode(WebArchivingConstants.NS_WEB_ARCHIVING_ADDON + "update");
         if (updateNode.isNodeType(WebArchivingConstants.NT_WEB_ARCHIVE_UPDATE)) {

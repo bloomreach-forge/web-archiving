@@ -28,12 +28,12 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.apache.commons.lang.StringUtils;
-import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.bloomreach.forge.webarchiving.common.api.WebArchiveManager;
 import org.bloomreach.forge.webarchiving.common.api.WebArchiveUpdateJobsManager;
 import org.bloomreach.forge.webarchiving.common.error.WebArchiveUpdateException;
 import org.bloomreach.forge.webarchiving.common.model.WebArchiveUpdate;
 import org.bloomreach.forge.webarchiving.common.model.WebArchiveUpdateJob;
+import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.repository.scheduling.RepositoryJob;
 import org.onehippo.repository.scheduling.RepositoryJobExecutionContext;
 import org.slf4j.Logger;
@@ -58,6 +58,7 @@ public class WebArchiveUpdatesProcessor implements RepositoryJob {
 
     private static final int DEFAULT_DAYS_TO_LIVE = 365;
     private static final int DEFAULT_SEARCH_LIMIT = 1000;
+    public static final long MAX_RETRIES_LIMIT = 5;
 
     private long daysToLive = DEFAULT_DAYS_TO_LIVE;
     private long searchLimit = DEFAULT_SEARCH_LIMIT;
@@ -133,7 +134,12 @@ public class WebArchiveUpdatesProcessor implements RepositoryJob {
                     updateJob.setStatus(ACKNOWLEDGED);
                 } catch (WebArchiveUpdateException e) {
                     log.info("Error processing job:" + updateJob.toString(), e);
-                    updateJob.setStatus(ABORTED);
+                    if (updateJob.getAttempt() == MAX_RETRIES_LIMIT) {
+                        updateJob.setStatus(ERROR);
+                    } else {
+                        updateJob.setAttempt(updateJob.getAttempt() + 1);
+                        updateJob.setStatus(ABORTED);
+                    }
                 } finally {
                     try {
                         updateJob.setLastModified(Calendar.getInstance());
