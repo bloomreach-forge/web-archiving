@@ -118,12 +118,6 @@ public class ArchiefWebArchiveManager implements WebArchiveManager, PlatformMana
         } catch (JSONException e) {
             throw new WebArchiveUpdateException(e, "Error while creating web archive update request body");
         }
-
-
         return payload.toString();
-        /*return "{\"url\":\n" +
-                " [\"https://www.politie.nl/aangifte-of-meldingdoen\",\"https://www.politie.nl/mijnbuurt\"],\n" +
-                " \"action\":\"add\"\n" +
-                "}";*/
     }
 }
