@@ -81,7 +81,7 @@ public class HstUrlServiceImpl implements HstUrlService, ModuleSessionAware, HST
         try {
             liveUserSession = systemSession.impersonate(liveUserCredentials);
         } catch (Exception e) {
-            throw new WebArchiveUpdateException("Cannot login a repository user with live user credentials of the platform webapp.", e);
+            throw new WebArchiveUpdateException(e, "Cannot login a repository user with live user credentials of the platform webapp.");
         }
 
         if (liveUserSession == null) {

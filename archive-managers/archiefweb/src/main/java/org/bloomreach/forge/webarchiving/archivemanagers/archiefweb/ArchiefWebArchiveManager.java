@@ -52,19 +52,19 @@ public class ArchiefWebArchiveManager implements WebArchiveManager, PlatformMana
     public void initialize(final Map<String, String> props) throws WebArchiveUpdateException {
         authEndpoint = props.get(CONFIG_PROP_AUTH_ENDPOINT);
         if (authEndpoint == null) {
-            throw new WebArchiveUpdateException("Please configure the authentication endpoint (" + CONFIG_PROP_AUTH_ENDPOINT + ")");
+            throw new WebArchiveUpdateException("Please configure the authentication endpoint ({})", CONFIG_PROP_AUTH_ENDPOINT);
         }
         requestEndpoint = props.get(CONFIG_PROP_REQUEST_ENDPOINT);
         if (requestEndpoint == null) {
-            throw new WebArchiveUpdateException("Please configure the request endpoint (" + CONFIG_PROP_REQUEST_ENDPOINT + ")");
+            throw new WebArchiveUpdateException("Please configure the request endpoint ({})", CONFIG_PROP_REQUEST_ENDPOINT);
         }
         username = props.get(CONFIG_PROP_USERNAME);
         if (username == null) {
-            throw new WebArchiveUpdateException("Please configure api username (" + CONFIG_PROP_USERNAME + ")");
+            throw new WebArchiveUpdateException("Please configure api username ({})", CONFIG_PROP_USERNAME);
         }
         password = props.get(CONFIG_PROP_PASSWORD);
         if (password == null) {
-            throw new WebArchiveUpdateException("Please configure api password (" + CONFIG_PROP_PASSWORD + ")");
+            throw new WebArchiveUpdateException("Please configure api password ({})", CONFIG_PROP_PASSWORD);
         }
     }
 
@@ -99,14 +99,14 @@ public class ArchiefWebArchiveManager implements WebArchiveManager, PlatformMana
                 if ("Action completed successfully.".equals(operationResource.getValue("message"))) {
                     System.out.println("SUCCESS!!");
                 } else {
-                    throw new WebArchiveUpdateException("Web archive update failed " + update);
+                    throw new WebArchiveUpdateException("Web archive update failed {}", update);
                 }
 
             } else {
-                throw new WebArchiveUpdateException("Authentication failed, web archive update " + update);
+                throw new WebArchiveUpdateException("Authentication failed, web archive update {}", update);
             }
         } catch (Throwable e) {
-            //TODO DO SOMETHING
+            throw new WebArchiveUpdateException(e, "Web archive update failed for {}", update);
         }
     }
 
@@ -116,7 +116,7 @@ public class ArchiefWebArchiveManager implements WebArchiveManager, PlatformMana
             payload.put("url", new JSONArray(update.getUrls()));
             payload.put("action", "add");
         } catch (JSONException e) {
-            throw new WebArchiveUpdateException("Error while creating web archive update request", e);
+            throw new WebArchiveUpdateException(e, "Error while creating web archive update request body");
         }
 
 
