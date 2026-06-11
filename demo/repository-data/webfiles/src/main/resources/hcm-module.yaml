@@ -1,5 +1,5 @@
 group: 
-  name: web-archiving-addon-demo-v13
-project: web-archiving-addon-demo-v13
+  name: web-archiving-addon-demo-v17
+project: web-archiving-addon-demo-v17
 module:
-  name: web-archiving-addon-demo-v13-repository-data-webfiles
+  name: web-archiving-addon-demo-v17-repository-data-webfiles

@@ -29,7 +29,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.bloomreach.forge.webarchiving.cms.util.Discoverable;
 import org.bloomreach.forge.webarchiving.cms.util.ModuleSessionAware;
 import org.bloomreach.forge.webarchiving.cms.util.PlatformManaged;

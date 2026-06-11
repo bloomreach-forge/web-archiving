@@ -3,10 +3,10 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.example</groupId>
-    <artifactId>web-archiving-addon-demo-v13</artifactId>
+    <artifactId>web-archiving-addon-demo-v17</artifactId>
     <version>0.1.0-SNAPSHOT</version>
   </parent>
-  <artifactId>web-archiving-addon-demo-v13-cms-dependencies</artifactId>
+  <artifactId>web-archiving-addon-demo-v17-cms-dependencies</artifactId>
   <packaging>pom</packaging>
   <name>Web Archiving Addon Demo v13 CMS Dependencies</name>
   <description>Web Archiving Addon Demo v13 CMS Dependencies</description>
@@ -14,7 +14,7 @@
 
     <dependency>
       <groupId>org.example</groupId>
-      <artifactId>web-archiving-addon-demo-v13-repository-data-application</artifactId>
+      <artifactId>web-archiving-addon-demo-v17-repository-data-application</artifactId>
       <version>${project.version}</version>
     </dependency>
 

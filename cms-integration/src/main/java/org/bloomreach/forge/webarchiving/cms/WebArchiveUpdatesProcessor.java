@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.bloomreach.forge.webarchiving.common.api.WebArchiveManager;
 import org.bloomreach.forge.webarchiving.common.api.WebArchiveUpdateJobsManager;
 import org.bloomreach.forge.webarchiving.common.error.WebArchiveUpdateException;

@@ -23,7 +23,7 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.bloomreach.forge.webarchiving.cms.util.CmsUtils;
 import org.bloomreach.forge.webarchiving.cms.util.Discoverable;
 import org.bloomreach.forge.webarchiving.cms.util.HSTServicesAwarePlatformManaged;
