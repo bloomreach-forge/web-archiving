@@ -1,7 +1,7 @@
 group: 
-  name: web-archiving-addon-demo-v13
+  name: web-archiving-addon-demo-v17
   after: hippo-cms
-project: web-archiving-addon-demo-v13
+project: web-archiving-addon-demo-v17
 module: 
-  name: web-archiving-addon-demo-v13-repository-data-development
-  after: web-archiving-addon-demo-v13-repository-data-application
+  name: web-archiving-addon-demo-v17-repository-data-development
+  after: web-archiving-addon-demo-v17-repository-data-application

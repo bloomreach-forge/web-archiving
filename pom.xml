@@ -19,19 +19,19 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>30.3.0</version>
+    <version>17.0.0</version>
   </parent>
 
   <name>BloomReach Web Archiving Addon</name>
   <groupId>org.bloomreach.forge</groupId>
   <artifactId>web-archiving-addon</artifactId>
-  <version>4.0.0-SNAPSHOT</version>
+  <version>5.0.0-SNAPSHOT</version>
   <packaging>pom</packaging>
   <inceptionYear>2018</inceptionYear>
 
   <issueManagement>
     <system>Jira</system>
-    <url>https://issues.onehippo.com/browse/HIPFORGE</url>
+    <url>https://bloomreach.atlassian.net/browse/FORGE</url>
   </issueManagement>
 
   <licenses>
@@ -50,33 +50,31 @@
 
   <distributionManagement>
     <repository>
-      <name>Hippo Maven 2 Forge Repository</name>
-      <id>hippo-maven2-forge</id>
-      <url>https://maven.onehippo.com/content/repositories/forge-releases/</url>
+      <name>Bloomreach Maven 2 Forge Repository</name>
+      <id>bloomreach-maven2-forge</id>
+      <url>https://maven.bloomreach.com/content/repositories/forge-releases</url>
       <uniqueVersion>false</uniqueVersion>
     </repository>
   </distributionManagement>
 
   <properties>
+    <project.build.javaVersion>21</project.build.javaVersion>
+
     <maven.plugin.site.version>3.7.1</maven.plugin.site.version>
 
-    <hippo.services.version>13.3.0</hippo.services.version>
-    <hippo.repository.version>13.3.0</hippo.repository.version>
-    <hippo.hst.version>13.3.0</hippo.hst.version>
-    <hippo.addon-search-service.version>13.3.0</hippo.addon-search-service.version>
-    <commons.lang3.version>3.9</commons.lang3.version>
+    <hippo.addon-search-service.version>${hippo.release.version}</hippo.addon-search-service.version>
   </properties>
 
   <repositories>
     <repository>
-      <id>hippo-maven2-public</id>
-      <name>Hippo Maven 2 Public Repository</name>
-      <url>http://maven.onehippo.com/maven2</url>
+      <id>bloomreach-maven2</id>
+      <name>Bloomreach Maven 2 Repository</name>
+      <url>https://maven.bloomreach.com/repository/maven2/</url>
     </repository>
     <repository>
-      <id>hippo-maven2-forge</id>
-      <name>Hippo Maven 2 Forge Repositories</name>
-      <url>http://maven.onehippo.com/maven2-forge</url>
+      <id>bloomreach-maven2-forge</id>
+      <name>Bloomreach Maven 2 Forge Repository</name>
+      <url>https://maven.bloomreach.com/repository/maven2-forge/</url>
     </repository>
   </repositories>
 
@@ -85,36 +83,36 @@
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-services</artifactId>
-        <version>${hippo.services.version}</version>
+        <version>${hippo.release.version}</version>
         <scope>provided</scope>
       </dependency>
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-repository-api</artifactId>
-        <version>${hippo.repository.version}</version>
+        <version>${hippo.release.version}</version>
         <scope>provided</scope>
       </dependency>
       <dependency>
         <groupId>org.onehippo.cms7.hst</groupId>
         <artifactId>hst-api</artifactId>
-        <version>${hippo.hst.version}</version>
+        <version>${hippo.release.version}</version>
         <scope>provided</scope>
       </dependency>
       <dependency>
         <groupId>org.onehippo.cms7.hst</groupId>
         <artifactId>hst-commons</artifactId>
-        <version>${hippo.hst.version}</version>
+        <version>${hippo.release.version}</version>
         <scope>provided</scope>
       </dependency>
       <dependency>
         <groupId>org.apache.commons</groupId>
         <artifactId>commons-lang3</artifactId>
-        <version>${commons.lang3.version}</version>
+        <version>${commons-lang3.version}</version>
       </dependency>
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-repository-workflow</artifactId>
-        <version>${hippo.repository.version}</version>
+        <version>${hippo.release.version}</version>
         <scope>provided</scope>
       </dependency>
       <dependency>

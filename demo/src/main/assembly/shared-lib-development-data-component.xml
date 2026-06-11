@@ -2,11 +2,11 @@
            xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/component/1.1.2 http://maven.apache.org/xsd/component-1.1.2.xsd">
   <files>
     <file>
-      <source>repository-data/development/target/web-archiving-addon-demo-v13-repository-data-development-${project.version}.jar</source>
+      <source>repository-data/development/target/web-archiving-addon-demo-v17-repository-data-development-${project.version}.jar</source>
       <outputDirectory>shared/lib</outputDirectory>
     </file>
     <file>
-      <source>repository-data/site-development/target/web-archiving-addon-demo-v13-repository-data-site-development-${project.version}.jar</source>
+      <source>repository-data/site-development/target/web-archiving-addon-demo-v17-repository-data-site-development-${project.version}.jar</source>
       <outputDirectory>shared/lib</outputDirectory>
     </file>
   </files>

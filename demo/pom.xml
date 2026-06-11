@@ -5,13 +5,14 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-release</artifactId>
-    <version>13.3.0</version>
+    <relativePath/>
+    <version>17.0.0</version>
   </parent>
 
-  <name>Web Archiving Addon Demo v13</name>
-  <description>Web Archiving Addon Demo v13</description>
+  <name>Web Archiving Addon Demo v17</name>
+  <description>Web Archiving Addon Demo v17</description>
   <groupId>org.example</groupId>
-  <artifactId>web-archiving-addon-demo-v13</artifactId>
+  <artifactId>web-archiving-addon-demo-v17</artifactId>
   <version>0.1.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
@@ -63,28 +64,27 @@
     <!--***START temporary override of versions*** -->
     <!-- ***END temporary override of versions*** -->
 
-    <essentials.version>13.3.0</essentials.version>
-    <jsp-api.version>2.2</jsp-api.version>
+    <essentials.version>${hippo.release.version}</essentials.version>
     <taglibs.version>1.2.5</taglibs.version>
 
     <development-module-deploy-dir>shared/lib</development-module-deploy-dir>
 
     <hippo.cms.locales>nl,de,fr,es,zh</hippo.cms.locales>
     <buildNumber>${maven.build.timestamp}</buildNumber>
-    <webarchiving-addon.version>4.0.0-SNAPSHOT</webarchiving-addon.version>
+    <webarchiving-addon.version>5.0.0-SNAPSHOT</webarchiving-addon.version>
 
   </properties>
 
   <repositories>
     <repository>
-      <id>hippo</id>
-      <name>Hippo maven 2 repository.</name>
-      <url>https://maven.onehippo.com/maven2/</url>
+      <id>bloomreach-maven2</id>
+      <name>Bloomreach Maven 2</name>
+      <url>https://maven.bloomreach.com/repository/maven2/</url>
     </repository>
     <repository>
-      <id>hippo-forge</id>
-      <name>Bloomreach Forge maven 2 repository.</name>
-      <url>https://maven.onehippo.com/maven2-forge/</url>
+      <id>bloomreach-maven2-forge</id>
+      <name>Bloomreach Maven 2 Forge repository</name>
+      <url>https://maven.bloomreach.com/repository/maven2-forge/</url>
       <snapshots>
         <enabled>false</enabled>
       </snapshots>
@@ -98,23 +98,23 @@
   <dependencyManagement>
     <dependencies>
       <dependency>
-        <groupId>javax.servlet.jsp</groupId>
-        <artifactId>jsp-api</artifactId>
+        <groupId>jakarta.servlet.jsp</groupId>
+        <artifactId>jakarta.servlet.jsp-api</artifactId>
         <version>${jsp-api.version}</version>
         <scope>provided</scope>
       </dependency>
 
       <!-- other predefined runtime scope versioned dependencies -->
       <dependency>
-        <groupId>org.apache.taglibs</groupId>
-        <artifactId>taglibs-standard-spec</artifactId>
+        <groupId>com.bloomreach.xm</groupId>
+        <artifactId>taglibs-standard-spec-jakarta</artifactId>
         <version>${taglibs.version}</version>
         <scope>runtime</scope>
       </dependency>
 
       <dependency>
-        <groupId>org.apache.taglibs</groupId>
-        <artifactId>taglibs-standard-impl</artifactId>
+        <groupId>com.bloomreach.xm</groupId>
+        <artifactId>taglibs-standard-impl-jakarta</artifactId>
         <version>${taglibs.version}</version>
         <scope>runtime</scope>
       </dependency>
@@ -275,7 +275,7 @@
         <docker.db.bind.1>${project.basedir}/target/mysql-data:/var/lib/mysql</docker.db.bind.1>
         <docker.db.bind.2>${project.basedir}/db-bootstrap:/docker-entrypoint-initdb.d</docker.db.bind.2>
 
-        <docker.brxm.envRun.MYSQL_DB_HOST>${docker.container.db.net.web-archiving-addon-demo-v13-network.ip}</docker.brxm.envRun.MYSQL_DB_HOST>
+        <docker.brxm.envRun.MYSQL_DB_HOST>${docker.container.db.net.web-archiving-addon-demo-v17-network.ip}</docker.brxm.envRun.MYSQL_DB_HOST>
       </properties>
     </profile>
 
@@ -289,7 +289,7 @@
         <docker.db.bind.1>${project.basedir}/target/postgres-data:/var/lib/postgresql/data</docker.db.bind.1>
         <docker.db.bind.2>${project.basedir}/db-bootstrap:/docker-entrypoint-initdb.d</docker.db.bind.2>
 
-        <docker.brxm.envRun.POSTGRES_DB_HOST>${docker.container.db.net.web-archiving-addon-demo-v13-network.ip}</docker.brxm.envRun.POSTGRES_DB_HOST>
+        <docker.brxm.envRun.POSTGRES_DB_HOST>${docker.container.db.net.web-archiving-addon-demo-v17-network.ip}</docker.brxm.envRun.POSTGRES_DB_HOST>
       </properties>
     </profile>
 
@@ -303,7 +303,7 @@
         <plugins>
           <plugin>
             <groupId>org.codehaus.cargo</groupId>
-            <artifactId>cargo-maven2-plugin</artifactId>
+            <artifactId>cargo-maven3-plugin</artifactId>
             <configuration>
               <configuration>
                 <configfiles>
@@ -320,11 +320,11 @@
                 </configfiles>
                 <files>
                   <file>
-                    <file>${project.basedir}/repository-data/development/target/web-archiving-addon-demo-v13-repository-data-development-${project.version}.jar</file>
+                    <file>${project.basedir}/repository-data/development/target/web-archiving-addon-demo-v17-repository-data-development-${project.version}.jar</file>
                     <todir>${development-module-deploy-dir}</todir>
                   </file>
                   <file>
-                    <file>${project.basedir}/repository-data/site-development/target/web-archiving-addon-demo-v13-repository-data-site-development-${project.version}.jar</file>
+                    <file>${project.basedir}/repository-data/site-development/target/web-archiving-addon-demo-v17-repository-data-site-development-${project.version}.jar</file>
                     <todir>${development-module-deploy-dir}</todir>
                   </file>
                 </files>
